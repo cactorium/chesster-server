@@ -11,6 +11,8 @@ Maybe eventually include a web version that'll run from the same server
   - [ ] Stores user login info (username + salted password hash) [TODO: explore using additional authentication using a key stored in the Android app that can be revoked by the user]
   - [ ] Stores board history
   - [ ] Stores latest board configuration
+  - [ ] (Extra feature): friend's list
+  - [ ] Allow spectating on (public) matches
 - [ ] Chess engine
   - [ ] Validates moves
   - [ ] Validates board history
