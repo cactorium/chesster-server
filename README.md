@@ -7,23 +7,23 @@ Maybe eventually include a web version that'll run from the same server
 
 ## Basic architecture
 
-- [ ] (SQLite database for backend)
-  - [ ] (Stores user login info (username + salted password hash) [TODO: explore using additional authentication using a key stored in the Android app that can be revoked by the user])
-  - [ ] (Stores board history)
-  - [ ] (Stores latest board configuration)
-- [ ] (Chess engine)
-  - [ ] (Validates moves)
-  - [ ] (Validates board history)
-- [ ] (TCP-based server)
-  - [ ] (Authenticates users and provides secure tokens)
-  - [ ] (Validates packets)
-  - [ ] (Allows account management)
-  - [ ] (Provides push notifications)
-  - [ ] (Password recovery)
-  - [ ] (Specify packet format)
-  - [ ] (Specify payloads using Protobuf)
-- [ ] (Maybe eventually web app) 
-  - [ ] (Lets you play chess online)
+- [ ] SQLite database for backend
+  - [ ] Stores user login info (username + salted password hash) [TODO: explore using additional authentication using a key stored in the Android app that can be revoked by the user]
+  - [ ] Stores board history
+  - [ ] Stores latest board configuration
+- [ ] Chess engine
+  - [ ] Validates moves
+  - [ ] Validates board history
+- [ ] TCP-based server
+  - [ ] Authenticates users and provides secure tokens
+  - [ ] Validates packets
+  - [ ] Allows account management
+  - [ ] Provides push notifications
+  - [ ] Password recovery
+  - [ ] Specify packet format
+  - [ ] Specify payloads using Protobuf
+- [ ] Maybe eventually web app
+  - [ ] Lets you play chess online
 
 ## Protocol
 We'll use a TCP socket for communication with the Android app, using Protobuf-encoded messages with a simple header for communication.
