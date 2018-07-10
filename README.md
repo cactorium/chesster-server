@@ -16,6 +16,7 @@ Maybe eventually include a web version that'll run from the same server
 - [ ] Chess engine
   - [ ] Validates moves
   - [ ] Validates board history
+  - [ ] Determines checkmate/stalemate
 - [ ] TCP-based server
   - [ ] Authenticates users and provides secure tokens
   - [ ] Validates packets
