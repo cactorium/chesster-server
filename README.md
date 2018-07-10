@@ -26,6 +26,15 @@ Maybe eventually include a web version that'll run from the same server
   - [ ] Password recovery
   - [ ] Specify packet format
   - [ ] Specify payloads using Protobuf
+- [ ] CLI client (used for testing server)
+  - [ ] Can communication with server
+  - [ ] Can read in test patterns from stdin for integration testing
+  - [ ] Can log in
+  - [ ] Can list matches
+  - [ ] Can start match
+  - [ ] Can make a move
+  - [ ] Can display board
+  - [ ] Lets you play chess from the command line
 - [ ] Maybe eventually web app
   - [ ] Lets you play chess online
 
