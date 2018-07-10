@@ -17,6 +17,7 @@ Maybe eventually include a web version that'll run from the same server
   - [ ] Validates moves
   - [ ] Validates board history
   - [ ] Determines checkmate/stalemate
+  - [ ] Flags mates
 - [ ] TCP-based server
   - [ ] Authenticates users and provides secure tokens
   - [ ] Validates packets
