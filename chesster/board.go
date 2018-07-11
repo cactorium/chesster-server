@@ -529,6 +529,15 @@ type Move struct {
 	Capture bool
 }
 
+func (m *Move) Eq(o Move) bool {
+	match := m.Start == o.Start && m.End == o.End && m.IsPromotion == o.IsPromotion && m.Capture == o.Capture
+	if !m.IsCastle {
+		return match
+	} else {
+		return match && m.IsCastle == o.IsCastle && m.IsKingsideCastle == o.IsKingsideCastle
+	}
+}
+
 type InvalidMoveReason int
 
 const (
@@ -576,7 +585,7 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 	moves := m.Start.GetPossibleMoves(b)
 	moveFound := false
 	for _, move := range moves {
-		if move == m {
+		if move.Eq(m) {
 			moveFound = true
 		}
 	}
