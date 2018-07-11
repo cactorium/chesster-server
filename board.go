@@ -21,7 +21,7 @@ type Piece struct {
 }
 
 func isInBounds(x, y int) bool {
-	isOutOfBounds = (x < 0) || (x > 8) || (y < 0) || (y > 8)
+	isOutOfBounds := (x < 0) || (x > 8) || (y < 0) || (y > 8)
 	return !isOutOfBounds
 }
 
@@ -46,14 +46,14 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			newPiece.X = x
 			newPiece.Y = y
 			newPiece.HasMoved = true
-			ret = append(ret, Move{p, newPiece})
+			ret = append(ret, Move{Start: p, End: newPiece})
 		}
 		if isInBounds(x, y) && hasEnemy(x, y) {
 			newPiece := p
 			newPiece.X = x
 			newPiece.Y = y
 			newPiece.HasMoved = true
-			ret = append(ret, Move{p, newPiece})
+			ret = append(ret, Move{Start: p, End: newPiece})
 		}
 		return ret
 	}
@@ -75,23 +75,22 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			newPiece.Y = p.Y + forward
 			newPiece.HasMoved = true
 			if newPiece.Y == 0 || newPiece.Y == 7 {
-				for pieceType := range []PieceType{Rook, Knight, Bishop, Queen} {
+				for _, pieceType := range []PieceType{Rook, Knight, Bishop, Queen} {
 					newNewPiece := newPiece
 					newNewPiece.Type = pieceType
-					moves = append(moves, Move{p, newNewPiece, true})
+					moves = append(moves, Move{Start: p, End: newNewPiece, IsPromotion: true})
 				}
 			} else {
-				moves = append(moves, Move{p, newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 		}
 		// add forward two squares if it's not blocked
 		if !p.HasMoved {
-			hasPieceTwoForward := b.getPiece(p.X, p.Y+2*forward) == nil
 			if isInBounds(p.X, p.Y+2*forward) && isClear(p.X, p.Y+forward) && isClear(p.X, p.Y+2*forward) {
 				newPiece := p
 				newPiece.Y = p.Y + 2*forward
 				newPiece.HasMoved = true
-				moves = append(moves, Move{p, newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 		}
 		// check possible captures
@@ -100,21 +99,20 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			newPiece.X = p.X - 1
 			newPiece.Y = p.Y + forward
 			newPiece.HasMoved = true
-			moves = append(moves, Move{p, newPiece})
+			moves = append(moves, Move{Start: p, End: newPiece})
 		}
 		if isInBounds(p.X+1, p.Y+forward) && hasEnemy(p.X+1, p.Y+forward) {
 			newPiece := p
 			newPiece.X = p.X + 1
 			newPiece.Y = p.Y + forward
 			newPiece.HasMoved = true
-			moves = append(moves, Move{p, newPiece})
+			moves = append(moves, Move{Start: p, End: newPiece})
 		}
 
 		// check for en passant
-		var enPassantActive bool
 		var enPassantFile int
 		if p.Side == White {
-			enPassantFile = b.BlackEnPassent
+			enPassantFile = b.BlackEnPassant
 		} else {
 			enPassantFile = b.WhiteEnPassant
 		}
@@ -124,14 +122,14 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 				newPiece.X = enPassantFile
 				newPiece.Y = 5
 				newPiece.HasMoved = true
-				moves = append(moves, Move{p, newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 			if p.Side == Black && p.Y == 3 {
 				newPiece := p
 				newPiece.X = enPassantFile
 				newPiece.Y = 2
 				newPiece.HasMoved = true
-				moves = append(moves, Move{p, newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 		}
 	case Rook:
@@ -145,12 +143,12 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 		dx := []int{1, 1, -1, -1, 2, 2, -2, -2}
 		dy := []int{2, -2, 2, -2, 1, -1, 1, -1}
 		for i := 0; i < 8; i++ {
-			if isInBounds(p.X+dx, p.Y+dy) && (isClear(p.X+dx, p.Y+dy) || hasEnemy(p.X+dx, p.Y+dy)) {
+			if isInBounds(p.X+dx[i], p.Y+dy[i]) && (isClear(p.X+dx[i], p.Y+dy[i]) || hasEnemy(p.X+dx[i], p.Y+dy[i])) {
 				newPiece := p
-				newPiece.X = p.X + dx
-				newPiece.Y = p.Y + dy
+				newPiece.X = p.X + dx[i]
+				newPiece.Y = p.Y + dy[i]
 				newPiece.HasMoved = true
-				moves = append(moves, Move{p, newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 		}
 	case Bishop:
@@ -164,14 +162,15 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 		dx := []int{0, 0, -1, -1, -1, 1, 1, 1}
 		dy := []int{1, -1, -1, 0, 1, -1, 0, 1}
 		for i := 0; i < 8; i++ {
-			if isInBounds(p.X+dx, p.Y+dy) && (isClear(p.X+dx, p.Y+dy) || hasEnemy(p.X+dx, p.Y+dy)) {
+			if isInBounds(p.X+dx[i], p.Y+dy[i]) && (isClear(p.X+dx[i], p.Y+dy[i]) || hasEnemy(p.X+dx[i], p.Y+dy[i])) {
 				newPiece := p
-				newPiece.X = p.X + dx
-				newPiece.Y = p.Y + dy
+				newPiece.X = p.X + dx[i]
+				newPiece.Y = p.Y + dy[i]
 				newPiece.HasMoved = true
-				moves = append(moves, Move{p, newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 		}
+		// TODO add castling
 	case Queen:
 		// check all eight directions
 		moves = raycast(moves, 1, 0)
@@ -273,7 +272,7 @@ func NewBoard() Board {
 			Piece{6, 6, Pawn, Black, false},
 			Piece{7, 6, Pawn, Black, false},
 		},
-		Captured:          []PieceType{},
+		Captured:          []Piece{},
 		State:             WhiteMove,
 		WhiteCheck:        false,
 		BlackCheck:        false,
@@ -337,6 +336,15 @@ func (b *Board) OfferDraw(s Side) {
 	}
 }
 
+func (b *Board) getPiece(x, y int) *Piece {
+	for i, p := range b.Pieces {
+		if p.X == x && p.Y == y {
+			return &b.Pieces[i]
+		}
+	}
+	return nil
+}
+
 func (b *Board) DoMove(m Move) {
 	// TODO: do move and update state as needed
 	// TODO: append to movelist
@@ -357,12 +365,7 @@ func (b *Board) IsValid() bool {
 		return false
 	}
 	// make sure all the pieces are in bounds
-	for _, piece := range b.White {
-		if piece.X < 0 || piece.X > 8 || piece.Y < 0 || piece.Y > 8 {
-			return false
-		}
-	}
-	for _, piece := range b.Black {
+	for _, piece := range b.Pieces {
 		if piece.X < 0 || piece.X > 8 || piece.Y < 0 || piece.Y > 8 {
 			return false
 		}
@@ -438,19 +441,16 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 	}
 
 	// make sure the piece exists
-	pieceFound := false
-	for _, piece := range toCheck {
-		if (piece.X == m.Start.X) && (piece.Y == m.End.Y) && (piece.Side == m.Start.Side) {
-			pieceFound = true
-			break
+	if maybePiece := b.getPiece(m.Start.X, m.Start.Y); maybePiece != nil {
+		if maybePiece.Side != m.Start.Side || maybePiece.Type != m.Start.Type {
+			return nil, PieceNotFound
 		}
-	}
-	if !pieceFound {
+	} else {
 		return nil, PieceNotFound
 	}
 
 	// make sure it's a possible move
-	possibleMoves := m.Start.GetPossibleMoves(b)
+	moves := m.Start.GetPossibleMoves(b)
 	moveFound := false
 	for _, move := range moves {
 		if move == m {
@@ -460,6 +460,9 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 	if !moveFound {
 		return nil, InvalidMove
 	}
+
+	afterMove := b.Clone()
+	afterMove.DoMove(m)
 
 	// else it's good
 	return &afterMove, MoveOkay
