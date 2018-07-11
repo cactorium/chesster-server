@@ -53,7 +53,7 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			newPiece.X = x
 			newPiece.Y = y
 			newPiece.HasMoved = true
-			ret = append(ret, Move{Start: p, End: newPiece})
+			ret = append(ret, Move{Start: p, End: newPiece, Capture: true})
 		}
 		return ret
 	}
@@ -99,14 +99,14 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			newPiece.X = p.X - 1
 			newPiece.Y = p.Y + forward
 			newPiece.HasMoved = true
-			moves = append(moves, Move{Start: p, End: newPiece})
+			moves = append(moves, Move{Start: p, End: newPiece, Capture: true})
 		}
 		if isInBounds(p.X+1, p.Y+forward) && hasEnemy(p.X+1, p.Y+forward) {
 			newPiece := p
 			newPiece.X = p.X + 1
 			newPiece.Y = p.Y + forward
 			newPiece.HasMoved = true
-			moves = append(moves, Move{Start: p, End: newPiece})
+			moves = append(moves, Move{Start: p, End: newPiece, Capture: true})
 		}
 
 		// check for en passant
@@ -122,14 +122,14 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 				newPiece.X = enPassantFile
 				newPiece.Y = 5
 				newPiece.HasMoved = true
-				moves = append(moves, Move{Start: p, End: newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece, Capture: true})
 			}
 			if p.Side == Black && p.Y == 3 {
 				newPiece := p
 				newPiece.X = enPassantFile
 				newPiece.Y = 2
 				newPiece.HasMoved = true
-				moves = append(moves, Move{Start: p, End: newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece, Capture: true})
 			}
 		}
 	case Rook:
@@ -148,7 +148,7 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 				newPiece.X = p.X + dx[i]
 				newPiece.Y = p.Y + dy[i]
 				newPiece.HasMoved = true
-				moves = append(moves, Move{Start: p, End: newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece, Capture: hasEnemy(p.X+dx[i], p.Y+dy[i])})
 			}
 		}
 	case Bishop:
@@ -167,7 +167,7 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 				newPiece.X = p.X + dx[i]
 				newPiece.Y = p.Y + dy[i]
 				newPiece.HasMoved = true
-				moves = append(moves, Move{Start: p, End: newPiece})
+				moves = append(moves, Move{Start: p, End: newPiece, Capture: hasEnemy(p.X+dx[i], p.Y+dy[i])})
 			}
 		}
 		// add castling
@@ -198,7 +198,6 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 
 	isValid := make([]bool, len(moves))
 	// check for moves that would lead to own check
-	// TODO: special case castle; check all squares between start and end position
 
 	for i, m := range moves {
 		if !isInBounds(m.End.X, m.End.Y) {
@@ -210,13 +209,17 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			// the same colored king to be in check
 
 			nb := b.Clone()
-			nb.CommitMove(m)
+			if !nb.CommitMove(m) {
+				isValid[i] = false
+				continue
+			}
 			isValid[i] = !nb.InCheck(p.Side)
 		} else {
 			// TODO handle castling
 		}
 	}
 
+	// copy all the valid ones
 	validMoves := []Move{}
 	for i, m := range moves {
 		if isValid[i] {
@@ -235,7 +238,6 @@ const (
 	BlackMove
 )
 
-// TODO: probably refactor board into game state with board embedded
 type Board struct {
 	Pieces   []Piece
 	Captured []Piece
@@ -372,7 +374,7 @@ func (b *Board) CommitMove(m Move) bool {
 			d = -1
 		}
 		captured = b.getPiece(m.End.X, m.Start.Y+d)
-		if captured == nil || captured.Type != Pawn {
+		if captured == nil || captured.Type != Pawn || captured.Side != m.Start.Side.Opposite() {
 			return false
 		}
 	}
@@ -523,6 +525,8 @@ type Move struct {
 	IsCastle bool
 	// true is kingside, false if queenside; ignored if not castle
 	IsKingsideCastle bool
+	// if the move captures a piece; only used for printing out notation
+	Capture bool
 }
 
 type InvalidMoveReason int
