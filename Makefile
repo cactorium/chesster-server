@@ -1,6 +1,6 @@
 server:
-	go build ./cmd/chesster
+	go build ./cmd/chessterd
 
 
 clean:
-	rm chesster
+	rm chessterd

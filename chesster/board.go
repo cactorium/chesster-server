@@ -197,140 +197,33 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 	}
 
 	isValid := make([]bool, len(moves))
-	// TODO: check moves for moves that would lead to own check or are out of bounds
+	// check for moves that would lead to own check
 	// TODO: special case castle; check all squares between start and end position
-	inCheck := func(kx, ky int, moved *Piece, fx, fy int, captured *Piece) bool {
-		maxInt := func(a, b int) int {
-			if a > b {
-				return a
-			} else {
-				return b
-			}
-		}
-		minInt := func(a, b int) int {
-			if a < b {
-				return a
-			} else {
-				return b
-			}
-		}
-		absInt := func(a int) int {
-			return maxInt(a, -a)
-		}
-		// see if there's anything on (x, y)
-		isBlocking := func(x, y int) bool {
-			maybePiece := b.getPiece(x, y)
-			// piece moved in the way
-			if x == fx && y == fy {
-				return true
-			}
-			// if there is a piece there and it isn't the one that moved
-			return maybePiece != nil && maybePiece != moved
-		}
-		for i, piece := range b.Pieces {
-			// no team kills; probably the least realistic part of chess
-			if piece.Side == p.Side {
-				continue
-			}
-			if &b.Pieces[i] == captured {
-				continue
-			}
-			switch piece.Type {
-			case Pawn:
-				var forward int
-				if piece.Side == White {
-					forward = 1
-				} else {
-					forward = -1
-				}
-				if absInt(piece.X-kx) == 1 && piece.Y == ky-forward {
-					return true
-				}
-			case Rook:
-				if piece.X == kx {
-					start := minInt(piece.Y, ky)
-					end := maxInt(piece.Y, ky)
 
-					canThreaten := true
-					x := kx
-					for y := start; y < end; y++ {
-						if isBlocking(x, y) {
-							canThreaten = false
-							break
-						}
-					}
-					if canThreaten {
-						return true
-					}
-				}
-				if piece.Y == ky {
-					start := minInt(piece.X, kx)
-					end := maxInt(piece.X, kx)
-
-					canThreaten := true
-					y := ky
-					for x := start; x < end; x++ {
-						if isBlocking(x, y) {
-							canThreaten = false
-							break
-						}
-					}
-					if canThreaten {
-						return true
-					}
-				}
-			case Knight:
-				if absInt(piece.X-kx) == 1 && absInt(piece.Y-ky) == 2 {
-					return true
-				}
-				if absInt(piece.X-kx) == 2 && absInt(piece.Y-ky) == 1 {
-					return true
-				}
-			case Bishop:
-				// on the +x +y diagonal, the difference between x and y stays the same
-				// on the +x -y diagonal, their sum stays the same
-				if kx-ky == piece.X-piece.Y {
-					// TODO
-				}
-				if kx+ky == piece.X+piece.Y {
-					// TODO
-				}
-			case Queen:
-				// TODO
-			case King:
-				// TODO
-			}
-		}
-		return false
-	}
 	for i, m := range moves {
 		if !isInBounds(m.End.X, m.End.Y) {
 			isValid[i] = false
 			continue
 		}
 		if !m.IsCastle {
-			moved := b.getPiece(m.Start.X, m.Start.Y)
-			// if the piece isn't on the board at the start, something bad happened
-			// also this move is invalid
-			if moved == nil {
-				isValid[i] = false
-				continue
-			}
-			captured := b.getPiece(m.End.X, m.End.Y)
-			king := b.getKing(p.Side)
-			if king == nil {
-				// NOTE: probably should print out some error info
-				return nil
-			}
-			kx := king.X
-			ky := king.Y
-			isValid[i] = !inCheck(kx, ky, moved, m.End.X, m.End.Y, captured)
+			// copy the pieces into a new board, do the move and see if it causes
+			// the same colored king to be in check
+
+			nb := b.Clone()
+			nb.CommitMove(m)
+			isValid[i] = !nb.InCheck(p.Side)
 		} else {
 			// TODO handle castling
 		}
 	}
-	// TODO filter out invalid moves
-	return moves
+
+	validMoves := []Move{}
+	for i, m := range moves {
+		if isValid[i] {
+			validMoves = append(validMoves, m)
+		}
+	}
+	return validMoves
 }
 
 type BoardState int
@@ -340,40 +233,13 @@ const (
 	WhiteMove BoardState = iota
 	// black's turn to move
 	BlackMove
-	// white checkmated
-	WhiteCheckmate
-	// black checkmated
-	BlackCheckmate
-	// white stallmated; black move caused stalemate
-	WhiteStallmate
-	// black stallmated; white move caused stalemate
-	BlackStallmate
-	// white resigned
-	WhiteResigned
-	// black resigned
-	BlackResigned
-	// both sides agreed to draw
-	DrawAgreed
-	// FIDE rule; 50 moves since capture or pawn move
-	Draw50Moves
-	// FIDE rule; threefold repetition
-	Draw3Fold
 )
 
+// TODO: probably refactor board into game state with board embedded
 type Board struct {
-	Moves    []Move
 	Pieces   []Piece
 	Captured []Piece
 	State    BoardState
-	// white's king is currently threatened
-	WhiteCheck bool
-	// black's king is currently threatened
-	BlackCheck bool
-	// white asked for draw
-	WhiteDrawAsk bool
-	// black asked for draw
-	BlackDrawAsk      bool
-	MovesSinceCapture int
 	// -1 if not marked, set if white moved a pawn two spaces last turn, set to the pawn's location
 	WhiteEnPassant int
 	// -1 if not marked, set if black moved a pawn two spaces last turn, set to the pawn's location
@@ -416,33 +282,31 @@ func NewBoard() Board {
 			Piece{6, 6, Pawn, Black, false},
 			Piece{7, 6, Pawn, Black, false},
 		},
-		Captured:          []Piece{},
-		State:             WhiteMove,
-		WhiteCheck:        false,
-		BlackCheck:        false,
-		WhiteDrawAsk:      false,
-		BlackDrawAsk:      false,
-		MovesSinceCapture: 0,
-		WhiteEnPassant:    -1,
-		BlackEnPassant:    -1,
+		Captured:       []Piece{},
+		State:          WhiteMove,
+		WhiteEnPassant: -1,
+		BlackEnPassant: -1,
+	}
+}
+
+func EmptyBoard() Board {
+	return Board{
+		Pieces:         []Piece{},
+		Captured:       []Piece{},
+		State:          WhiteMove,
+		WhiteEnPassant: -1,
+		BlackEnPassant: -1,
 	}
 }
 
 func (b *Board) Clone() Board {
 	newBoard := Board{
-		Moves:             make([]Move, len(b.Moves)),
-		Pieces:            make([]Piece, len(b.Pieces)),
-		Captured:          make([]Piece, len(b.Captured)),
-		State:             b.State,
-		WhiteCheck:        b.WhiteCheck,
-		BlackCheck:        b.BlackCheck,
-		WhiteDrawAsk:      b.WhiteDrawAsk,
-		BlackDrawAsk:      b.BlackDrawAsk,
-		MovesSinceCapture: b.MovesSinceCapture,
-		WhiteEnPassant:    b.WhiteEnPassant,
-		BlackEnPassant:    b.BlackEnPassant,
+		Pieces:         make([]Piece, len(b.Pieces)),
+		Captured:       make([]Piece, len(b.Captured)),
+		State:          b.State,
+		WhiteEnPassant: b.WhiteEnPassant,
+		BlackEnPassant: b.BlackEnPassant,
 	}
-	copy(newBoard.Moves, b.Moves)
 	copy(newBoard.Pieces, b.Pieces)
 	copy(newBoard.Captured, b.Captured)
 	return newBoard
@@ -450,34 +314,6 @@ func (b *Board) Clone() Board {
 
 func (b *Board) IsMove(s Side) bool {
 	return (s == White && b.State == WhiteMove) || (s == Black && b.State == BlackMove)
-}
-
-func (b *Board) GameEnded() bool {
-	return b.State != WhiteMove && b.State != BlackMove
-}
-
-func (b *Board) WhiteWon() bool {
-	return b.State == BlackCheckmate
-}
-
-func (b *Board) BlackWon() bool {
-	return b.State == WhiteCheckmate
-}
-
-func (b *Board) Draw() bool {
-	return (b.State == DrawAgreed) || (b.State == Draw50Moves) || (b.State == Draw3Fold)
-}
-
-func (b *Board) OfferDraw(s Side) {
-	if s == White {
-		b.WhiteDrawAsk = true
-	} else {
-		b.BlackDrawAsk = true
-	}
-
-	if b.WhiteDrawAsk && b.BlackDrawAsk {
-		b.State = DrawAgreed
-	}
 }
 
 func (b *Board) getPiece(x, y int) *Piece {
@@ -498,18 +334,151 @@ func (b *Board) getKing(s Side) *Piece {
 	return nil
 }
 
-func (b *Board) DoMove(m Move) {
-	// TODO: do move and update state as needed
-	// TODO: append to movelist
-	// TODO: check to see if it's en passant
-	// TODO: update captured pieces
-	// TODO: check for check; complicated due to pinning
-	// TODO: reset draw ask
-	// TODO: update moves since capture
-	// TODO: update en passant states
-	// TODO: check for 50 move draw
-	// TODO: check for 3 fold repetition
-	panic("unimplemented!")
+func maxInt(a, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	} else {
+		return b
+	}
+}
+func absInt(a int) int {
+	return maxInt(a, -a)
+}
+
+func (b *Board) CommitMove(m Move) bool {
+	if m.IsCastle {
+		// TODO special case castle
+		panic("unimplemented!")
+		return false
+	}
+	moving := b.getPiece(m.Start.X, m.Start.Y)
+	if moving == nil || moving.Side != m.Start.Side || moving.Type != m.Start.Type {
+		return false
+	}
+	captured := b.getPiece(m.End.X, m.End.Y)
+	// special case en passant
+	if m.Start.Type == Pawn && (absInt(m.End.Y-m.Start.Y) == 2 && absInt(m.End.X-m.Start.X) == 1) {
+		var d int
+		if m.End.Y > m.Start.Y {
+			d = 1
+		} else {
+			d = -1
+		}
+		captured = b.getPiece(m.End.X, m.Start.Y+d)
+		if captured == nil || captured.Type != Pawn {
+			return false
+		}
+	}
+	if captured != nil && captured.Side != m.Start.Side.Opposite() {
+		return false
+	}
+
+	*moving = m.End
+	moving.HasMoved = true
+	if captured != nil {
+		// replace it with the last piece and shift it all down one to remove it
+		*captured = b.Pieces[len(b.Pieces)-1]
+		b.Pieces = b.Pieces[:len(b.Pieces)-1]
+	}
+	return true
+}
+
+func (b *Board) InCheck(s Side) bool {
+	king := b.getKing(s)
+	if king == nil {
+		// NOTE: probably should print out some error info
+		return false
+	}
+	kx := king.X
+	ky := king.Y
+
+	isBlocking := func(x, y int) bool {
+		return b.getPiece(x, y) != nil
+	}
+	for _, p := range b.Pieces {
+		// no team kills; probably the least realistic part of chess
+		if p.Side == s {
+			continue
+		}
+		switch p.Type {
+		case Pawn:
+			var forward int
+			if p.Side == White {
+				forward = 1
+			} else {
+				forward = -1
+			}
+			if absInt(p.X-kx) == 1 && p.Y == ky-forward {
+				return true
+			}
+		case Rook:
+			if p.X == kx {
+				start := minInt(p.Y, ky)
+				end := maxInt(p.Y, ky)
+
+				canThreaten := true
+				x := kx
+				for y := start; y < end; y++ {
+					if isBlocking(x, y) {
+						canThreaten = false
+						break
+					}
+				}
+				if canThreaten {
+					return true
+				}
+			}
+			if p.Y == ky {
+				start := minInt(p.X, kx)
+				end := maxInt(p.X, kx)
+
+				canThreaten := true
+				y := ky
+				for x := start; x < end; x++ {
+					if isBlocking(x, y) {
+						canThreaten = false
+						break
+					}
+				}
+				if canThreaten {
+					return true
+				}
+			}
+		case Knight:
+			if absInt(p.X-kx) == 1 && absInt(p.Y-ky) == 2 {
+				return true
+			}
+			if absInt(p.X-kx) == 2 && absInt(p.Y-ky) == 1 {
+				return true
+			}
+		case Bishop:
+			// on the +x +y diagonal, the difference between x and y stays the same
+			// on the +x -y diagonal, their sum stays the same
+			if kx-ky == p.X-p.Y {
+				panic("unimplemented")
+				// TODO
+			}
+			if kx+ky == p.X+p.Y {
+				panic("unimplemented")
+				// TODO
+			}
+		case Queen:
+			panic("unimplemented")
+			// TODO
+		case King:
+			if absInt(p.X-kx) <= 1 || absInt(p.Y-ky) <= 1 {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (b *Board) IsValid() bool {
@@ -526,15 +495,6 @@ func (b *Board) IsValid() bool {
 
 	// make sure that each side has a king
 	if b.getKing(Black) == nil || b.getKing(White) == nil {
-		return false
-	}
-
-	// make sure both kings aren't in check
-	if b.WhiteCheck && b.BlackCheck {
-		return false
-	}
-	// make sure en passant isn't set for both players
-	if b.WhiteEnPassant != -1 && b.BlackEnPassant != -1 {
 		return false
 	}
 	return true
@@ -578,6 +538,7 @@ const (
 	InvalidMove
 	StillInCheck
 	OnlyOneKing
+	AfraidOfCommitment
 	CantCastle
 )
 
@@ -620,7 +581,9 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 	}
 
 	afterMove := b.Clone()
-	afterMove.DoMove(m)
+	if !afterMove.CommitMove(m) {
+		return nil, AfraidOfCommitment
+	}
 
 	// else it's good
 	return &afterMove, MoveOkay
