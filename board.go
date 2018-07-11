@@ -170,7 +170,19 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 				moves = append(moves, Move{Start: p, End: newPiece})
 			}
 		}
-		// TODO add castling
+		// add castling
+		if !p.HasMoved {
+			for _, piece := range b.Pieces {
+				if piece.Type == Rook && piece.Side == p.Side && !piece.HasMoved {
+					if piece.X == 0 && isClear(1, p.Y) && isClear(2, p.Y) && isClear(3, p.Y) {
+						moves = append(moves, Move{IsCastle: true})
+					}
+					if piece.X == 7 && isClear(6, p.Y) && isClear(5, p.Y) {
+						moves = append(moves, Move{IsCastle: true, IsKingsideCastle: true})
+					}
+				}
+			}
+		}
 	case Queen:
 		// check all eight directions
 		moves = raycast(moves, 1, 0)
@@ -184,8 +196,140 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 		moves = raycast(moves, -1, -1)
 	}
 
+	isValid := make([]bool, len(moves))
 	// TODO: check moves for moves that would lead to own check or are out of bounds
 	// TODO: special case castle; check all squares between start and end position
+	inCheck := func(kx, ky int, moved *Piece, fx, fy int, captured *Piece) bool {
+		maxInt := func(a, b int) int {
+			if a > b {
+				return a
+			} else {
+				return b
+			}
+		}
+		minInt := func(a, b int) int {
+			if a < b {
+				return a
+			} else {
+				return b
+			}
+		}
+		absInt := func(a int) int {
+			return maxInt(a, -a)
+		}
+		// see if there's anything on (x, y)
+		isBlocking := func(x, y int) bool {
+			maybePiece := b.getPiece(x, y)
+			// piece moved in the way
+			if x == fx && y == fy {
+				return true
+			}
+			// if there is a piece there and it isn't the one that moved
+			return maybePiece != nil && maybePiece != moved
+		}
+		for i, piece := range b.Pieces {
+			// no team kills; probably the least realistic part of chess
+			if piece.Side == p.Side {
+				continue
+			}
+			if &b.Pieces[i] == captured {
+				continue
+			}
+			switch piece.Type {
+			case Pawn:
+				var forward int
+				if piece.Side == White {
+					forward = 1
+				} else {
+					forward = -1
+				}
+				if absInt(piece.X-kx) == 1 && piece.Y == ky-forward {
+					return true
+				}
+			case Rook:
+				if piece.X == kx {
+					start := minInt(piece.Y, ky)
+					end := maxInt(piece.Y, ky)
+
+					canThreaten := true
+					x := kx
+					for y := start; y < end; y++ {
+						if isBlocking(x, y) {
+							canThreaten = false
+							break
+						}
+					}
+					if canThreaten {
+						return true
+					}
+				}
+				if piece.Y == ky {
+					start := minInt(piece.X, kx)
+					end := maxInt(piece.X, kx)
+
+					canThreaten := true
+					y := ky
+					for x := start; x < end; x++ {
+						if isBlocking(x, y) {
+							canThreaten = false
+							break
+						}
+					}
+					if canThreaten {
+						return true
+					}
+				}
+			case Knight:
+				if absInt(piece.X-kx) == 1 && absInt(piece.Y-ky) == 2 {
+					return true
+				}
+				if absInt(piece.X-kx) == 2 && absInt(piece.Y-ky) == 1 {
+					return true
+				}
+			case Bishop:
+				// on the +x +y diagonal, the difference between x and y stays the same
+				// on the +x -y diagonal, their sum stays the same
+				if kx-ky == piece.X-piece.Y {
+					// TODO
+				}
+				if kx+ky == piece.X+piece.Y {
+					// TODO
+				}
+			case Queen:
+				// TODO
+			case King:
+				// TODO
+			}
+		}
+		return false
+	}
+	for i, m := range moves {
+		if !isInBounds(m.End.X, m.End.Y) {
+			isValid[i] = false
+			continue
+		}
+		if !m.IsCastle {
+			moved := b.getPiece(m.Start.X, m.Start.Y)
+			// if the piece isn't on the board at the start, something bad happened
+			// also this move is invalid
+			if moved == nil {
+				isValid[i] = false
+				continue
+			}
+			captured := b.getPiece(m.End.X, m.End.Y)
+			king := b.getKing(p.Side)
+			if king == nil {
+				// NOTE: probably should print out some error info
+				return nil
+			}
+			kx := king.X
+			ky := king.Y
+			isValid[i] = !inCheck(kx, ky, moved, m.End.X, m.End.Y, captured)
+		} else {
+			// TODO handle castling
+		}
+	}
+	// TODO filter out invalid moves
 	return moves
 }
 
@@ -345,6 +489,15 @@ func (b *Board) getPiece(x, y int) *Piece {
 	return nil
 }
 
+func (b *Board) getKing(s Side) *Piece {
+	for i, p := range b.Pieces {
+		if p.Type == King || p.Side == s {
+			return &b.Pieces[i]
+		}
+	}
+	return nil
+}
+
 func (b *Board) DoMove(m Move) {
 	// TODO: do move and update state as needed
 	// TODO: append to movelist
@@ -369,6 +522,11 @@ func (b *Board) IsValid() bool {
 		if piece.X < 0 || piece.X > 8 || piece.Y < 0 || piece.Y > 8 {
 			return false
 		}
+	}
+
+	// make sure that each side has a king
+	if b.getKing(Black) == nil || b.getKing(White) == nil {
+		return false
 	}
 
 	// make sure both kings aren't in check
