@@ -16,7 +16,178 @@ type Piece struct {
 	X        int
 	Y        int
 	Type     PieceType
+	Side     Side
 	HasMoved bool
+}
+
+func isInBounds(x, y int) bool {
+	isOutOfBounds = (x < 0) || (x > 8) || (y < 0) || (y > 8)
+	return !isOutOfBounds
+}
+
+// gets possible moves
+func (p Piece) GetPossibleMoves(b *Board) []Move {
+	isClear := func(x, y int) bool {
+		return b.getPiece(x, y) == nil
+	}
+	hasEnemy := func(x, y int) bool {
+		maybePiece := b.getPiece(x, y)
+		if maybePiece == nil {
+			return false
+		}
+		return maybePiece.Side == p.Side.Opposite()
+	}
+	raycast := func(ary []Move, dx, dy int) []Move {
+		ret := ary
+		x := p.X + dx
+		y := p.Y + dy
+		for isInBounds(x, y) && isClear(x, y) {
+			newPiece := p
+			newPiece.X = x
+			newPiece.Y = y
+			newPiece.HasMoved = true
+			ret = append(ret, Move{p, newPiece})
+		}
+		if isInBounds(x, y) && hasEnemy(x, y) {
+			newPiece := p
+			newPiece.X = x
+			newPiece.Y = y
+			newPiece.HasMoved = true
+			ret = append(ret, Move{p, newPiece})
+		}
+		return ret
+	}
+
+	moves := make([]Move, 0)
+	switch p.Type {
+	case InvalidPiece:
+		return nil
+	case Pawn:
+		var forward int
+		if p.Side == White {
+			forward = 1
+		} else {
+			forward = -1
+		}
+		// add forward one square if it's not blocked
+		if isInBounds(p.X, p.Y+forward) && isClear(p.X, p.Y+forward) {
+			newPiece := p
+			newPiece.Y = p.Y + forward
+			newPiece.HasMoved = true
+			if newPiece.Y == 0 || newPiece.Y == 7 {
+				for pieceType := range []PieceType{Rook, Knight, Bishop, Queen} {
+					newNewPiece := newPiece
+					newNewPiece.Type = pieceType
+					moves = append(moves, Move{p, newNewPiece, true})
+				}
+			} else {
+				moves = append(moves, Move{p, newPiece})
+			}
+		}
+		// add forward two squares if it's not blocked
+		if !p.HasMoved {
+			hasPieceTwoForward := b.getPiece(p.X, p.Y+2*forward) == nil
+			if isInBounds(p.X, p.Y+2*forward) && isClear(p.X, p.Y+forward) && isClear(p.X, p.Y+2*forward) {
+				newPiece := p
+				newPiece.Y = p.Y + 2*forward
+				newPiece.HasMoved = true
+				moves = append(moves, Move{p, newPiece})
+			}
+		}
+		// check possible captures
+		if isInBounds(p.X-1, p.Y+forward) && hasEnemy(p.X-1, p.Y+forward) {
+			newPiece := p
+			newPiece.X = p.X - 1
+			newPiece.Y = p.Y + forward
+			newPiece.HasMoved = true
+			moves = append(moves, Move{p, newPiece})
+		}
+		if isInBounds(p.X+1, p.Y+forward) && hasEnemy(p.X+1, p.Y+forward) {
+			newPiece := p
+			newPiece.X = p.X + 1
+			newPiece.Y = p.Y + forward
+			newPiece.HasMoved = true
+			moves = append(moves, Move{p, newPiece})
+		}
+
+		// check for en passant
+		var enPassantActive bool
+		var enPassantFile int
+		if p.Side == White {
+			enPassantFile = b.BlackEnPassent
+		} else {
+			enPassantFile = b.WhiteEnPassant
+		}
+		if enPassantFile != -1 && (p.X-1 == enPassantFile || p.X+1 == enPassantFile) {
+			if p.Side == White && p.Y == 4 {
+				newPiece := p
+				newPiece.X = enPassantFile
+				newPiece.Y = 5
+				newPiece.HasMoved = true
+				moves = append(moves, Move{p, newPiece})
+			}
+			if p.Side == Black && p.Y == 3 {
+				newPiece := p
+				newPiece.X = enPassantFile
+				newPiece.Y = 2
+				newPiece.HasMoved = true
+				moves = append(moves, Move{p, newPiece})
+			}
+		}
+	case Rook:
+		// check all four directions
+		moves = raycast(moves, 1, 0)
+		moves = raycast(moves, -1, 0)
+		moves = raycast(moves, 0, 1)
+		moves = raycast(moves, 0, -1)
+	case Knight:
+		// check all eight L shapes
+		dx := []int{1, 1, -1, -1, 2, 2, -2, -2}
+		dy := []int{2, -2, 2, -2, 1, -1, 1, -1}
+		for i := 0; i < 8; i++ {
+			if isInBounds(p.X+dx, p.Y+dy) && (isClear(p.X+dx, p.Y+dy) || hasEnemy(p.X+dx, p.Y+dy)) {
+				newPiece := p
+				newPiece.X = p.X + dx
+				newPiece.Y = p.Y + dy
+				newPiece.HasMoved = true
+				moves = append(moves, Move{p, newPiece})
+			}
+		}
+	case Bishop:
+		// check all four directions
+		moves = raycast(moves, 1, -1)
+		moves = raycast(moves, -1, 1)
+		moves = raycast(moves, 1, 1)
+		moves = raycast(moves, -1, -1)
+	case King:
+		// check his eight moves
+		dx := []int{0, 0, -1, -1, -1, 1, 1, 1}
+		dy := []int{1, -1, -1, 0, 1, -1, 0, 1}
+		for i := 0; i < 8; i++ {
+			if isInBounds(p.X+dx, p.Y+dy) && (isClear(p.X+dx, p.Y+dy) || hasEnemy(p.X+dx, p.Y+dy)) {
+				newPiece := p
+				newPiece.X = p.X + dx
+				newPiece.Y = p.Y + dy
+				newPiece.HasMoved = true
+				moves = append(moves, Move{p, newPiece})
+			}
+		}
+	case Queen:
+		// check all eight directions
+		moves = raycast(moves, 1, 0)
+		moves = raycast(moves, -1, 0)
+		moves = raycast(moves, 0, 1)
+		moves = raycast(moves, 0, -1)
+
+		moves = raycast(moves, 1, -1)
+		moves = raycast(moves, -1, 1)
+		moves = raycast(moves, 1, 1)
+		moves = raycast(moves, -1, -1)
+	}
+
+	// TODO: check moves for moves that would lead to own check or are out of bounds
+	// TODO: special case castle; check all squares between start and end position
+	return moves
 }
 
 type BoardState int
@@ -47,14 +218,10 @@ const (
 )
 
 type Board struct {
-	Moves []Move
-	White []Piece
-	Black []Piece
-	// pieces captured by white
-	CapturedWhite []PieceType
-	// pieces captured by black
-	CapturedBlack []PieceType
-	State         BoardState
+	Moves    []Move
+	Pieces   []Piece
+	Captured []Piece
+	State    BoardState
 	// white's king is currently threatened
 	WhiteCheck bool
 	// black's king is currently threatened
@@ -71,15 +238,42 @@ type Board struct {
 }
 
 func NewBoard() Board {
-	// TODO: generate a fresh board
-	panic("unimplemented!")
 	return Board{
-		White: []Piece{
-			Piece{0, 0, Rook, false},
+		Pieces: []Piece{
+			Piece{0, 0, Rook, White, false},
+			Piece{1, 0, Knight, White, false},
+			Piece{2, 0, Bishop, White, false},
+			Piece{3, 0, Queen, White, false},
+			Piece{4, 0, King, White, false},
+			Piece{5, 0, Bishop, White, false},
+			Piece{6, 0, Knight, White, false},
+			Piece{7, 0, Rook, White, false},
+			Piece{0, 1, Pawn, White, false},
+			Piece{1, 1, Pawn, White, false},
+			Piece{2, 1, Pawn, White, false},
+			Piece{3, 1, Pawn, White, false},
+			Piece{4, 1, Pawn, White, false},
+			Piece{5, 1, Pawn, White, false},
+			Piece{6, 1, Pawn, White, false},
+			Piece{7, 1, Pawn, White, false},
+			Piece{0, 7, Rook, Black, false},
+			Piece{1, 7, Knight, Black, false},
+			Piece{2, 7, Bishop, Black, false},
+			Piece{3, 7, Queen, Black, false},
+			Piece{4, 7, King, Black, false},
+			Piece{5, 7, Bishop, Black, false},
+			Piece{6, 7, Knight, Black, false},
+			Piece{7, 7, Rook, Black, false},
+			Piece{0, 6, Pawn, Black, false},
+			Piece{1, 6, Pawn, Black, false},
+			Piece{2, 6, Pawn, Black, false},
+			Piece{3, 6, Pawn, Black, false},
+			Piece{4, 6, Pawn, Black, false},
+			Piece{5, 6, Pawn, Black, false},
+			Piece{6, 6, Pawn, Black, false},
+			Piece{7, 6, Pawn, Black, false},
 		},
-		Black:             []Piece{},
-		CapturedWhite:     []PieceType{},
-		CapturedBlack:     []PieceType{},
+		Captured:          []PieceType{},
 		State:             WhiteMove,
 		WhiteCheck:        false,
 		BlackCheck:        false,
@@ -94,10 +288,8 @@ func NewBoard() Board {
 func (b *Board) Clone() Board {
 	newBoard := Board{
 		Moves:             make([]Move, len(b.Moves)),
-		White:             make([]Piece, len(b.White)),
-		Black:             make([]Piece, len(b.Black)),
-		CapturedWhite:     make([]PieceType, len(b.CapturedWhite)),
-		CapturedBlack:     make([]PieceType, len(b.CapturedBlack)),
+		Pieces:            make([]Piece, len(b.Pieces)),
+		Captured:          make([]Piece, len(b.Captured)),
 		State:             b.State,
 		WhiteCheck:        b.WhiteCheck,
 		BlackCheck:        b.BlackCheck,
@@ -108,10 +300,8 @@ func (b *Board) Clone() Board {
 		BlackEnPassant:    b.BlackEnPassant,
 	}
 	copy(newBoard.Moves, b.Moves)
-	copy(newBoard.White, b.White)
-	copy(newBoard.Black, b.Black)
-	copy(newBoard.CapturedWhite, b.CapturedWhite)
-	copy(newBoard.CapturedBlack, b.CapturedBlack)
+	copy(newBoard.Pieces, b.Pieces)
+	copy(newBoard.Captured, b.Captured)
 	return newBoard
 }
 
@@ -152,7 +342,7 @@ func (b *Board) DoMove(m Move) {
 	// TODO: append to movelist
 	// TODO: check to see if it's en passant
 	// TODO: update captured pieces
-	// TODO: update check states
+	// TODO: check for check; complicated due to pinning
 	// TODO: reset draw ask
 	// TODO: update moves since capture
 	// TODO: update en passant states
@@ -162,8 +352,8 @@ func (b *Board) DoMove(m Move) {
 }
 
 func (b *Board) IsValid() bool {
-	// make sure there are the appropriate number of pieces on the board
-	if (len(b.White)+len(b.CapturedWhite)) > 8 || (len(b.Black)+len(b.CapturedBlack)) > 8 {
+	// make sure there are the appropriate number of pieces on the board and captured
+	if (len(b.Pieces) + len(b.Captured)) != 32 {
 		return false
 	}
 	// make sure all the pieces are in bounds
@@ -196,8 +386,15 @@ const (
 	Black
 )
 
+func (s Side) Opposite() Side {
+	if s == White {
+		return Black
+	} else {
+		return White
+	}
+}
+
 type Move struct {
-	Side        Side
 	Start       Piece
 	End         Piece
 	IsPromotion bool
@@ -212,12 +409,12 @@ type InvalidMoveReason int
 const (
 	MoveOkay InvalidMoveReason = iota
 	GameEnded
+	DisloyaltyForbidden
 	WrongSide
 	OutOfBounds
 	PieceNotFound
-	SpaceOccupied
-	PieceCantMoveThatWay
-	TypeChange
+	TypeChangeNotAllowed
+	InvalidMove
 	StillInCheck
 	OnlyOneKing
 	CantCastle
@@ -229,27 +426,21 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 	if b.State != WhiteMove && b.State != BlackMove {
 		return nil, GameEnded
 	}
+
+	// make sure the piece doesn't change sides
+	if m.Start.Side != m.End.Side {
+		return nil, DisloyaltyForbidden
+	}
+
 	// make sure the move is from the right player
-	if (b.State == WhiteMove && m.Side != White) || (b.State == BlackMove && m.Side != Black) {
+	if (b.State == WhiteMove && m.Start.Side != White) || (b.State == BlackMove && m.Start.Side != Black) {
 		return nil, WrongSide
-	}
-
-	// make sure the move ends within bounds
-	if m.End.X > 8 || m.End.X < 0 || m.End.Y > 8 || m.End.X < 0 {
-		return nil, OutOfBounds
-	}
-
-	var toCheck []Piece
-	if m.Side == White {
-		toCheck = b.White
-	} else {
-		toCheck = b.Black
 	}
 
 	// make sure the piece exists
 	pieceFound := false
 	for _, piece := range toCheck {
-		if (piece.X == m.Start.X) && (piece.Y == m.End.Y) {
+		if (piece.X == m.Start.X) && (piece.Y == m.End.Y) && (piece.Side == m.Start.Side) {
 			pieceFound = true
 			break
 		}
@@ -258,34 +449,16 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 		return nil, PieceNotFound
 	}
 
-	// make sure the move lands on top of a piece of opposite color or an empty square (basically doesn't land on top of one of their own pieces)
-	for _, piece := range toCheck {
-		if (piece.X == m.End.X) && (piece.Y == m.End.Y) {
-			return nil, SpaceOccupied
+	// make sure it's a possible move
+	possibleMoves := m.Start.GetPossibleMoves(b)
+	moveFound := false
+	for _, move := range moves {
+		if move == m {
+			moveFound = true
 		}
 	}
-
-	// TODO: make sure the move is valid for the piece type
-	// TODO: make sure the move ends with the same piece type as it started (assuming it is not a promotion)
-	// TODO: if the move is a promotion, the end piece type is not a king
-	// TODO: if the move is a kind of castle, make sure all the conditions are met:
-	//   king and appropriate rook haven't moved
-	//   the space between them is clear
-	//   the king is not in check
-	//   after the move, the king is not in check
-	var isInCheck bool
-	if b.State == WhiteMove {
-		isInCheck = b.WhiteCheck
-	} else {
-		isInCheck = b.BlackCheck
-	}
-	afterMove := b.Clone()
-	afterMove.DoMove(m)
-	// see if the move leaves the player who moved in check
-	if isInCheck {
-		if (m.Side == White && afterMove.WhiteCheck) || (m.Side == Black && afterMove.BlackCheck) {
-			return nil, StillInCheck
-		}
+	if !moveFound {
+		return nil, InvalidMove
 	}
 
 	// else it's good
