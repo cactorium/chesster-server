@@ -1,5 +1,9 @@
 package chesster
 
+import (
+	"strconv"
+)
+
 type PieceType int
 
 const (
@@ -20,8 +24,39 @@ type Piece struct {
 	HasMoved bool
 }
 
+type Move struct {
+	Start       Piece
+	End         Piece
+	IsPromotion bool
+	// if the move is a castle; overrides all the above attributes
+	IsCastle bool
+	// true is kingside, false if queenside; ignored if not castle
+	IsKingsideCastle bool
+	// if the move captures a piece; only used for printing out notation
+	Capture bool
+}
+
+type BoardState int
+
+const (
+	// white's turn to move
+	WhiteMove BoardState = iota
+	// black's turn to move
+	BlackMove
+)
+
+type Board struct {
+	Pieces   []Piece
+	Captured []Piece
+	State    BoardState
+	// -1 if not marked, set if white moved a pawn two spaces last turn, set to the pawn's location
+	WhiteEnPassant int
+	// -1 if not marked, set if black moved a pawn two spaces last turn, set to the pawn's location
+	BlackEnPassant int
+}
+
 func isInBounds(x, y int) bool {
-	isOutOfBounds := (x < 0) || (x > 8) || (y < 0) || (y > 8)
+	isOutOfBounds := (x < 0) || (x > 7) || (y < 0) || (y > 7)
 	return !isOutOfBounds
 }
 
@@ -46,6 +81,8 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			newPiece.X = x
 			newPiece.Y = y
 			newPiece.HasMoved = true
+			x = x + dx
+			y = y + dy
 			ret = append(ret, Move{Start: p, End: newPiece})
 		}
 		if isInBounds(x, y) && hasEnemy(x, y) {
@@ -256,25 +293,6 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 	return vm
 }
 
-type BoardState int
-
-const (
-	// white's turn to move
-	WhiteMove BoardState = iota
-	// black's turn to move
-	BlackMove
-)
-
-type Board struct {
-	Pieces   []Piece
-	Captured []Piece
-	State    BoardState
-	// -1 if not marked, set if white moved a pawn two spaces last turn, set to the pawn's location
-	WhiteEnPassant int
-	// -1 if not marked, set if black moved a pawn two spaces last turn, set to the pawn's location
-	BlackEnPassant int
-}
-
 func NewBoard() Board {
 	return Board{
 		Pieces: []Piece{
@@ -356,7 +374,7 @@ func (b *Board) getPiece(x, y int) *Piece {
 
 func (b *Board) getKing(s Side) *Piece {
 	for i, p := range b.Pieces {
-		if p.Type == King || p.Side == s {
+		if p.Type == King && p.Side == s {
 			return &b.Pieces[i]
 		}
 	}
@@ -605,18 +623,6 @@ func (s Side) Opposite() Side {
 	}
 }
 
-type Move struct {
-	Start       Piece
-	End         Piece
-	IsPromotion bool
-	// if the move is a castle; overrides all the above attributes
-	IsCastle bool
-	// true is kingside, false if queenside; ignored if not castle
-	IsKingsideCastle bool
-	// if the move captures a piece; only used for printing out notation
-	Capture bool
-}
-
 func (m *Move) Eq(o Move) bool {
 	match := m.Start == o.Start && m.End == o.End && m.IsPromotion == o.IsPromotion && m.Capture == o.Capture
 	if !m.IsCastle {
@@ -690,7 +696,50 @@ func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
 	return &afterMove, MoveOkay
 }
 
-func (m Move) String() string {
-	// TODO: write move as standard chess notation
-	panic("unimplemented!")
+func (m Move) Notation(b *Board) string {
+	// TODO: make more correct; this currently outputs more info than needed
+	if m.IsCastle {
+		if m.IsKingsideCastle {
+			return "O-O"
+		} else {
+			return "O-O-O"
+		}
+	}
+	s := ""
+	switch m.Start.Type {
+	default:
+		s += "?"
+	case Pawn:
+		s += ""
+	case Rook:
+		s += "R"
+	case Knight:
+		s += "N"
+	case Bishop:
+		s += "B"
+	case Queen:
+		s += "Q"
+	case King:
+		s += "K"
+	}
+	f := "abcdefgh"
+	if m.Start.X < 0 || m.Start.X > 7 {
+		s += "?"
+	} else {
+		s += string(f[m.Start.X])
+	}
+	s += strconv.FormatInt(int64(m.Start.Y+1), 10)
+
+	if m.Capture {
+		s += "x"
+	}
+
+	if m.End.X < 0 || m.End.X > 7 {
+		s += "?"
+	} else {
+		s += string(f[m.End.X])
+	}
+	s += strconv.FormatInt(int64(m.End.Y+1), 10)
+
+	return s
 }
