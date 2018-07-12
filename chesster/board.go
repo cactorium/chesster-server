@@ -215,18 +215,45 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			}
 			isValid[i] = !nb.InCheck(p.Side)
 		} else {
-			// TODO handle castling
+			// handle castling
+			// manually move the king to the spot he moves to before castling
+			// before testing castling
+			// using the CommitMove approach as above
+			nb := b.Clone()
+			k := nb.getKing(p.Side)
+			if k == nil {
+				isValid[i] = false
+				continue
+			}
+			var kx int
+			if m.IsKingsideCastle {
+				kx = 5
+			} else {
+				kx = 3
+			}
+			k.X = kx
+			if nb.InCheck(p.Side) {
+				isValid[i] = false
+				continue
+			}
+
+			nb = b.Clone()
+			if !nb.CommitMove(m) {
+				isValid[i] = false
+				continue
+			}
+			isValid[i] = !nb.InCheck(p.Side)
 		}
 	}
 
 	// copy all the valid ones
-	validMoves := []Move{}
+	vm := []Move{}
 	for i, m := range moves {
 		if isValid[i] {
-			validMoves = append(validMoves, m)
+			vm = append(vm, m)
 		}
 	}
-	return validMoves
+	return vm
 }
 
 type BoardState int
@@ -356,9 +383,29 @@ func absInt(a int) int {
 
 func (b *Board) CommitMove(m Move) bool {
 	if m.IsCastle {
-		// TODO special case castle
-		panic("unimplemented!")
-		return false
+		k := b.getKing(m.Start.Side)
+		if k == nil {
+			return false
+		}
+		var r *Piece
+		if m.IsKingsideCastle {
+			r = b.getPiece(7, k.Y)
+		} else {
+			r = b.getPiece(0, k.Y)
+		}
+		if r == nil || r.Type != Rook {
+			return false
+		}
+		if m.IsKingsideCastle {
+			k.X = 6
+			r.X = 5
+		} else {
+			k.X = 2
+			r.X = 3
+		}
+		k.HasMoved = true
+		r.HasMoved = true
+		return true
 	}
 	moving := b.getPiece(m.Start.X, m.Start.Y)
 	if moving == nil || moving.Side != m.Start.Side || moving.Type != m.Start.Type {
@@ -404,6 +451,79 @@ func (b *Board) InCheck(s Side) bool {
 	isBlocking := func(x, y int) bool {
 		return b.getPiece(x, y) != nil
 	}
+	checkRook := func(px, py int) bool {
+		if px == kx {
+			start := minInt(py, ky) + 1
+			end := maxInt(py, ky)
+
+			canThreaten := true
+			x := kx
+			for y := start; y < end; y++ {
+				if isBlocking(x, y) {
+					canThreaten = false
+					break
+				}
+			}
+			if canThreaten {
+				return true
+			}
+		}
+		if py == ky {
+			start := minInt(px, kx) + 1
+			end := maxInt(px, kx)
+
+			canThreaten := true
+			y := ky
+			for x := start; x < end; x++ {
+				if isBlocking(x, y) {
+					canThreaten = false
+					break
+				}
+			}
+			if canThreaten {
+				return true
+			}
+		}
+		return false
+	}
+	checkBishop := func(px, py int) bool {
+		// on the +x +y diagonal, the difference between x and y stays the same
+		// on the +x -y diagonal, their sum stays the same
+		if kx-ky == px-px {
+			sx := minInt(px, kx) + 1
+			y := minInt(py, ky) + 1
+			ex := maxInt(px, ky)
+			canThreaten := true
+			for x := sx; x < ex; x++ {
+				if isBlocking(x, y) {
+					canThreaten = false
+					break
+				}
+				y++
+			}
+			if canThreaten {
+				return true
+			}
+		}
+		if kx+ky == px+py {
+			sx := minInt(px, kx) + 1
+			y := maxInt(py, ky) - 1
+			ex := maxInt(px, ky)
+			canThreaten := true
+			for x := sx; x < ex; x++ {
+				if isBlocking(x, y) {
+					canThreaten = false
+					break
+				}
+				y--
+			}
+			if canThreaten {
+				return true
+			}
+		}
+
+		return false
+	}
 	for _, p := range b.Pieces {
 		// no team kills; probably the least realistic part of chess
 		if p.Side == s {
@@ -411,47 +531,18 @@ func (b *Board) InCheck(s Side) bool {
 		}
 		switch p.Type {
 		case Pawn:
-			var forward int
+			var f int
 			if p.Side == White {
-				forward = 1
+				f = 1
 			} else {
-				forward = -1
+				f = -1
 			}
-			if absInt(p.X-kx) == 1 && p.Y == ky-forward {
+			if absInt(p.X-kx) == 1 && p.Y == ky-f {
 				return true
 			}
 		case Rook:
-			if p.X == kx {
-				start := minInt(p.Y, ky)
-				end := maxInt(p.Y, ky)
-
-				canThreaten := true
-				x := kx
-				for y := start; y < end; y++ {
-					if isBlocking(x, y) {
-						canThreaten = false
-						break
-					}
-				}
-				if canThreaten {
-					return true
-				}
-			}
-			if p.Y == ky {
-				start := minInt(p.X, kx)
-				end := maxInt(p.X, kx)
-
-				canThreaten := true
-				y := ky
-				for x := start; x < end; x++ {
-					if isBlocking(x, y) {
-						canThreaten = false
-						break
-					}
-				}
-				if canThreaten {
-					return true
-				}
+			if checkRook(p.X, p.Y) {
+				return true
 			}
 		case Knight:
 			if absInt(p.X-kx) == 1 && absInt(p.Y-ky) == 2 {
@@ -461,21 +552,18 @@ func (b *Board) InCheck(s Side) bool {
 				return true
 			}
 		case Bishop:
-			// on the +x +y diagonal, the difference between x and y stays the same
-			// on the +x -y diagonal, their sum stays the same
-			if kx-ky == p.X-p.Y {
-				panic("unimplemented")
-				// TODO
-			}
-			if kx+ky == p.X+p.Y {
-				panic("unimplemented")
-				// TODO
+			if checkBishop(p.X, p.Y) {
+				return true
 			}
 		case Queen:
-			panic("unimplemented")
-			// TODO
+			if checkRook(p.X, p.Y) {
+				return true
+			}
+			if checkBishop(p.X, p.Y) {
+				return true
+			}
 		case King:
-			if absInt(p.X-kx) <= 1 || absInt(p.Y-ky) <= 1 {
+			if absInt(p.X-kx) <= 1 && absInt(p.Y-ky) <= 1 {
 				return true
 			}
 		}
