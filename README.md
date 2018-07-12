@@ -14,10 +14,10 @@ Maybe eventually include a web version that'll run from the same server
   - [ ] (Extra feature): friend's list
   - [ ] Allow spectating on (public) matches
 - [ ] Chess engine
-  - [ ] Validates moves
+  - [x] Validates moves
   - [ ] Validates board history
-  - [ ] Determines checkmate/stalemate
-  - [ ] Flags mates
+  - [ ] Determines checkmate/stalemate/draws
+  - [x] Flags mates
 - [ ] TCP-based server
   - [ ] Authenticates users and provides secure tokens
   - [ ] Validates packets
