@@ -60,6 +60,112 @@ func isInBounds(x, y int) bool {
 	return !isOutOfBounds
 }
 
+func NewBoard() Board {
+	return Board{
+		Pieces: []Piece{
+			Piece{0, 0, Rook, White, false},
+			Piece{1, 0, Knight, White, false},
+			Piece{2, 0, Bishop, White, false},
+			Piece{3, 0, Queen, White, false},
+			Piece{4, 0, King, White, false},
+			Piece{5, 0, Bishop, White, false},
+			Piece{6, 0, Knight, White, false},
+			Piece{7, 0, Rook, White, false},
+			Piece{0, 1, Pawn, White, false},
+			Piece{1, 1, Pawn, White, false},
+			Piece{2, 1, Pawn, White, false},
+			Piece{3, 1, Pawn, White, false},
+			Piece{4, 1, Pawn, White, false},
+			Piece{5, 1, Pawn, White, false},
+			Piece{6, 1, Pawn, White, false},
+			Piece{7, 1, Pawn, White, false},
+			Piece{0, 7, Rook, Black, false},
+			Piece{1, 7, Knight, Black, false},
+			Piece{2, 7, Bishop, Black, false},
+			Piece{3, 7, Queen, Black, false},
+			Piece{4, 7, King, Black, false},
+			Piece{5, 7, Bishop, Black, false},
+			Piece{6, 7, Knight, Black, false},
+			Piece{7, 7, Rook, Black, false},
+			Piece{0, 6, Pawn, Black, false},
+			Piece{1, 6, Pawn, Black, false},
+			Piece{2, 6, Pawn, Black, false},
+			Piece{3, 6, Pawn, Black, false},
+			Piece{4, 6, Pawn, Black, false},
+			Piece{5, 6, Pawn, Black, false},
+			Piece{6, 6, Pawn, Black, false},
+			Piece{7, 6, Pawn, Black, false},
+		},
+		Captured:       []Piece{},
+		State:          WhiteMove,
+		WhiteEnPassant: -1,
+		BlackEnPassant: -1,
+	}
+}
+
+func EmptyBoard() Board {
+	return Board{
+		Pieces:         []Piece{},
+		Captured:       []Piece{},
+		State:          WhiteMove,
+		WhiteEnPassant: -1,
+		BlackEnPassant: -1,
+	}
+}
+
+func (b *Board) Clone() Board {
+	newBoard := Board{
+		Pieces:         make([]Piece, len(b.Pieces)),
+		Captured:       make([]Piece, len(b.Captured)),
+		State:          b.State,
+		WhiteEnPassant: b.WhiteEnPassant,
+		BlackEnPassant: b.BlackEnPassant,
+	}
+	copy(newBoard.Pieces, b.Pieces)
+	copy(newBoard.Captured, b.Captured)
+	return newBoard
+}
+
+func (b *Board) IsMove(s Side) bool {
+	return (s == White && b.State == WhiteMove) || (s == Black && b.State == BlackMove)
+}
+
+func (b *Board) getPiece(x, y int) *Piece {
+	for i, p := range b.Pieces {
+		if p.X == x && p.Y == y {
+			return &b.Pieces[i]
+		}
+	}
+	return nil
+}
+
+func (b *Board) getKing(s Side) *Piece {
+	for i, p := range b.Pieces {
+		if p.Type == King && p.Side == s {
+			return &b.Pieces[i]
+		}
+	}
+	return nil
+}
+
+func maxInt(a, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	} else {
+		return b
+	}
+}
+func absInt(a int) int {
+	return maxInt(a, -a)
+}
+
 // gets possible moves
 func (p Piece) GetPossibleMoves(b *Board) []Move {
 	isClear := func(x, y int) bool {
@@ -246,7 +352,7 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			// the same colored king to be in check
 
 			nb := b.Clone()
-			if !nb.CommitMove(m) {
+			if !nb.commitMove(m) {
 				isValid[i] = false
 				continue
 			}
@@ -255,7 +361,7 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			// handle castling
 			// manually move the king to the spot he moves to before castling
 			// before testing castling
-			// using the CommitMove approach as above
+			// using the commitMove approach as above
 			nb := b.Clone()
 			k := nb.getKing(p.Side)
 			if k == nil {
@@ -275,7 +381,7 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 			}
 
 			nb = b.Clone()
-			if !nb.CommitMove(m) {
+			if !nb.commitMove(m) {
 				isValid[i] = false
 				continue
 			}
@@ -293,113 +399,69 @@ func (p Piece) GetPossibleMoves(b *Board) []Move {
 	return vm
 }
 
-func NewBoard() Board {
-	return Board{
-		Pieces: []Piece{
-			Piece{0, 0, Rook, White, false},
-			Piece{1, 0, Knight, White, false},
-			Piece{2, 0, Bishop, White, false},
-			Piece{3, 0, Queen, White, false},
-			Piece{4, 0, King, White, false},
-			Piece{5, 0, Bishop, White, false},
-			Piece{6, 0, Knight, White, false},
-			Piece{7, 0, Rook, White, false},
-			Piece{0, 1, Pawn, White, false},
-			Piece{1, 1, Pawn, White, false},
-			Piece{2, 1, Pawn, White, false},
-			Piece{3, 1, Pawn, White, false},
-			Piece{4, 1, Pawn, White, false},
-			Piece{5, 1, Pawn, White, false},
-			Piece{6, 1, Pawn, White, false},
-			Piece{7, 1, Pawn, White, false},
-			Piece{0, 7, Rook, Black, false},
-			Piece{1, 7, Knight, Black, false},
-			Piece{2, 7, Bishop, Black, false},
-			Piece{3, 7, Queen, Black, false},
-			Piece{4, 7, King, Black, false},
-			Piece{5, 7, Bishop, Black, false},
-			Piece{6, 7, Knight, Black, false},
-			Piece{7, 7, Rook, Black, false},
-			Piece{0, 6, Pawn, Black, false},
-			Piece{1, 6, Pawn, Black, false},
-			Piece{2, 6, Pawn, Black, false},
-			Piece{3, 6, Pawn, Black, false},
-			Piece{4, 6, Pawn, Black, false},
-			Piece{5, 6, Pawn, Black, false},
-			Piece{6, 6, Pawn, Black, false},
-			Piece{7, 6, Pawn, Black, false},
-		},
-		Captured:       []Piece{},
-		State:          WhiteMove,
-		WhiteEnPassant: -1,
-		BlackEnPassant: -1,
-	}
-}
-
-func EmptyBoard() Board {
-	return Board{
-		Pieces:         []Piece{},
-		Captured:       []Piece{},
-		State:          WhiteMove,
-		WhiteEnPassant: -1,
-		BlackEnPassant: -1,
-	}
-}
-
-func (b *Board) Clone() Board {
-	newBoard := Board{
-		Pieces:         make([]Piece, len(b.Pieces)),
-		Captured:       make([]Piece, len(b.Captured)),
-		State:          b.State,
-		WhiteEnPassant: b.WhiteEnPassant,
-		BlackEnPassant: b.BlackEnPassant,
-	}
-	copy(newBoard.Pieces, b.Pieces)
-	copy(newBoard.Captured, b.Captured)
-	return newBoard
-}
-
-func (b *Board) IsMove(s Side) bool {
-	return (s == White && b.State == WhiteMove) || (s == Black && b.State == BlackMove)
-}
-
-func (b *Board) getPiece(x, y int) *Piece {
-	for i, p := range b.Pieces {
-		if p.X == x && p.Y == y {
-			return &b.Pieces[i]
+func (b *Board) noMoves(s Side) bool {
+	// if there are no pieces that can move
+	for _, p := range b.Pieces {
+		if p.Side == s {
+			if len(p.GetPossibleMoves(b)) > 0 {
+				return false
+			}
 		}
 	}
-	return nil
+	return true
 }
 
-func (b *Board) getKing(s Side) *Piece {
-	for i, p := range b.Pieces {
-		if p.Type == King && p.Side == s {
-			return &b.Pieces[i]
+func (b *Board) Checkmate(s Side) bool {
+	return b.InCheck(s) && b.noMoves(s)
+}
+
+func (b *Board) Stalemate(s Side) bool {
+	return !b.InCheck(s) && b.noMoves(s)
+}
+
+func (b *Board) TryMove(m Move) (bool, InvalidMoveReason) {
+	// sanity checks
+
+	// make sure the piece doesn't change sides
+	if m.Start.Side != m.End.Side {
+		return false, DisloyaltyForbidden
+	}
+
+	// make sure the move is from the right player
+	if (b.State == WhiteMove && m.Start.Side != White) || (b.State == BlackMove && m.Start.Side != Black) {
+		return false, WrongSide
+	}
+
+	// make sure the piece exists
+	if maybePiece := b.getPiece(m.Start.X, m.Start.Y); maybePiece != nil {
+		if maybePiece.Side != m.Start.Side || maybePiece.Type != m.Start.Type {
+			return false, PieceNotFound
+		}
+	} else {
+		return false, PieceNotFound
+	}
+
+	// make sure it's a possible move
+	moves := m.Start.GetPossibleMoves(b)
+	moveFound := false
+	for _, move := range moves {
+		if move.Eq(m) {
+			moveFound = true
 		}
 	}
-	return nil
+	if !moveFound {
+		return false, InvalidMove
+	}
+
+	if !b.commitMove(m) {
+		return false, AfraidOfCommitment
+	}
+
+	// else it's good
+	return true, MoveOkay
 }
 
-func maxInt(a, b int) int {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-func minInt(a, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
-func absInt(a int) int {
-	return maxInt(a, -a)
-}
-
-func (b *Board) CommitMove(m Move) bool {
+func (b *Board) commitMove(m Move) bool {
 	if m.IsCastle {
 		k := b.getKing(m.Start.Side)
 		if k == nil {
@@ -447,12 +509,30 @@ func (b *Board) CommitMove(m Move) bool {
 		return false
 	}
 
+	b.WhiteEnPassant = -1
+	b.BlackEnPassant = -1
+	// if a pawn's moving two squares, set en passant state
+	if m.Start.Type == Pawn && (absInt(m.End.Y-m.Start.Y) == 2 && absInt(m.End.X-m.Start.X) == 0) {
+		if m.Start.Side == White {
+			b.WhiteEnPassant = m.Start.X
+		} else {
+			b.BlackEnPassant = m.Start.X
+		}
+	}
+
 	*moving = m.End
 	moving.HasMoved = true
 	if captured != nil {
+		// save it to the captured list
+		b.Captured = append(b.Captured, *captured)
 		// replace it with the last piece and shift it all down one to remove it
 		*captured = b.Pieces[len(b.Pieces)-1]
 		b.Pieces = b.Pieces[:len(b.Pieces)-1]
+	}
+	if b.State == WhiteMove {
+		b.State = BlackMove
+	} else {
+		b.State = WhiteMove
 	}
 	return true
 }
@@ -589,25 +669,6 @@ func (b *Board) InCheck(s Side) bool {
 	return false
 }
 
-func (b *Board) IsValid() bool {
-	// make sure there are the appropriate number of pieces on the board and captured
-	if (len(b.Pieces) + len(b.Captured)) != 32 {
-		return false
-	}
-	// make sure all the pieces are in bounds
-	for _, piece := range b.Pieces {
-		if piece.X < 0 || piece.X > 8 || piece.Y < 0 || piece.Y > 8 {
-			return false
-		}
-	}
-
-	// make sure that each side has a king
-	if b.getKing(Black) == nil || b.getKing(White) == nil {
-		return false
-	}
-	return true
-}
-
 type Side int
 
 const (
@@ -648,53 +709,6 @@ const (
 	AfraidOfCommitment
 	CantCastle
 )
-
-func (b *Board) TryMove(m Move) (*Board, InvalidMoveReason) {
-	// sanity checks
-	// make sure the game is still in session
-	if b.State != WhiteMove && b.State != BlackMove {
-		return nil, GameEnded
-	}
-
-	// make sure the piece doesn't change sides
-	if m.Start.Side != m.End.Side {
-		return nil, DisloyaltyForbidden
-	}
-
-	// make sure the move is from the right player
-	if (b.State == WhiteMove && m.Start.Side != White) || (b.State == BlackMove && m.Start.Side != Black) {
-		return nil, WrongSide
-	}
-
-	// make sure the piece exists
-	if maybePiece := b.getPiece(m.Start.X, m.Start.Y); maybePiece != nil {
-		if maybePiece.Side != m.Start.Side || maybePiece.Type != m.Start.Type {
-			return nil, PieceNotFound
-		}
-	} else {
-		return nil, PieceNotFound
-	}
-
-	// make sure it's a possible move
-	moves := m.Start.GetPossibleMoves(b)
-	moveFound := false
-	for _, move := range moves {
-		if move.Eq(m) {
-			moveFound = true
-		}
-	}
-	if !moveFound {
-		return nil, InvalidMove
-	}
-
-	afterMove := b.Clone()
-	if !afterMove.CommitMove(m) {
-		return nil, AfraidOfCommitment
-	}
-
-	// else it's good
-	return &afterMove, MoveOkay
-}
 
 func (m Move) Notation(b *Board) string {
 	// TODO: make more correct; this currently outputs more info than needed

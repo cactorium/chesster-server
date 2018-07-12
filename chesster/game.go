@@ -4,14 +4,14 @@ type GameState int
 
 const (
 	InPlay GameState = iota
-	// white checkmated
+	// black checkmated; white wins!
 	WhiteCheckmate
-	// black checkmated
+	// white checkmated; black wins!
 	BlackCheckmate
-	// white stallmated; black move caused stalemate
-	WhiteStallmate
-	// black stallmated; white move caused stalemate
-	BlackStallmate
+	// white stalemated; black move caused stalemate
+	WhiteStalemate
+	// black stalemated; white move caused stalemate
+	BlackStalemate
 	// white resigned
 	WhiteResigned
 	// black resigned
@@ -95,30 +95,64 @@ func (g *Game) OfferDraw(s Side) {
 	}
 }
 
-func (g *Game) DoMove(m Move) {
-	// do move and update board state as needed
-	g.Board.CommitMove(m)
-	// append to movelist
-	g.Moves = append(g.Moves, m)
-	// TODO: check to see if it's en passant
-	// TODO: update en passant states
-	// TODO: update captured pieces
-	// TODO: check for check
-	// TODO: reset draw ask
-	// TODO: update moves since capture
-	// TODO: check for 50 move draw
-	// TODO: check for 3 fold repetition
-	panic("unimplemented!")
+func (g *Game) RescindDraw(s Side) {
+	if g.State != DrawAgreed {
+		if s == White {
+			g.WhiteDrawAsk = false
+		} else {
+			g.BlackDrawAsk = false
+		}
+	}
 }
 
-func (g *Game) IsValid() bool {
-	if !g.Board.IsValid() {
-		return false
+func (g *Game) DoMove(m Move) (b bool, r InvalidMoveReason) {
+	ocl := len(g.Board.Captured)
+	// do move and update board state as needed
+	if b, r = g.Board.TryMove(m); !b {
+		return
 	}
 
-	// make sure both kings aren't in check
-	if g.WhiteCheck && g.BlackCheck {
-		return false
+	// append to movelist
+	g.Moves = append(g.Moves, m)
+
+	// check for check
+	g.BlackCheck = g.Board.InCheck(Black)
+	g.WhiteCheck = g.Board.InCheck(White)
+
+	// check for checkmate and stalemate
+	if g.Board.IsMove(White) {
+		if g.Board.Stalemate(White) {
+			g.State = WhiteStalemate
+			return
+		}
+		if g.Board.Checkmate(White) {
+			g.State = BlackCheckmate
+			return
+		}
+	} else {
+		if g.Board.Stalemate(Black) {
+			g.State = BlackStalemate
+			return
+		}
+		if g.Board.Checkmate(Black) {
+			g.State = WhiteCheckmate
+			return
+		}
 	}
-	return true
+
+	// update moves since capture
+	if len(g.Board.Captured) > ocl {
+		g.MovesSinceCapture = 0
+	} else {
+		g.MovesSinceCapture += 1
+	}
+
+	// check for 50 move draw
+	if g.MovesSinceCapture >= 50 {
+		g.State = Draw50Moves
+	}
+
+	// TODO: check for 3 fold repetition
+	panic("unimplemented!")
+	return
 }
