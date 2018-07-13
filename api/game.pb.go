@@ -18,7 +18,406 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type MoveResponse_Error int32
+
+const (
+	MoveResponse_NO_ERROR     MoveResponse_Error = 0
+	MoveResponse_INVALID_MOVE MoveResponse_Error = 1
+)
+
+var MoveResponse_Error_name = map[int32]string{
+	0: "NO_ERROR",
+	1: "INVALID_MOVE",
+}
+var MoveResponse_Error_value = map[string]int32{
+	"NO_ERROR":     0,
+	"INVALID_MOVE": 1,
+}
+
+func (x MoveResponse_Error) String() string {
+	return proto.EnumName(MoveResponse_Error_name, int32(x))
+}
+func (MoveResponse_Error) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_game_6c5435a65fbd319e, []int{5, 0}
+}
+
+type Move_Castle int32
+
+const (
+	Move_NONE      Move_Castle = 0
+	Move_KINGSIDE  Move_Castle = 1
+	Move_QUEENSIDE Move_Castle = 2
+)
+
+var Move_Castle_name = map[int32]string{
+	0: "NONE",
+	1: "KINGSIDE",
+	2: "QUEENSIDE",
+}
+var Move_Castle_value = map[string]int32{
+	"NONE":      0,
+	"KINGSIDE":  1,
+	"QUEENSIDE": 2,
+}
+
+func (x Move_Castle) String() string {
+	return proto.EnumName(Move_Castle_name, int32(x))
+}
+func (Move_Castle) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_game_6c5435a65fbd319e, []int{9, 0}
+}
+
+type GameRequest struct {
+	// Types that are valid to be assigned to R:
+	//	*GameRequest_MakeMoveReq
+	//	*GameRequest_BoardReq
+	//	*GameRequest_ListGamesReq
+	R                    isGameRequest_R `protobuf_oneof:"r"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *GameRequest) Reset()         { *m = GameRequest{} }
+func (m *GameRequest) String() string { return proto.CompactTextString(m) }
+func (*GameRequest) ProtoMessage()    {}
+func (*GameRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_6c5435a65fbd319e, []int{0}
+}
+func (m *GameRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameRequest.Unmarshal(m, b)
+}
+func (m *GameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameRequest.Marshal(b, m, deterministic)
+}
+func (dst *GameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameRequest.Merge(dst, src)
+}
+func (m *GameRequest) XXX_Size() int {
+	return xxx_messageInfo_GameRequest.Size(m)
+}
+func (m *GameRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameRequest proto.InternalMessageInfo
+
+type isGameRequest_R interface {
+	isGameRequest_R()
+}
+
+type GameRequest_MakeMoveReq struct {
+	MakeMoveReq *MoveRequest `protobuf:"bytes,1,opt,name=make_move_req,json=makeMoveReq,proto3,oneof"`
+}
+type GameRequest_BoardReq struct {
+	BoardReq *GetBoardRequest `protobuf:"bytes,2,opt,name=board_req,json=boardReq,proto3,oneof"`
+}
+type GameRequest_ListGamesReq struct {
+	ListGamesReq *ListGamesRequest `protobuf:"bytes,3,opt,name=list_games_req,json=listGamesReq,proto3,oneof"`
+}
+
+func (*GameRequest_MakeMoveReq) isGameRequest_R()  {}
+func (*GameRequest_BoardReq) isGameRequest_R()     {}
+func (*GameRequest_ListGamesReq) isGameRequest_R() {}
+
+func (m *GameRequest) GetR() isGameRequest_R {
+	if m != nil {
+		return m.R
+	}
+	return nil
+}
+
+func (m *GameRequest) GetMakeMoveReq() *MoveRequest {
+	if x, ok := m.GetR().(*GameRequest_MakeMoveReq); ok {
+		return x.MakeMoveReq
+	}
+	return nil
+}
+
+func (m *GameRequest) GetBoardReq() *GetBoardRequest {
+	if x, ok := m.GetR().(*GameRequest_BoardReq); ok {
+		return x.BoardReq
+	}
+	return nil
+}
+
+func (m *GameRequest) GetListGamesReq() *ListGamesRequest {
+	if x, ok := m.GetR().(*GameRequest_ListGamesReq); ok {
+		return x.ListGamesReq
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*GameRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _GameRequest_OneofMarshaler, _GameRequest_OneofUnmarshaler, _GameRequest_OneofSizer, []interface{}{
+		(*GameRequest_MakeMoveReq)(nil),
+		(*GameRequest_BoardReq)(nil),
+		(*GameRequest_ListGamesReq)(nil),
+	}
+}
+
+func _GameRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*GameRequest)
+	// r
+	switch x := m.R.(type) {
+	case *GameRequest_MakeMoveReq:
+		b.EncodeVarint(1<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.MakeMoveReq); err != nil {
+			return err
+		}
+	case *GameRequest_BoardReq:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.BoardReq); err != nil {
+			return err
+		}
+	case *GameRequest_ListGamesReq:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ListGamesReq); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("GameRequest.R has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _GameRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*GameRequest)
+	switch tag {
+	case 1: // r.make_move_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(MoveRequest)
+		err := b.DecodeMessage(msg)
+		m.R = &GameRequest_MakeMoveReq{msg}
+		return true, err
+	case 2: // r.board_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetBoardRequest)
+		err := b.DecodeMessage(msg)
+		m.R = &GameRequest_BoardReq{msg}
+		return true, err
+	case 3: // r.list_games_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListGamesRequest)
+		err := b.DecodeMessage(msg)
+		m.R = &GameRequest_ListGamesReq{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _GameRequest_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*GameRequest)
+	// r
+	switch x := m.R.(type) {
+	case *GameRequest_MakeMoveReq:
+		s := proto.Size(x.MakeMoveReq)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameRequest_BoardReq:
+		s := proto.Size(x.BoardReq)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameRequest_ListGamesReq:
+		s := proto.Size(x.ListGamesReq)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type GameResponse struct {
+	// Types that are valid to be assigned to R:
+	//	*GameResponse_MakeMoveResp
+	//	*GameResponse_BoardResp
+	//	*GameResponse_ListGamesResp
+	R                    isGameResponse_R `protobuf_oneof:"r"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *GameResponse) Reset()         { *m = GameResponse{} }
+func (m *GameResponse) String() string { return proto.CompactTextString(m) }
+func (*GameResponse) ProtoMessage()    {}
+func (*GameResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_6c5435a65fbd319e, []int{1}
+}
+func (m *GameResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameResponse.Unmarshal(m, b)
+}
+func (m *GameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameResponse.Marshal(b, m, deterministic)
+}
+func (dst *GameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameResponse.Merge(dst, src)
+}
+func (m *GameResponse) XXX_Size() int {
+	return xxx_messageInfo_GameResponse.Size(m)
+}
+func (m *GameResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameResponse proto.InternalMessageInfo
+
+type isGameResponse_R interface {
+	isGameResponse_R()
+}
+
+type GameResponse_MakeMoveResp struct {
+	MakeMoveResp *MoveResponse `protobuf:"bytes,1,opt,name=make_move_resp,json=makeMoveResp,proto3,oneof"`
+}
+type GameResponse_BoardResp struct {
+	BoardResp *GetBoardResponse `protobuf:"bytes,2,opt,name=board_resp,json=boardResp,proto3,oneof"`
+}
+type GameResponse_ListGamesResp struct {
+	ListGamesResp *ListGamesResponse `protobuf:"bytes,3,opt,name=list_games_resp,json=listGamesResp,proto3,oneof"`
+}
+
+func (*GameResponse_MakeMoveResp) isGameResponse_R()  {}
+func (*GameResponse_BoardResp) isGameResponse_R()     {}
+func (*GameResponse_ListGamesResp) isGameResponse_R() {}
+
+func (m *GameResponse) GetR() isGameResponse_R {
+	if m != nil {
+		return m.R
+	}
+	return nil
+}
+
+func (m *GameResponse) GetMakeMoveResp() *MoveResponse {
+	if x, ok := m.GetR().(*GameResponse_MakeMoveResp); ok {
+		return x.MakeMoveResp
+	}
+	return nil
+}
+
+func (m *GameResponse) GetBoardResp() *GetBoardResponse {
+	if x, ok := m.GetR().(*GameResponse_BoardResp); ok {
+		return x.BoardResp
+	}
+	return nil
+}
+
+func (m *GameResponse) GetListGamesResp() *ListGamesResponse {
+	if x, ok := m.GetR().(*GameResponse_ListGamesResp); ok {
+		return x.ListGamesResp
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*GameResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _GameResponse_OneofMarshaler, _GameResponse_OneofUnmarshaler, _GameResponse_OneofSizer, []interface{}{
+		(*GameResponse_MakeMoveResp)(nil),
+		(*GameResponse_BoardResp)(nil),
+		(*GameResponse_ListGamesResp)(nil),
+	}
+}
+
+func _GameResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*GameResponse)
+	// r
+	switch x := m.R.(type) {
+	case *GameResponse_MakeMoveResp:
+		b.EncodeVarint(1<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.MakeMoveResp); err != nil {
+			return err
+		}
+	case *GameResponse_BoardResp:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.BoardResp); err != nil {
+			return err
+		}
+	case *GameResponse_ListGamesResp:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ListGamesResp); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("GameResponse.R has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _GameResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*GameResponse)
+	switch tag {
+	case 1: // r.make_move_resp
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(MoveResponse)
+		err := b.DecodeMessage(msg)
+		m.R = &GameResponse_MakeMoveResp{msg}
+		return true, err
+	case 2: // r.board_resp
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetBoardResponse)
+		err := b.DecodeMessage(msg)
+		m.R = &GameResponse_BoardResp{msg}
+		return true, err
+	case 3: // r.list_games_resp
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListGamesResponse)
+		err := b.DecodeMessage(msg)
+		m.R = &GameResponse_ListGamesResp{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _GameResponse_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*GameResponse)
+	// r
+	switch x := m.R.(type) {
+	case *GameResponse_MakeMoveResp:
+		s := proto.Size(x.MakeMoveResp)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResponse_BoardResp:
+		s := proto.Size(x.BoardResp)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResponse_ListGamesResp:
+		s := proto.Size(x.ListGamesResp)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
 type ListGamesRequest struct {
+	ListRecent           bool     `protobuf:"varint,1,opt,name=list_recent,json=listRecent,proto3" json:"list_recent,omitempty"`
+	Earliest             uint64   `protobuf:"varint,2,opt,name=earliest,proto3" json:"earliest,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -28,7 +427,7 @@ func (m *ListGamesRequest) Reset()         { *m = ListGamesRequest{} }
 func (m *ListGamesRequest) String() string { return proto.CompactTextString(m) }
 func (*ListGamesRequest) ProtoMessage()    {}
 func (*ListGamesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_c4e93f0efd6aa501, []int{0}
+	return fileDescriptor_game_6c5435a65fbd319e, []int{2}
 }
 func (m *ListGamesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListGamesRequest.Unmarshal(m, b)
@@ -48,6 +447,20 @@ func (m *ListGamesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ListGamesRequest proto.InternalMessageInfo
 
+func (m *ListGamesRequest) GetListRecent() bool {
+	if m != nil {
+		return m.ListRecent
+	}
+	return false
+}
+
+func (m *ListGamesRequest) GetEarliest() uint64 {
+	if m != nil {
+		return m.Earliest
+	}
+	return 0
+}
+
 type ListGamesResponse struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -58,7 +471,7 @@ func (m *ListGamesResponse) Reset()         { *m = ListGamesResponse{} }
 func (m *ListGamesResponse) String() string { return proto.CompactTextString(m) }
 func (*ListGamesResponse) ProtoMessage()    {}
 func (*ListGamesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_c4e93f0efd6aa501, []int{1}
+	return fileDescriptor_game_6c5435a65fbd319e, []int{3}
 }
 func (m *ListGamesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListGamesResponse.Unmarshal(m, b)
@@ -91,7 +504,7 @@ func (m *MoveRequest) Reset()         { *m = MoveRequest{} }
 func (m *MoveRequest) String() string { return proto.CompactTextString(m) }
 func (*MoveRequest) ProtoMessage()    {}
 func (*MoveRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_c4e93f0efd6aa501, []int{2}
+	return fileDescriptor_game_6c5435a65fbd319e, []int{4}
 }
 func (m *MoveRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MoveRequest.Unmarshal(m, b)
@@ -133,7 +546,7 @@ func (m *MoveRequest) GetMove() *Move {
 }
 
 type MoveResponse struct {
-	IsValid              bool     `protobuf:"varint,1,opt,name=is_valid,json=isValid,proto3" json:"is_valid,omitempty"`
+	Committed            bool     `protobuf:"varint,1,opt,name=committed,proto3" json:"committed,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -143,7 +556,7 @@ func (m *MoveResponse) Reset()         { *m = MoveResponse{} }
 func (m *MoveResponse) String() string { return proto.CompactTextString(m) }
 func (*MoveResponse) ProtoMessage()    {}
 func (*MoveResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_c4e93f0efd6aa501, []int{3}
+	return fileDescriptor_game_6c5435a65fbd319e, []int{5}
 }
 func (m *MoveResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_MoveResponse.Unmarshal(m, b)
@@ -163,9 +576,9 @@ func (m *MoveResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MoveResponse proto.InternalMessageInfo
 
-func (m *MoveResponse) GetIsValid() bool {
+func (m *MoveResponse) GetCommitted() bool {
 	if m != nil {
-		return m.IsValid
+		return m.Committed
 	}
 	return false
 }
@@ -180,7 +593,7 @@ func (m *GetBoardRequest) Reset()         { *m = GetBoardRequest{} }
 func (m *GetBoardRequest) String() string { return proto.CompactTextString(m) }
 func (*GetBoardRequest) ProtoMessage()    {}
 func (*GetBoardRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_c4e93f0efd6aa501, []int{4}
+	return fileDescriptor_game_6c5435a65fbd319e, []int{6}
 }
 func (m *GetBoardRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetBoardRequest.Unmarshal(m, b)
@@ -210,7 +623,7 @@ func (m *GetBoardResponse) Reset()         { *m = GetBoardResponse{} }
 func (m *GetBoardResponse) String() string { return proto.CompactTextString(m) }
 func (*GetBoardResponse) ProtoMessage()    {}
 func (*GetBoardResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_c4e93f0efd6aa501, []int{5}
+	return fileDescriptor_game_6c5435a65fbd319e, []int{7}
 }
 func (m *GetBoardResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetBoardResponse.Unmarshal(m, b)
@@ -230,31 +643,157 @@ func (m *GetBoardResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetBoardResponse proto.InternalMessageInfo
 
+type Board struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Board) Reset()         { *m = Board{} }
+func (m *Board) String() string { return proto.CompactTextString(m) }
+func (*Board) ProtoMessage()    {}
+func (*Board) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_6c5435a65fbd319e, []int{8}
+}
+func (m *Board) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Board.Unmarshal(m, b)
+}
+func (m *Board) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Board.Marshal(b, m, deterministic)
+}
+func (dst *Board) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Board.Merge(dst, src)
+}
+func (m *Board) XXX_Size() int {
+	return xxx_messageInfo_Board.Size(m)
+}
+func (m *Board) XXX_DiscardUnknown() {
+	xxx_messageInfo_Board.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Board proto.InternalMessageInfo
+
+type Move struct {
+	Type                 Type        `protobuf:"varint,1,opt,name=type,proto3,enum=api.Type" json:"type,omitempty"`
+	Start                *Position   `protobuf:"bytes,2,opt,name=start,proto3" json:"start,omitempty"`
+	End                  *Position   `protobuf:"bytes,3,opt,name=end,proto3" json:"end,omitempty"`
+	Promotion            bool        `protobuf:"varint,4,opt,name=promotion,proto3" json:"promotion,omitempty"`
+	Castle               Move_Castle `protobuf:"varint,5,opt,name=castle,proto3,enum=api.Move_Castle" json:"castle,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *Move) Reset()         { *m = Move{} }
+func (m *Move) String() string { return proto.CompactTextString(m) }
+func (*Move) ProtoMessage()    {}
+func (*Move) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_6c5435a65fbd319e, []int{9}
+}
+func (m *Move) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Move.Unmarshal(m, b)
+}
+func (m *Move) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Move.Marshal(b, m, deterministic)
+}
+func (dst *Move) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Move.Merge(dst, src)
+}
+func (m *Move) XXX_Size() int {
+	return xxx_messageInfo_Move.Size(m)
+}
+func (m *Move) XXX_DiscardUnknown() {
+	xxx_messageInfo_Move.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Move proto.InternalMessageInfo
+
+func (m *Move) GetType() Type {
+	if m != nil {
+		return m.Type
+	}
+	return Type_INVALID
+}
+
+func (m *Move) GetStart() *Position {
+	if m != nil {
+		return m.Start
+	}
+	return nil
+}
+
+func (m *Move) GetEnd() *Position {
+	if m != nil {
+		return m.End
+	}
+	return nil
+}
+
+func (m *Move) GetPromotion() bool {
+	if m != nil {
+		return m.Promotion
+	}
+	return false
+}
+
+func (m *Move) GetCastle() Move_Castle {
+	if m != nil {
+		return m.Castle
+	}
+	return Move_NONE
+}
+
 func init() {
+	proto.RegisterType((*GameRequest)(nil), "api.GameRequest")
+	proto.RegisterType((*GameResponse)(nil), "api.GameResponse")
 	proto.RegisterType((*ListGamesRequest)(nil), "api.ListGamesRequest")
 	proto.RegisterType((*ListGamesResponse)(nil), "api.ListGamesResponse")
 	proto.RegisterType((*MoveRequest)(nil), "api.MoveRequest")
 	proto.RegisterType((*MoveResponse)(nil), "api.MoveResponse")
 	proto.RegisterType((*GetBoardRequest)(nil), "api.GetBoardRequest")
 	proto.RegisterType((*GetBoardResponse)(nil), "api.GetBoardResponse")
+	proto.RegisterType((*Board)(nil), "api.Board")
+	proto.RegisterType((*Move)(nil), "api.Move")
+	proto.RegisterEnum("api.MoveResponse_Error", MoveResponse_Error_name, MoveResponse_Error_value)
+	proto.RegisterEnum("api.Move_Castle", Move_Castle_name, Move_Castle_value)
 }
 
-func init() { proto.RegisterFile("game.proto", fileDescriptor_game_c4e93f0efd6aa501) }
+func init() { proto.RegisterFile("game.proto", fileDescriptor_game_6c5435a65fbd319e) }
 
-var fileDescriptor_game_c4e93f0efd6aa501 = []byte{
-	// 214 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8f, 0x4f, 0x4b, 0x03, 0x31,
-	0x10, 0xc5, 0x59, 0x2b, 0x6d, 0x9d, 0x2e, 0xda, 0xc6, 0x83, 0x6b, 0x41, 0x58, 0x72, 0x5a, 0x2f,
-	0x7b, 0xd0, 0x6f, 0xe0, 0xa5, 0x08, 0x7a, 0x89, 0xe0, 0xb5, 0x44, 0x33, 0xc8, 0x80, 0xe9, 0xc4,
-	0x4e, 0xdc, 0xcf, 0x2f, 0xf9, 0x23, 0x7a, 0x7c, 0xbf, 0x17, 0xde, 0x2f, 0x03, 0xf0, 0x61, 0x3d,
-	0x8e, 0xe1, 0xc8, 0x91, 0xd5, 0xcc, 0x06, 0xda, 0xb6, 0xef, 0xec, 0x3d, 0x1f, 0x0a, 0xda, 0x82,
-	0xe7, 0xa9, 0xd6, 0x5a, 0xc1, 0xfa, 0x89, 0x24, 0xee, 0xac, 0x47, 0x31, 0xf8, 0xf5, 0x8d, 0x12,
-	0xf5, 0x25, 0x6c, 0xfe, 0x31, 0x09, 0x7c, 0x10, 0xd4, 0x0e, 0x56, 0xcf, 0x3c, 0x61, 0x7d, 0xa3,
-	0xae, 0x60, 0x91, 0x24, 0x7b, 0x72, 0x5d, 0xd3, 0x37, 0x43, 0x6b, 0xe6, 0x29, 0x3e, 0x3a, 0x75,
-	0x03, 0xa7, 0x42, 0x0e, 0xbb, 0x93, 0xbe, 0x19, 0xce, 0xef, 0xce, 0x46, 0x1b, 0x68, 0x7c, 0x21,
-	0x87, 0x26, 0xe3, 0x54, 0x27, 0x7b, 0x37, 0xeb, 0x9b, 0x61, 0x55, 0xeb, 0xbc, 0x9b, 0xb1, 0xbe,
-	0x85, 0xb6, 0x58, 0x8a, 0x55, 0x5d, 0xc3, 0x92, 0x64, 0x3f, 0xd9, 0xcf, 0xea, 0x59, 0x9a, 0x05,
-	0xc9, 0x6b, 0x8a, 0x7a, 0x03, 0x17, 0x3b, 0x8c, 0x0f, 0x6c, 0x8f, 0xee, 0xf7, 0xe3, 0x0a, 0xd6,
-	0x7f, 0xa8, 0x2c, 0xbc, 0xcd, 0xf3, 0x9d, 0xf7, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x3b, 0x15,
-	0x2c, 0xa3, 0x14, 0x01, 0x00, 0x00,
+var fileDescriptor_game_6c5435a65fbd319e = []byte{
+	// 534 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x64, 0x93, 0x5f, 0x6f, 0xd3, 0x3c,
+	0x14, 0x87, 0x9b, 0xf5, 0xcf, 0x9a, 0xd3, 0xb4, 0x4b, 0xfd, 0xbe, 0x83, 0x6a, 0x02, 0x0d, 0x99,
+	0x0b, 0x76, 0x55, 0xa4, 0x4d, 0x9a, 0xc4, 0x05, 0x12, 0x8c, 0x45, 0xa5, 0x62, 0x4b, 0xc1, 0x63,
+	0xbb, 0x8d, 0xd2, 0xc6, 0x42, 0x16, 0x4d, 0xed, 0xd9, 0x66, 0xd2, 0xbe, 0x1c, 0xd7, 0x7c, 0x10,
+	0x3e, 0x08, 0xf2, 0x49, 0xda, 0x84, 0x70, 0xe9, 0xe7, 0xf8, 0xe7, 0x9c, 0xe7, 0x38, 0x06, 0xf8,
+	0x96, 0xe6, 0x7c, 0xaa, 0xb4, 0xb4, 0x92, 0xb4, 0x53, 0x25, 0x8e, 0x82, 0x95, 0xcc, 0x73, 0xb9,
+	0x29, 0x10, 0xfd, 0xe9, 0xc1, 0x60, 0x96, 0xe6, 0x9c, 0xf1, 0xfb, 0x1f, 0xdc, 0x58, 0x72, 0x0e,
+	0xc3, 0x3c, 0xfd, 0xce, 0x93, 0x5c, 0x3e, 0xf0, 0x44, 0xf3, 0xfb, 0x89, 0xf7, 0xc2, 0x3b, 0x19,
+	0x9c, 0x86, 0xd3, 0x54, 0x89, 0xe9, 0xb5, 0x7c, 0xd8, 0x6e, 0xfc, 0xd8, 0x62, 0x03, 0xb7, 0xb1,
+	0x44, 0xe4, 0x0c, 0xfc, 0xa5, 0x4c, 0x75, 0x86, 0x99, 0x3d, 0xcc, 0xfc, 0x8f, 0x99, 0x19, 0xb7,
+	0x17, 0xae, 0x50, 0xe5, 0xfa, 0xcb, 0x72, 0x4d, 0xde, 0xc2, 0x68, 0x2d, 0x8c, 0x4d, 0x5c, 0x8b,
+	0x06, 0x93, 0x6d, 0x4c, 0x1e, 0x62, 0xf2, 0x4a, 0x18, 0xeb, 0x5a, 0x33, 0x55, 0x34, 0x58, 0xd7,
+	0xd8, 0x45, 0x1b, 0x3c, 0x4d, 0x7f, 0x79, 0x10, 0x14, 0x02, 0x46, 0xc9, 0x8d, 0xe1, 0xe4, 0x0d,
+	0x8c, 0xea, 0x06, 0x46, 0x95, 0x0a, 0xe3, 0x9a, 0x42, 0xb1, 0xd5, 0x1d, 0x58, 0x39, 0x18, 0x45,
+	0xce, 0x01, 0xb6, 0x12, 0x46, 0x95, 0x16, 0x87, 0x0d, 0x8b, 0x5d, 0xd4, 0x5f, 0x6e, 0x01, 0x79,
+	0x07, 0x07, 0x7f, 0x79, 0x18, 0x55, 0x8a, 0x3c, 0x69, 0x8a, 0xec, 0xd2, 0xc3, 0x75, 0x1d, 0x16,
+	0x2a, 0x0b, 0x08, 0x9b, 0xce, 0xe4, 0x18, 0x06, 0x78, 0xb4, 0xe6, 0x2b, 0xbe, 0xb1, 0xa8, 0xd2,
+	0x67, 0xe0, 0x10, 0x43, 0x42, 0x8e, 0xa0, 0xcf, 0x53, 0xbd, 0x16, 0xdc, 0x58, 0xec, 0xb8, 0xc3,
+	0x76, 0x6b, 0xfa, 0x1f, 0x8c, 0xff, 0xf9, 0x36, 0xcd, 0x60, 0x50, 0xbb, 0x47, 0xf2, 0x14, 0xf6,
+	0x5d, 0xdb, 0x89, 0xc8, 0xf0, 0xf0, 0x80, 0xf5, 0xdc, 0x72, 0x9e, 0x91, 0xe7, 0xd0, 0x31, 0x22,
+	0xe3, 0x78, 0xe8, 0xe8, 0xd4, 0x47, 0x93, 0x1b, 0x91, 0x71, 0x86, 0xd8, 0x95, 0xdd, 0x84, 0x4b,
+	0x51, 0xbf, 0x1a, 0x2e, 0x62, 0x7a, 0x0b, 0x41, 0x7d, 0xd4, 0xe4, 0x19, 0xf8, 0xee, 0xbf, 0x13,
+	0xd6, 0xf2, 0xac, 0xb4, 0xa8, 0x00, 0x7d, 0x05, 0xdd, 0x48, 0x6b, 0xa9, 0x49, 0x00, 0xfd, 0x78,
+	0x91, 0x44, 0x8c, 0x2d, 0x58, 0xd8, 0x22, 0x21, 0x04, 0xf3, 0xf8, 0xee, 0xfd, 0xd5, 0xfc, 0x32,
+	0xb9, 0x5e, 0xdc, 0x45, 0xa1, 0x47, 0xc7, 0x70, 0xd0, 0xf8, 0xa1, 0x28, 0x81, 0xb0, 0x79, 0x3b,
+	0x74, 0x1f, 0xba, 0x08, 0xe8, 0x6f, 0x0f, 0x3a, 0xae, 0x0f, 0xd7, 0xae, 0x7d, 0x54, 0x1c, 0x3f,
+	0xbd, 0xb5, 0xf9, 0xfa, 0xa8, 0x38, 0x43, 0x4c, 0x5e, 0x42, 0xd7, 0xd8, 0x54, 0xdb, 0xf2, 0xd2,
+	0x87, 0x58, 0xff, 0x2c, 0x8d, 0xb0, 0x42, 0x6e, 0x58, 0x51, 0x23, 0xc7, 0xd0, 0xe6, 0x9b, 0xac,
+	0x34, 0x6e, 0x6c, 0x71, 0x15, 0x27, 0xa9, 0xb4, 0xcc, 0xa5, 0x23, 0x93, 0x4e, 0x21, 0xb9, 0x03,
+	0xe4, 0x04, 0x7a, 0xab, 0xd4, 0xd8, 0x35, 0x9f, 0x74, 0xb1, 0x89, 0xea, 0x4d, 0x4d, 0x3f, 0x20,
+	0x67, 0x65, 0x9d, 0xbe, 0x86, 0x5e, 0x41, 0x48, 0x1f, 0x3a, 0xf1, 0x22, 0x8e, 0xc2, 0x96, 0x9b,
+	0xcc, 0xa7, 0x79, 0x3c, 0xbb, 0x99, 0x5f, 0x46, 0xa1, 0x47, 0x86, 0xe0, 0x7f, 0xb9, 0x8d, 0xa2,
+	0x18, 0x97, 0x7b, 0xcb, 0x1e, 0x3e, 0xe6, 0xb3, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x90, 0x7c,
+	0xca, 0x85, 0xed, 0x03, 0x00, 0x00,
 }

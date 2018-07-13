@@ -3,11 +3,27 @@ syntax = "proto3";
 package api;
 
 message AuthRequest {
+  oneof r {
+    Auth1Request auth_req = 4;
+    Auth2Request auth2_req = 6;
+    RefreshTokenRequest refresh_token_req = 14;
+  }
+}
+
+message AuthResponse {
+  oneof r {
+    Auth1Response auth_resp = 5;
+    Auth2Response auth2_resp = 7;
+    RefreshTokenResponse refresh_token_response = 14;
+  }
+}
+
+message Auth1Request {
   bytes client_nonce = 1;
   string user_id = 2;
 }
 
-message AuthResponse {
+message Auth1Response {
   bytes server_nonce = 1;
   bytes salt = 2;
   bytes token = 3;
@@ -27,4 +43,12 @@ message Auth2Response {
   }
   bytes random_payload = 1;
   Encryption enc = 2;
+}
+
+message RefreshTokenRequest {
+  // TODO
+}
+
+message RefreshTokenResponse {
+  // TODO
 }

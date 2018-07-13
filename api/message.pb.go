@@ -18,6 +18,41 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type InvalidRequest_Code int32
+
+const (
+	InvalidRequest_UNKNOWN_ERROR     InvalidRequest_Code = 0
+	InvalidRequest_AUTH_ERROR        InvalidRequest_Code = 1
+	InvalidRequest_WAS_RESPONSE      InvalidRequest_Code = 2
+	InvalidRequest_MALFORMED_REQUEST InvalidRequest_Code = 3
+	InvalidRequest_INCOMPATIBLE      InvalidRequest_Code = 4
+	InvalidRequest_TOKEN_EXPIRED     InvalidRequest_Code = 5
+)
+
+var InvalidRequest_Code_name = map[int32]string{
+	0: "UNKNOWN_ERROR",
+	1: "AUTH_ERROR",
+	2: "WAS_RESPONSE",
+	3: "MALFORMED_REQUEST",
+	4: "INCOMPATIBLE",
+	5: "TOKEN_EXPIRED",
+}
+var InvalidRequest_Code_value = map[string]int32{
+	"UNKNOWN_ERROR":     0,
+	"AUTH_ERROR":        1,
+	"WAS_RESPONSE":      2,
+	"MALFORMED_REQUEST": 3,
+	"INCOMPATIBLE":      4,
+	"TOKEN_EXPIRED":     5,
+}
+
+func (x InvalidRequest_Code) String() string {
+	return proto.EnumName(InvalidRequest_Code_name, int32(x))
+}
+func (InvalidRequest_Code) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_message_26061b304be25246, []int{2, 0}
+}
+
 type Header struct {
 	Version              uint32   `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
 	Token                []byte   `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
@@ -34,7 +69,7 @@ func (m *Header) Reset()         { *m = Header{} }
 func (m *Header) String() string { return proto.CompactTextString(m) }
 func (*Header) ProtoMessage()    {}
 func (*Header) Descriptor() ([]byte, []int) {
-	return fileDescriptor_message_20a7564ed30363b6, []int{0}
+	return fileDescriptor_message_26061b304be25246, []int{0}
 }
 func (m *Header) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Header.Unmarshal(m, b)
@@ -100,16 +135,11 @@ type Message struct {
 	Header *Header `protobuf:"bytes,1,opt,name=header,proto3" json:"header,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*Message_EncPayload
+	//	*Message_InvalidReq
 	//	*Message_AuthReq
 	//	*Message_AuthResp
-	//	*Message_Auth2Req
-	//	*Message_Auth2Resp
-	//	*Message_MakeMoveReq
-	//	*Message_MakeMoveResp
-	//	*Message_BoardReq
-	//	*Message_BoardResp
-	//	*Message_ListGamesReq
-	//	*Message_ListGamesResp
+	//	*Message_GameReq
+	//	*Message_GameResp
 	Payload              isMessage_Payload `protobuf_oneof:"payload"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
@@ -120,7 +150,7 @@ func (m *Message) Reset()         { *m = Message{} }
 func (m *Message) String() string { return proto.CompactTextString(m) }
 func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
-	return fileDescriptor_message_20a7564ed30363b6, []int{1}
+	return fileDescriptor_message_26061b304be25246, []int{1}
 }
 func (m *Message) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Message.Unmarshal(m, b)
@@ -147,48 +177,28 @@ type isMessage_Payload interface {
 type Message_EncPayload struct {
 	EncPayload []byte `protobuf:"bytes,2,opt,name=enc_payload,json=encPayload,proto3,oneof"`
 }
+type Message_InvalidReq struct {
+	InvalidReq *InvalidRequest `protobuf:"bytes,3,opt,name=invalid_req,json=invalidReq,proto3,oneof"`
+}
 type Message_AuthReq struct {
-	AuthReq *AuthRequest `protobuf:"bytes,3,opt,name=auth_req,json=authReq,proto3,oneof"`
+	AuthReq *AuthRequest `protobuf:"bytes,4,opt,name=auth_req,json=authReq,proto3,oneof"`
 }
 type Message_AuthResp struct {
-	AuthResp *AuthResponse `protobuf:"bytes,4,opt,name=auth_resp,json=authResp,proto3,oneof"`
+	AuthResp *AuthResponse `protobuf:"bytes,5,opt,name=auth_resp,json=authResp,proto3,oneof"`
 }
-type Message_Auth2Req struct {
-	Auth2Req *Auth2Request `protobuf:"bytes,5,opt,name=auth2_req,json=auth2Req,proto3,oneof"`
+type Message_GameReq struct {
+	GameReq *GameRequest `protobuf:"bytes,6,opt,name=game_req,json=gameReq,proto3,oneof"`
 }
-type Message_Auth2Resp struct {
-	Auth2Resp *Auth2Response `protobuf:"bytes,6,opt,name=auth2_resp,json=auth2Resp,proto3,oneof"`
-}
-type Message_MakeMoveReq struct {
-	MakeMoveReq *MoveRequest `protobuf:"bytes,7,opt,name=make_move_req,json=makeMoveReq,proto3,oneof"`
-}
-type Message_MakeMoveResp struct {
-	MakeMoveResp *MoveResponse `protobuf:"bytes,8,opt,name=make_move_resp,json=makeMoveResp,proto3,oneof"`
-}
-type Message_BoardReq struct {
-	BoardReq *GetBoardRequest `protobuf:"bytes,9,opt,name=board_req,json=boardReq,proto3,oneof"`
-}
-type Message_BoardResp struct {
-	BoardResp *GetBoardResponse `protobuf:"bytes,10,opt,name=board_resp,json=boardResp,proto3,oneof"`
-}
-type Message_ListGamesReq struct {
-	ListGamesReq *ListGamesRequest `protobuf:"bytes,11,opt,name=list_games_req,json=listGamesReq,proto3,oneof"`
-}
-type Message_ListGamesResp struct {
-	ListGamesResp *ListGamesResponse `protobuf:"bytes,12,opt,name=list_games_resp,json=listGamesResp,proto3,oneof"`
+type Message_GameResp struct {
+	GameResp *GameResponse `protobuf:"bytes,7,opt,name=game_resp,json=gameResp,proto3,oneof"`
 }
 
-func (*Message_EncPayload) isMessage_Payload()    {}
-func (*Message_AuthReq) isMessage_Payload()       {}
-func (*Message_AuthResp) isMessage_Payload()      {}
-func (*Message_Auth2Req) isMessage_Payload()      {}
-func (*Message_Auth2Resp) isMessage_Payload()     {}
-func (*Message_MakeMoveReq) isMessage_Payload()   {}
-func (*Message_MakeMoveResp) isMessage_Payload()  {}
-func (*Message_BoardReq) isMessage_Payload()      {}
-func (*Message_BoardResp) isMessage_Payload()     {}
-func (*Message_ListGamesReq) isMessage_Payload()  {}
-func (*Message_ListGamesResp) isMessage_Payload() {}
+func (*Message_EncPayload) isMessage_Payload() {}
+func (*Message_InvalidReq) isMessage_Payload() {}
+func (*Message_AuthReq) isMessage_Payload()    {}
+func (*Message_AuthResp) isMessage_Payload()   {}
+func (*Message_GameReq) isMessage_Payload()    {}
+func (*Message_GameResp) isMessage_Payload()   {}
 
 func (m *Message) GetPayload() isMessage_Payload {
 	if m != nil {
@@ -211,6 +221,13 @@ func (m *Message) GetEncPayload() []byte {
 	return nil
 }
 
+func (m *Message) GetInvalidReq() *InvalidRequest {
+	if x, ok := m.GetPayload().(*Message_InvalidReq); ok {
+		return x.InvalidReq
+	}
+	return nil
+}
+
 func (m *Message) GetAuthReq() *AuthRequest {
 	if x, ok := m.GetPayload().(*Message_AuthReq); ok {
 		return x.AuthReq
@@ -225,58 +242,16 @@ func (m *Message) GetAuthResp() *AuthResponse {
 	return nil
 }
 
-func (m *Message) GetAuth2Req() *Auth2Request {
-	if x, ok := m.GetPayload().(*Message_Auth2Req); ok {
-		return x.Auth2Req
+func (m *Message) GetGameReq() *GameRequest {
+	if x, ok := m.GetPayload().(*Message_GameReq); ok {
+		return x.GameReq
 	}
 	return nil
 }
 
-func (m *Message) GetAuth2Resp() *Auth2Response {
-	if x, ok := m.GetPayload().(*Message_Auth2Resp); ok {
-		return x.Auth2Resp
-	}
-	return nil
-}
-
-func (m *Message) GetMakeMoveReq() *MoveRequest {
-	if x, ok := m.GetPayload().(*Message_MakeMoveReq); ok {
-		return x.MakeMoveReq
-	}
-	return nil
-}
-
-func (m *Message) GetMakeMoveResp() *MoveResponse {
-	if x, ok := m.GetPayload().(*Message_MakeMoveResp); ok {
-		return x.MakeMoveResp
-	}
-	return nil
-}
-
-func (m *Message) GetBoardReq() *GetBoardRequest {
-	if x, ok := m.GetPayload().(*Message_BoardReq); ok {
-		return x.BoardReq
-	}
-	return nil
-}
-
-func (m *Message) GetBoardResp() *GetBoardResponse {
-	if x, ok := m.GetPayload().(*Message_BoardResp); ok {
-		return x.BoardResp
-	}
-	return nil
-}
-
-func (m *Message) GetListGamesReq() *ListGamesRequest {
-	if x, ok := m.GetPayload().(*Message_ListGamesReq); ok {
-		return x.ListGamesReq
-	}
-	return nil
-}
-
-func (m *Message) GetListGamesResp() *ListGamesResponse {
-	if x, ok := m.GetPayload().(*Message_ListGamesResp); ok {
-		return x.ListGamesResp
+func (m *Message) GetGameResp() *GameResponse {
+	if x, ok := m.GetPayload().(*Message_GameResp); ok {
+		return x.GameResp
 	}
 	return nil
 }
@@ -285,16 +260,11 @@ func (m *Message) GetListGamesResp() *ListGamesResponse {
 func (*Message) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
 	return _Message_OneofMarshaler, _Message_OneofUnmarshaler, _Message_OneofSizer, []interface{}{
 		(*Message_EncPayload)(nil),
+		(*Message_InvalidReq)(nil),
 		(*Message_AuthReq)(nil),
 		(*Message_AuthResp)(nil),
-		(*Message_Auth2Req)(nil),
-		(*Message_Auth2Resp)(nil),
-		(*Message_MakeMoveReq)(nil),
-		(*Message_MakeMoveResp)(nil),
-		(*Message_BoardReq)(nil),
-		(*Message_BoardResp)(nil),
-		(*Message_ListGamesReq)(nil),
-		(*Message_ListGamesResp)(nil),
+		(*Message_GameReq)(nil),
+		(*Message_GameResp)(nil),
 	}
 }
 
@@ -305,54 +275,29 @@ func _Message_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
 	case *Message_EncPayload:
 		b.EncodeVarint(2<<3 | proto.WireBytes)
 		b.EncodeRawBytes(x.EncPayload)
-	case *Message_AuthReq:
+	case *Message_InvalidReq:
 		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.InvalidReq); err != nil {
+			return err
+		}
+	case *Message_AuthReq:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.AuthReq); err != nil {
 			return err
 		}
 	case *Message_AuthResp:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
+		b.EncodeVarint(5<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.AuthResp); err != nil {
 			return err
 		}
-	case *Message_Auth2Req:
-		b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Auth2Req); err != nil {
-			return err
-		}
-	case *Message_Auth2Resp:
+	case *Message_GameReq:
 		b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Auth2Resp); err != nil {
+		if err := b.EncodeMessage(x.GameReq); err != nil {
 			return err
 		}
-	case *Message_MakeMoveReq:
+	case *Message_GameResp:
 		b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.MakeMoveReq); err != nil {
-			return err
-		}
-	case *Message_MakeMoveResp:
-		b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.MakeMoveResp); err != nil {
-			return err
-		}
-	case *Message_BoardReq:
-		b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.BoardReq); err != nil {
-			return err
-		}
-	case *Message_BoardResp:
-		b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.BoardResp); err != nil {
-			return err
-		}
-	case *Message_ListGamesReq:
-		b.EncodeVarint(11<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ListGamesReq); err != nil {
-			return err
-		}
-	case *Message_ListGamesResp:
-		b.EncodeVarint(12<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ListGamesResp); err != nil {
+		if err := b.EncodeMessage(x.GameResp); err != nil {
 			return err
 		}
 	case nil:
@@ -372,7 +317,15 @@ func _Message_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer
 		x, err := b.DecodeRawBytes(true)
 		m.Payload = &Message_EncPayload{x}
 		return true, err
-	case 3: // payload.auth_req
+	case 3: // payload.invalid_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(InvalidRequest)
+		err := b.DecodeMessage(msg)
+		m.Payload = &Message_InvalidReq{msg}
+		return true, err
+	case 4: // payload.auth_req
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -380,7 +333,7 @@ func _Message_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer
 		err := b.DecodeMessage(msg)
 		m.Payload = &Message_AuthReq{msg}
 		return true, err
-	case 4: // payload.auth_resp
+	case 5: // payload.auth_resp
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -388,69 +341,21 @@ func _Message_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer
 		err := b.DecodeMessage(msg)
 		m.Payload = &Message_AuthResp{msg}
 		return true, err
-	case 5: // payload.auth2_req
+	case 6: // payload.game_req
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
-		msg := new(Auth2Request)
+		msg := new(GameRequest)
 		err := b.DecodeMessage(msg)
-		m.Payload = &Message_Auth2Req{msg}
+		m.Payload = &Message_GameReq{msg}
 		return true, err
-	case 6: // payload.auth2_resp
+	case 7: // payload.game_resp
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
-		msg := new(Auth2Response)
+		msg := new(GameResponse)
 		err := b.DecodeMessage(msg)
-		m.Payload = &Message_Auth2Resp{msg}
-		return true, err
-	case 7: // payload.make_move_req
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(MoveRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &Message_MakeMoveReq{msg}
-		return true, err
-	case 8: // payload.make_move_resp
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(MoveResponse)
-		err := b.DecodeMessage(msg)
-		m.Payload = &Message_MakeMoveResp{msg}
-		return true, err
-	case 9: // payload.board_req
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetBoardRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &Message_BoardReq{msg}
-		return true, err
-	case 10: // payload.board_resp
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(GetBoardResponse)
-		err := b.DecodeMessage(msg)
-		m.Payload = &Message_BoardResp{msg}
-		return true, err
-	case 11: // payload.list_games_req
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ListGamesRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &Message_ListGamesReq{msg}
-		return true, err
-	case 12: // payload.list_games_resp
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ListGamesResponse)
-		err := b.DecodeMessage(msg)
-		m.Payload = &Message_ListGamesResp{msg}
+		m.Payload = &Message_GameResp{msg}
 		return true, err
 	default:
 		return false, nil
@@ -465,6 +370,11 @@ func _Message_OneofSizer(msg proto.Message) (n int) {
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(len(x.EncPayload)))
 		n += len(x.EncPayload)
+	case *Message_InvalidReq:
+		s := proto.Size(x.InvalidReq)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
 	case *Message_AuthReq:
 		s := proto.Size(x.AuthReq)
 		n += 1 // tag and wire
@@ -475,43 +385,13 @@ func _Message_OneofSizer(msg proto.Message) (n int) {
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *Message_Auth2Req:
-		s := proto.Size(x.Auth2Req)
+	case *Message_GameReq:
+		s := proto.Size(x.GameReq)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
-	case *Message_Auth2Resp:
-		s := proto.Size(x.Auth2Resp)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Message_MakeMoveReq:
-		s := proto.Size(x.MakeMoveReq)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Message_MakeMoveResp:
-		s := proto.Size(x.MakeMoveResp)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Message_BoardReq:
-		s := proto.Size(x.BoardReq)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Message_BoardResp:
-		s := proto.Size(x.BoardResp)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Message_ListGamesReq:
-		s := proto.Size(x.ListGamesReq)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Message_ListGamesResp:
-		s := proto.Size(x.ListGamesResp)
+	case *Message_GameResp:
+		s := proto.Size(x.GameResp)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
@@ -522,42 +402,92 @@ func _Message_OneofSizer(msg proto.Message) (n int) {
 	return n
 }
 
+type InvalidRequest struct {
+	Code                 InvalidRequest_Code `protobuf:"varint,1,opt,name=code,proto3,enum=api.InvalidRequest_Code" json:"code,omitempty"`
+	Reason               string              `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
+}
+
+func (m *InvalidRequest) Reset()         { *m = InvalidRequest{} }
+func (m *InvalidRequest) String() string { return proto.CompactTextString(m) }
+func (*InvalidRequest) ProtoMessage()    {}
+func (*InvalidRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_message_26061b304be25246, []int{2}
+}
+func (m *InvalidRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_InvalidRequest.Unmarshal(m, b)
+}
+func (m *InvalidRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_InvalidRequest.Marshal(b, m, deterministic)
+}
+func (dst *InvalidRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InvalidRequest.Merge(dst, src)
+}
+func (m *InvalidRequest) XXX_Size() int {
+	return xxx_messageInfo_InvalidRequest.Size(m)
+}
+func (m *InvalidRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_InvalidRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InvalidRequest proto.InternalMessageInfo
+
+func (m *InvalidRequest) GetCode() InvalidRequest_Code {
+	if m != nil {
+		return m.Code
+	}
+	return InvalidRequest_UNKNOWN_ERROR
+}
+
+func (m *InvalidRequest) GetReason() string {
+	if m != nil {
+		return m.Reason
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*Header)(nil), "api.Header")
 	proto.RegisterType((*Message)(nil), "api.Message")
+	proto.RegisterType((*InvalidRequest)(nil), "api.InvalidRequest")
+	proto.RegisterEnum("api.InvalidRequest_Code", InvalidRequest_Code_name, InvalidRequest_Code_value)
 }
 
-func init() { proto.RegisterFile("message.proto", fileDescriptor_message_20a7564ed30363b6) }
+func init() { proto.RegisterFile("message.proto", fileDescriptor_message_26061b304be25246) }
 
-var fileDescriptor_message_20a7564ed30363b6 = []byte{
-	// 455 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x93, 0xc1, 0x6a, 0xdb, 0x40,
-	0x10, 0x86, 0xad, 0x26, 0xb6, 0xac, 0x91, 0x9c, 0xb6, 0x43, 0x5a, 0x44, 0xe8, 0xc1, 0x49, 0x2f,
-	0xbe, 0xd4, 0x14, 0x19, 0x02, 0x3d, 0x14, 0xda, 0x5c, 0xe2, 0x43, 0x53, 0x8a, 0x5e, 0x40, 0xac,
-	0xe5, 0x21, 0x16, 0x91, 0xb4, 0x1b, 0xed, 0xda, 0x90, 0x07, 0xe8, 0xfb, 0xf4, 0x11, 0x8b, 0x66,
-	0x25, 0x6b, 0xe3, 0x9b, 0xe7, 0x9f, 0xff, 0xf3, 0xbf, 0xff, 0xb2, 0x82, 0x59, 0x45, 0x5a, 0x8b,
-	0x47, 0x5a, 0xaa, 0x46, 0x1a, 0x89, 0x67, 0x42, 0x15, 0x57, 0x20, 0xf6, 0x66, 0x67, 0x85, 0x2b,
-	0x78, 0x14, 0x55, 0xb7, 0xbc, 0xf9, 0xe7, 0xc1, 0x64, 0x4d, 0x62, 0x4b, 0x0d, 0xc6, 0xe0, 0x1f,
-	0xa8, 0xd1, 0x85, 0xac, 0x63, 0x6f, 0xee, 0x2d, 0x66, 0x69, 0x3f, 0xe2, 0x25, 0x8c, 0x8d, 0x7c,
-	0xa2, 0x3a, 0x7e, 0x33, 0xf7, 0x16, 0x51, 0x6a, 0x07, 0xbc, 0x86, 0x28, 0x2f, 0x0b, 0xaa, 0x4d,
-	0x56, 0xcb, 0x3a, 0xa7, 0xf8, 0x8c, 0x97, 0xa1, 0xd5, 0x7e, 0xb7, 0x52, 0x6b, 0xd1, 0xd4, 0x1c,
-	0xa8, 0xe9, 0x2c, 0xe7, 0xd6, 0x62, 0x35, 0x6b, 0x41, 0x38, 0xdf, 0x55, 0x22, 0x8f, 0xc7, 0xbc,
-	0xe2, 0xdf, 0xf8, 0x09, 0x02, 0xaa, 0xf3, 0xe6, 0x45, 0x19, 0xda, 0xc6, 0x93, 0xb9, 0xb7, 0x98,
-	0xa6, 0x83, 0x70, 0xf3, 0x77, 0x0c, 0xfe, 0x83, 0x6d, 0x88, 0x9f, 0x61, 0xb2, 0xe3, 0xd3, 0xf3,
-	0x91, 0xc3, 0x24, 0x5c, 0x0a, 0x55, 0x2c, 0x6d, 0xa1, 0xb4, 0x5b, 0xe1, 0x35, 0x84, 0x54, 0xe7,
-	0x99, 0x12, 0x2f, 0xa5, 0x14, 0x5b, 0x5b, 0x62, 0x3d, 0x4a, 0x81, 0xea, 0xfc, 0x8f, 0xd5, 0xf0,
-	0x0b, 0x4c, 0xdb, 0x0b, 0xca, 0x1a, 0x7a, 0xe6, 0x1e, 0x61, 0xf2, 0x8e, 0xff, 0xe9, 0xe7, 0xde,
-	0xec, 0x52, 0x7a, 0xde, 0x93, 0x36, 0xeb, 0x51, 0xea, 0x0b, 0x3b, 0xe2, 0x57, 0x08, 0x3a, 0xbb,
-	0x56, 0x5c, 0x2a, 0x4c, 0xde, 0x3b, 0x7e, 0xad, 0x64, 0xad, 0x69, 0x3d, 0x4a, 0xa7, 0xa2, 0x9b,
-	0x7b, 0x22, 0xe1, 0x84, 0xf1, 0x09, 0x91, 0x0c, 0x11, 0x4c, 0xb4, 0x33, 0xae, 0x00, 0x7a, 0x42,
-	0x2b, 0xbe, 0x85, 0x30, 0x41, 0x17, 0x39, 0xa6, 0x04, 0xa2, 0x17, 0xf0, 0x16, 0x66, 0x95, 0x78,
-	0xa2, 0xac, 0x92, 0x07, 0xe2, 0x28, 0xdf, 0x29, 0xf3, 0x20, 0x0f, 0x34, 0x24, 0x85, 0xad, 0xb1,
-	0x93, 0xf0, 0x1b, 0x5c, 0xb8, 0x9c, 0x56, 0xf1, 0xd4, 0x39, 0xa3, 0x75, 0x1d, 0xf3, 0xa2, 0x81,
-	0xd4, 0x0a, 0x57, 0x10, 0x6c, 0xa4, 0x68, 0xb6, 0x1c, 0x17, 0x30, 0x75, 0xc9, 0xd4, 0x3d, 0x99,
-	0xbb, 0x76, 0xe1, 0x94, 0xdb, 0x74, 0x33, 0xde, 0x02, 0xf4, 0x90, 0x56, 0x31, 0x30, 0xf5, 0xe1,
-	0x84, 0x1a, 0xfa, 0x6d, 0x7a, 0x01, 0xbf, 0xc3, 0x45, 0x59, 0x68, 0x93, 0xb5, 0x2f, 0x58, 0x73,
-	0x62, 0xe8, 0xb0, 0xbf, 0x0a, 0x6d, 0xee, 0xdb, 0xcd, 0x10, 0x19, 0x95, 0x8e, 0x86, 0x3f, 0xe0,
-	0xed, 0x2b, 0x5c, 0xab, 0x38, 0x62, 0xfe, 0xe3, 0x29, 0x7f, 0x0c, 0x9f, 0x95, 0xae, 0x78, 0x17,
-	0x80, 0xdf, 0xbd, 0xa3, 0xcd, 0x84, 0xbf, 0xa0, 0xd5, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0xee,
-	0xda, 0x23, 0x02, 0x6f, 0x03, 0x00, 0x00,
+var fileDescriptor_message_26061b304be25246 = []byte{
+	// 488 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x92, 0xcf, 0x6e, 0xda, 0x40,
+	0x10, 0xc6, 0x63, 0x30, 0x06, 0xc6, 0x80, 0xcc, 0xf6, 0x8f, 0xac, 0xa8, 0x07, 0x42, 0x2f, 0x1c,
+	0x5a, 0x54, 0x51, 0xa9, 0x77, 0x27, 0x71, 0x0b, 0x4a, 0xb0, 0xe9, 0x02, 0x4a, 0x6f, 0xd6, 0xd6,
+	0x1e, 0x81, 0x55, 0xb0, 0x1d, 0xaf, 0xa1, 0xca, 0x5b, 0xf5, 0x4d, 0x7a, 0xeb, 0xf3, 0x54, 0xfb,
+	0xa7, 0x85, 0x4a, 0xbd, 0xf9, 0xfb, 0xe6, 0x37, 0xfb, 0xed, 0x8c, 0x17, 0xba, 0x7b, 0xe4, 0x9c,
+	0x6d, 0x70, 0x5c, 0x94, 0x79, 0x95, 0x93, 0x3a, 0x2b, 0xd2, 0x4b, 0x60, 0x87, 0x6a, 0xab, 0x8c,
+	0x4b, 0xd8, 0xb0, 0xbd, 0x2e, 0x0e, 0x7f, 0x18, 0x60, 0x4d, 0x91, 0x25, 0x58, 0x12, 0x17, 0x9a,
+	0x47, 0x2c, 0x79, 0x9a, 0x67, 0xae, 0x31, 0x30, 0x46, 0x5d, 0xfa, 0x47, 0x92, 0xe7, 0xd0, 0xa8,
+	0xf2, 0x6f, 0x98, 0xb9, 0xb5, 0x81, 0x31, 0xea, 0x50, 0x25, 0xc8, 0x15, 0x74, 0xe2, 0x5d, 0x8a,
+	0x59, 0x15, 0x65, 0x79, 0x16, 0xa3, 0x5b, 0x97, 0x45, 0x5b, 0x79, 0x81, 0xb0, 0x04, 0xc2, 0xb1,
+	0x3c, 0x62, 0xa9, 0x11, 0x53, 0x21, 0xca, 0x53, 0x08, 0x01, 0x73, 0xbb, 0x67, 0xb1, 0xdb, 0x90,
+	0x25, 0xf9, 0x4d, 0x5e, 0x41, 0x1b, 0xb3, 0xb8, 0x7c, 0x2a, 0x2a, 0x4c, 0x5c, 0x6b, 0x60, 0x8c,
+	0x5a, 0xf4, 0x64, 0x0c, 0x7f, 0xd5, 0xa0, 0x39, 0x57, 0x13, 0x92, 0xd7, 0x60, 0x6d, 0xe5, 0xed,
+	0xe5, 0x95, 0xed, 0x89, 0x3d, 0x66, 0x45, 0x3a, 0x56, 0x03, 0x51, 0x5d, 0x22, 0x57, 0x60, 0x63,
+	0x16, 0x47, 0x05, 0x7b, 0xda, 0xe5, 0x2c, 0x51, 0x43, 0x4c, 0x2f, 0x28, 0x60, 0x16, 0x2f, 0x94,
+	0x47, 0x3e, 0x80, 0x9d, 0x66, 0x47, 0xb6, 0x4b, 0x93, 0xa8, 0xc4, 0x47, 0x39, 0x8a, 0x3d, 0x79,
+	0x26, 0x0f, 0x9b, 0x29, 0x9f, 0xe2, 0xe3, 0x01, 0x79, 0x25, 0xfa, 0xd2, 0xbf, 0x0e, 0x79, 0x0b,
+	0x2d, 0xb1, 0x58, 0xd9, 0x64, 0xca, 0x26, 0x47, 0x36, 0x79, 0x87, 0x6a, 0x7b, 0xea, 0x68, 0x32,
+	0x25, 0xc9, 0x3b, 0x68, 0x6b, 0x9c, 0x17, 0x72, 0x62, 0x7b, 0xd2, 0x3f, 0xe3, 0x79, 0x91, 0x67,
+	0x1c, 0xa7, 0x17, 0xb4, 0xc5, 0xb4, 0x16, 0x01, 0xe2, 0x6f, 0xc9, 0x00, 0xeb, 0x2c, 0xe0, 0x13,
+	0xdb, 0xe3, 0x59, 0xc0, 0x46, 0x49, 0x11, 0xa0, 0x71, 0x5e, 0xb8, 0xcd, 0xb3, 0x00, 0xc5, 0x9f,
+	0x02, 0x36, 0x5a, 0x5f, 0xb7, 0xa1, 0xa9, 0x17, 0x33, 0xfc, 0x69, 0x40, 0xef, 0xdf, 0x69, 0xc9,
+	0x1b, 0x30, 0xe3, 0x3c, 0x41, 0xb9, 0xdd, 0xde, 0xc4, 0xfd, 0xcf, 0x42, 0xc6, 0x37, 0x79, 0x82,
+	0x54, 0x52, 0xe4, 0x25, 0x58, 0x25, 0x32, 0x9e, 0xab, 0x87, 0xd2, 0xa6, 0x5a, 0x0d, 0xbf, 0x83,
+	0x29, 0x28, 0xd2, 0x87, 0xee, 0x3a, 0xb8, 0x0b, 0xc2, 0x87, 0x20, 0xf2, 0x29, 0x0d, 0xa9, 0x73,
+	0x41, 0x7a, 0x00, 0xde, 0x7a, 0x35, 0xd5, 0xda, 0x20, 0x0e, 0x74, 0x1e, 0xbc, 0x65, 0x44, 0xfd,
+	0xe5, 0x22, 0x0c, 0x96, 0xbe, 0x53, 0x23, 0x2f, 0xa0, 0x3f, 0xf7, 0xee, 0x3f, 0x86, 0x74, 0xee,
+	0xdf, 0x46, 0xd4, 0xff, 0xbc, 0xf6, 0x97, 0x2b, 0xa7, 0x2e, 0xc0, 0x59, 0x70, 0x13, 0xce, 0x17,
+	0xde, 0x6a, 0x76, 0x7d, 0xef, 0x3b, 0xa6, 0x38, 0x7d, 0x15, 0xde, 0xf9, 0x41, 0xe4, 0x7f, 0x59,
+	0xcc, 0xa8, 0x7f, 0xeb, 0x34, 0xbe, 0x5a, 0xf2, 0x91, 0xbf, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff,
+	0x8a, 0xf0, 0x2b, 0xf5, 0x12, 0x03, 0x00, 0x00,
 }

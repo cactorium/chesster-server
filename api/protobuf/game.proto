@@ -3,12 +3,31 @@ syntax = "proto3";
 package api;
 
 import "common.proto";
-import "move.proto";
+
+message GameRequest {
+  oneof r {
+    MoveRequest make_move_req = 1;
+    GetBoardRequest board_req = 2;
+    ListGamesRequest list_games_req = 3;
+  }
+
+}
+
+message GameResponse {
+  oneof r {
+    MoveResponse make_move_resp = 1;
+    GetBoardResponse board_resp = 2;
+    ListGamesResponse list_games_resp = 3;
+  }
+}
 
 message ListGamesRequest {
+  bool list_recent = 1;
+  uint64 earliest = 2; // if set only list games up to that point
 }
 
 message ListGamesResponse {
+  // TODO
 }
 
 message MoveRequest {
@@ -18,12 +37,34 @@ message MoveRequest {
 }
 
 message MoveResponse {
-  bool is_valid = 1;
+  bool committed = 1;
+  enum Error {
+    NO_ERROR = 0;
+    INVALID_MOVE = 1;
+  }
 }
 
 message GetBoardRequest {
+  // TODO
 }
 
 message GetBoardResponse {
+  // TODO
 }
 
+message Board {
+  // TODO
+}
+
+message Move {
+  Type type = 1;
+  Position start = 2;
+  Position end = 3;
+  bool promotion = 4;
+  enum Castle {
+    NONE = 0;
+    KINGSIDE = 1;
+    QUEENSIDE = 2;
+  }
+  Castle castle = 5;
+}

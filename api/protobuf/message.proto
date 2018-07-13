@@ -18,15 +18,23 @@ message Message {
   Header header = 1;
   oneof payload {
     bytes enc_payload = 2;
-    AuthRequest auth_req = 3;
-    AuthResponse auth_resp = 4;
-    Auth2Request auth2_req = 5;
-    Auth2Response auth2_resp = 6;
-    MoveRequest make_move_req = 7;
-    MoveResponse make_move_resp = 8;
-    GetBoardRequest board_req = 9;
-    GetBoardResponse board_resp = 10;
-    ListGamesRequest list_games_req = 11;
-    ListGamesResponse list_games_resp = 12;
+    InvalidRequest invalid_req = 3;
+    AuthRequest auth_req = 4;
+    AuthResponse auth_resp = 5;
+    GameRequest game_req = 6;
+    GameResponse game_resp = 7;
   }
+}
+
+message InvalidRequest {
+  enum Code {
+    UNKNOWN_ERROR = 0;
+    AUTH_ERROR = 1; // token or hmac was bad
+    WAS_RESPONSE = 2; // client can't send a response and expect a reply
+    MALFORMED_REQUEST = 3; // bad field somewhere in the response
+    INCOMPATIBLE = 4; // older or incompatible version number
+    TOKEN_EXPIRED = 5; // authentication token is expired
+  }
+  Code code = 1;
+  string reason = 2;
 }
