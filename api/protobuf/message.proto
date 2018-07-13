@@ -25,6 +25,8 @@ message Message {
     MoveResponse make_move_resp = 8;
     GetBoardRequest board_req = 9;
     GetBoardResponse board_resp = 10;
+    ListGamesRequest list_games_req = 11;
+    ListGamesResponse list_games_resp = 12;
   }
 }
 
@@ -57,4 +59,10 @@ message GetBoardRequest {
 }
 
 message GetBoardResponse {
+}
+
+message ListGamesRequest {
+}
+
+message ListGamesResponse {
 }
