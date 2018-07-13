@@ -5,6 +5,16 @@ This is meant to work with the Android app [here](https://github.com/cactorium/c
 
 Maybe eventually include a web version that'll run from the same server
 
+## How to build
+
+Install [Go](https://golang.org/doc/install) and [protocol buffers for Go](https://developers.google.com/protocol-buffers/docs/gotutorial) (see section for "Compiling your protocol buffers").
+
+ TODO finish and test instructions
+
+```
+make # Or go build ./cmd/chessterd
+```
+
 ## Basic architecture
 
 - [ ] SQLite database for backend
