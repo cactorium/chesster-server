@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package api;
+
+import "common.proto";
+
+message Move {
+  Type type = 1;
+  Position start = 2;
+  Position end = 3;
+  bool promotion = 4;
+  enum Castle {
+    NONE = 0;
+    KINGSIDE = 1;
+    QUEENSIDE = 2;
+  }
+  Castle castle = 5;
+}

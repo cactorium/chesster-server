@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package api;
+
+message Position {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+enum Type {
+  PAWN = 0;
+  ROOK = 1;
+  KNIGHT = 2;
+  BISHOP = 3;
+  QUEEN = 4;
+  KING = 5;
+}
+
+message Piece {
+  Type type = 1;
+  Position position = 2;
+}

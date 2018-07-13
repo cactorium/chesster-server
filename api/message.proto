@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "move.proto";
+
+package api;
+
+message Header {
+  uint32 version = 1;
+  bytes token = 2;
+  bytes client_nonce = 3;
+  bytes server_nonce = 4;
+  bytes hmac = 5;
+  bool encrypted = 6;
+}
+
+message Message {
+  Header header = 1;
+  oneof payload {
+    bytes enc_payload = 2;
+    AuthRequest auth_req = 3;
+    AuthResponse auth_resp = 4;
+    Auth2Request auth2_req = 5;
+    Auth2Response auth2_resp = 6;
+    MoveRequest make_move_req = 7;
+    MoveResponse make_move_resp = 8;
+    GetBoardRequest board_req = 9;
+    GetBoardResponse board_resp = 10;
+  }
+}
+
+message AuthRequest {
+  bytes client_nonce = 1;
+  string user_id = 2;
+}
+
+message AuthResponse {
+  bytes server_nonce = 1;
+  bytes salt = 2;
+  bytes token = 3;
+}
+
+message Auth2Request {
+}
+
+message Auth2Response {
+}
+
+message MoveRequest {
+  Move move = 1;
+}
+
+message MoveResponse {
+  bool is_valid = 1;
+}
+
+message GetBoardRequest {
+}
+
+message GetBoardResponse {
+}
