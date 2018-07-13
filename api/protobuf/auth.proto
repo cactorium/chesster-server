@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package api;
+
+message AuthRequest {
+  bytes client_nonce = 1;
+  string user_id = 2;
+}
+
+message AuthResponse {
+  bytes server_nonce = 1;
+  bytes salt = 2;
+  bytes token = 3;
+}
+
+message Auth2Request {
+  message Encryption {
+    bytes randomness = 1;
+  }
+  bytes random_payload = 1;
+  Encryption enc = 2;
+}
+
+message Auth2Response {
+  message Encryption {
+    bytes randomness = 1;
+  }
+  bytes random_payload = 1;
+  Encryption enc = 2;
+}

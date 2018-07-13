@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package api;
+
+import "common.proto";
+import "move.proto";
+
+message ListGamesRequest {
+}
+
+message ListGamesResponse {
+}
+
+message MoveRequest {
+  bytes game_id = 1;
+  Side side = 2;
+  Move move = 3;
+}
+
+message MoveResponse {
+  bool is_valid = 1;
+}
+
+message GetBoardRequest {
+}
+
+message GetBoardResponse {
+}
+

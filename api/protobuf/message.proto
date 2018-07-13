@@ -1,8 +1,9 @@
 syntax = "proto3";
 
-import "move.proto";
-
 package api;
+
+import "auth.proto";
+import "game.proto";
 
 message Header {
   uint32 version = 1;
@@ -28,41 +29,4 @@ message Message {
     ListGamesRequest list_games_req = 11;
     ListGamesResponse list_games_resp = 12;
   }
-}
-
-message AuthRequest {
-  bytes client_nonce = 1;
-  string user_id = 2;
-}
-
-message AuthResponse {
-  bytes server_nonce = 1;
-  bytes salt = 2;
-  bytes token = 3;
-}
-
-message Auth2Request {
-}
-
-message Auth2Response {
-}
-
-message MoveRequest {
-  Move move = 1;
-}
-
-message MoveResponse {
-  bool is_valid = 1;
-}
-
-message GetBoardRequest {
-}
-
-message GetBoardResponse {
-}
-
-message ListGamesRequest {
-}
-
-message ListGamesResponse {
 }
