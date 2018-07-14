@@ -8,10 +8,11 @@ import "game.proto";
 message Header {
   uint32 version = 1;
   bytes token = 2;
-  bytes client_nonce = 3;
-  bytes server_nonce = 4;
-  bytes hmac = 5;
-  bool encrypted = 6;
+  uint32 req_id = 3; // matching between a request and a response
+  bytes client_nonce = 4;
+  bytes server_nonce = 5;
+  bytes hmac = 6;
+  bool encrypted = 7;
 }
 
 message Message {

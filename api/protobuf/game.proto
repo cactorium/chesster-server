@@ -4,55 +4,41 @@ package api;
 
 import "common.proto";
 
+// allow batching requests; basically a single packet can be any combination of
+// these
 message GameRequest {
-  oneof r {
-    MoveRequest make_move_req = 1;
-    GetBoardRequest board_req = 2;
-    ListGamesRequest list_games_req = 3;
-  }
-
+  ListGamesRequest list_games_req = 1;
+  GetBoardRequest get_board = 2; // get current board state
+  GetBoardMetaRequest get_board_meta = 8; // get board info like access control, time since last move, current move, current move number, who's on what side, etc.
+  MoveRequest make_move = 3;
+  OfferDrawRequest draw = 7;
+  CreateGameRequest create_game = 4;
+  WaitForMoveRequest wait_moves = 5;
+  repeated GetMovesRequest get_moves = 6; // get moves for a given piece
+  GetPreviousBoardStatesRequest get_prev_board = 9; // get historical board positions
+  GetMovelistRequest move_list = 10;
 }
 
 message GameResponse {
-  oneof r {
-    MoveResponse make_move_resp = 1;
-    GetBoardResponse board_resp = 2;
-    ListGamesResponse list_games_resp = 3;
-  }
+  ListGamesResponse list_games = 1;
+  GetBoardResponse get_board = 2;
+  GetBoardMetaResponse get_board_meta = 8;
+  MoveResponse make_move_resp = 3;
+  OfferDrawResponse draw = 7;
+  CreateGameResponse create_game = 4;
+  WaitForMoveResponse wait_moves = 5;
+  repeated GetMovesResponse get_moves = 6;
+  GetPreviousBoardStatesResponse get_prev_board = 9;
+  GetMovelistResponse move_list = 10;
 }
 
 message ListGamesRequest {
   bool list_recent = 1;
-  uint64 earliest = 2; // if set only list games up to that point
+  uint64 latest = 2; // if set only list games before that point
+  uint64 earliest = 3; // if set only list games up to that point
 }
 
 message ListGamesResponse {
-  // TODO
-}
-
-message MoveRequest {
-  bytes game_id = 1;
-  Side side = 2;
-  Move move = 3;
-}
-
-message MoveResponse {
-  bool committed = 1;
-  enum Error {
-    NO_ERROR = 0;
-    INVALID_MOVE = 1;
-  }
-}
-
-message GetBoardRequest {
-  // TODO
-}
-
-message GetBoardResponse {
-  // TODO
-}
-
-message Board {
   // TODO
 }
 
@@ -68,3 +54,105 @@ message Move {
   }
   Castle castle = 5;
 }
+
+message MoveRequest {
+  bytes game_id = 1;
+  Side side = 2;
+  Move move = 3;
+}
+
+message MoveResponse {
+  bool committed = 1;
+  enum Error {
+    NO_ERROR = 0;
+    INVALID_MOVE = 1;
+  }
+  Error error = 2;
+  bool is_checkmate = 3;
+  bool is_stalemate = 4;
+}
+
+message GameState {
+  // TODO
+}
+
+message Board {
+  repeated Piece pieces = 1;
+  repeated Piece captured = 2;
+}
+
+message GetBoardRequest {
+  bytes board_id = 1;
+}
+
+message GetBoardResponse {
+  enum Error {
+    NO_ERROR = 0;
+    NO_BOARD = 1;
+  }
+  Error error = 1;
+  Board board = 2;
+  GameState state = 3;
+}
+
+message GetBoardMetaRequest {
+  // TODO
+}
+
+message GetBoardMetaResponse {
+  // TODO
+}
+
+message OfferDrawRequest {
+  // TODO
+}
+
+message OfferDrawResponse {
+  // TODO
+}
+
+
+message CreateGameRequest {
+  // TODO
+}
+
+message CreateGameResponse {
+  // TODO
+}
+
+
+message WaitForMoveRequest {
+  // TODO
+}
+
+message WaitForMoveResponse {
+  // TODO
+}
+
+
+message GetMovesRequest {
+  // TODO
+}
+
+message GetMovesResponse {
+  // TODO
+}
+
+
+message GetPreviousBoardStatesRequest {
+  // TODO
+}
+
+message GetPreviousBoardStatesResponse {
+  // TODO
+}
+
+
+message GetMovelistRequest {
+  // TODO
+}
+
+message GetMovelistResponse {
+  // TODO
+}
+

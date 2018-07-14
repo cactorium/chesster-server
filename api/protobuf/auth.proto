@@ -4,51 +4,116 @@ package api;
 
 message AuthRequest {
   oneof r {
-    Auth1Request auth_req = 4;
-    Auth2Request auth2_req = 6;
-    RefreshTokenRequest refresh_token_req = 14;
+    Auth1Request auth = 1;
+    Auth1GuestRequest auth_guest = 2; // used for spectating and creating accounts
+    Auth2Request auth2 = 3;
+    RefreshTokenRequest refresh_token = 4;
+    RevokeSessionsRequest revoke_sessions = 5;
+    RevokeKeysRequest revoke_keys = 6;
+    CreateAccountRequest create_account = 7;
   }
 }
 
 message AuthResponse {
   oneof r {
-    Auth1Response auth_resp = 5;
-    Auth2Response auth2_resp = 7;
-    RefreshTokenResponse refresh_token_response = 14;
+    Auth1Response auth = 1;
+    Auth1GuestResponse auth_guest = 2;
+    Auth2Response auth2 = 3;
+    RefreshTokenResponse refresh_token = 4;
+    RevokeSessionsResponse revoke_sessions = 5;
+    RevokeKeysResponse revoke_keys = 6;
+    CreateAccountResponse create_account = 7;
   }
+}
+
+message CreateAccountRequest {
+  string user_id = 1;
+  string password = 2;
+}
+
+message CreateAccountResponse {
+  bool success = 1;
+  enum Error {
+    NO_ERROR = 0;
+    USER_NAME_ALREADY_USED = 1;
+    NOT_ENCRYPTED = 2;
+  }
+  Error error = 2;
 }
 
 message Auth1Request {
-  bytes client_nonce = 1;
-  string user_id = 2;
+  string user_id = 1;
+  message Password {
+    bytes client_nonce = 1;
+  }
+  message PubKey {
+    bytes ecc_pub = 1;
+  }
+  oneof a {
+    Password password = 2;
+    PubKey pub_key = 3;
+  }
 }
 
 message Auth1Response {
-  bytes server_nonce = 1;
-  bytes salt = 2;
-  bytes token = 3;
+  // new session token used to identify this session
+  bytes token = 1;
+  message Password {
+    bytes server_nonce = 1;
+    bytes salt = 2;
+  }
+  message PubKey {
+    bytes ecc_pub = 1;
+  }
+  // info used to authenticate this session
+  oneof a {
+    Password password = 2;
+    PubKey pub_key = 3;
+  }
 }
 
+message Auth1GuestRequest {
+  // TODO
+}
+
+message Auth1GuestResponse {
+  // TODO
+}
+
+// second set of messages to ensure credentials are good
 message Auth2Request {
-  message Encryption {
-    bytes randomness = 1;
-  }
-  bytes random_payload = 1;
-  Encryption enc = 2;
+  bool enable_encryption = 1;
 }
 
 message Auth2Response {
-  message Encryption {
-    bytes randomness = 1;
-  }
-  bytes random_payload = 1;
-  Encryption enc = 2;
+  bool encryption_enabled = 1;
+  uint64 token_expiry = 2; // time of token expiration in Unix time
 }
 
+// generate a new token with new secret credentials
 message RefreshTokenRequest {
-  // TODO
+  bytes client_input = 1;
 }
 
 message RefreshTokenResponse {
+  bytes token = 1;
+  bytes server_input = 2;
+  uint64 token_expiry = 3;
+}
+
+message RevokeSessionsRequest {
   // TODO
 }
+
+message RevokeSessionsResponse {
+  // TODO
+}
+
+message RevokeKeysRequest {
+  // TODO
+}
+
+message RevokeKeysResponse {
+  // TODO
+}
+
