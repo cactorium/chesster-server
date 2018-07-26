@@ -2,44 +2,29 @@ syntax = "proto3";
 
 package api;
 
-import "common.proto";
-
-// allow batching requests; basically a single packet can be any combination of
-// these
-message GameRequest {
-  ListGamesRequest list_games_req = 1;
-  GetBoardRequest get_board = 2; // get current board state
-  GetBoardMetaRequest get_board_meta = 8; // get board info like access control, time since last move, current move, current move number, who's on what side, etc.
-  MoveRequest make_move = 3;
-  OfferDrawRequest draw = 7;
-  CreateGameRequest create_game = 4;
-  WaitForMoveRequest wait_moves = 5;
-  repeated GetMovesRequest get_moves = 6; // get moves for a given piece
-  GetPreviousBoardStatesRequest get_prev_board = 9; // get historical board positions
-  GetMovelistRequest move_list = 10;
+enum Side {
+  WHITE = 0;
+  BLACK = 1;
 }
 
-message GameResponse {
-  ListGamesResponse list_games = 1;
-  GetBoardResponse get_board = 2;
-  GetBoardMetaResponse get_board_meta = 8;
-  MoveResponse make_move_resp = 3;
-  OfferDrawResponse draw = 7;
-  CreateGameResponse create_game = 4;
-  WaitForMoveResponse wait_moves = 5;
-  repeated GetMovesResponse get_moves = 6;
-  GetPreviousBoardStatesResponse get_prev_board = 9;
-  GetMovelistResponse move_list = 10;
+message Position {
+  int32 x = 1;
+  int32 y = 2;
 }
 
-message ListGamesRequest {
-  bool list_recent = 1;
-  uint64 latest = 2; // if set only list games before that point
-  uint64 earliest = 3; // if set only list games up to that point
+enum Type {
+  INVALID = 0;
+  PAWN = 1;
+  ROOK = 2;
+  KNIGHT = 3;
+  BISHOP = 4;
+  QUEEN = 5;
+  KING = 6;
 }
 
-message ListGamesResponse {
-  // TODO
+message Piece {
+  Type type = 1;
+  Position position = 2;
 }
 
 message Move {
@@ -53,106 +38,233 @@ message Move {
     QUEENSIDE = 2;
   }
   Castle castle = 5;
+  bytes player_id = 6;
 }
 
-message MoveRequest {
+
+// allow batching requests; basically a single packet can be any combination of
+// these
+message GameRequest {
+  repeated PlayerReq ps = 1;
+  repeated GameReq gs = 2;
+}
+
+message GameResponse {
+  repeated PlayerResp ps = 1;
+  repeated GameResp gs = 2;
+}
+
+message PlayerReq {
+  bytes player_id = 1;
+  repeated PlayerAction actions = 2;
+}
+
+message PlayerResp {
+  bytes player_id = 1;
+  repeated PlayerResult results = 2;
+}
+
+message GameReq {
   bytes game_id = 1;
-  Side side = 2;
-  Move move = 3;
+  repeated GameAction actions = 2;
 }
 
-message MoveResponse {
-  bool committed = 1;
-  enum Error {
-    NO_ERROR = 0;
-    INVALID_MOVE = 1;
+message GameResp {
+  bytes game_id = 1;
+  repeated GameResult results = 2;
+}
+
+message PlayerAction {
+  bytes action_id = 1;
+  oneof actions {
+    ListActiveGames list_games = 2;
+    ListFinishedGames list_hist = 3;
+    StartGame start_game = 5;
+    Notify notify = 6;
+    GetProfile profile = 7;
+    ModifyProfile modify_profile = 8;
+    ListPlayers list_players = 9;
   }
-  Error error = 2;
-  bool is_checkmate = 3;
-  bool is_stalemate = 4;
 }
 
-message GameState {
-  // TODO
+message PlayerResult {
+  bytes action_id = 1;
+  oneof results {
+    GameSummaries games = 2;
+    GameSummaries history = 3;
+    bytes game_id = 4;
+    PlayerNotification notification = 5;
+    Profile profile = 7;
+    bool modify_success = 8;
+    PlayerList listed_player_id = 6;
+  }
 }
 
-message Board {
-  repeated Piece pieces = 1;
-  repeated Piece captured = 2;
+message GameAction {
+  bytes action_id = 1;
+  oneof actions {
+    GetSummary game_summary = 2;
+    GetBoard board = 3;
+    GetMoveHistory history = 4;
+    PlayMove play_move = 5;
+    Resign resign = 6;
+    Draw draw = 7;
+    Spectate spectate = 8;
+    Unspectate unspectate = 9;
+  }
 }
 
-message GetBoardRequest {
+message GameResult {
+  bytes action_id = 1;
+  oneof actions {
+    GameSummary summary = 2;
+    Board board = 3;
+    MoveList moves = 4;
+    MoveResult move_result = 5;
+    ResignResult resign_result = 6;
+    DrawResult draw_result = 7;
+    SpectateResult spectate = 8;
+    UnspectateResult unspectate = 9;
+  }
+}
+
+
+message GetProfile {}
+
+message Profile {
+  bytes player_id = 1;
+  uint64 wins = 2;
+  uint64 ties = 3;
+  uint64 losses = 4;
+  repeated bytes current_games = 5;
+  bytes player_name = 6;
+}
+
+message ModifyProfile {
+  bytes new_name = 1;
+}
+
+message ListPlayers {
+  // TODO: filters for player name or whatever
+}
+
+
+message GameSummaries {
+  repeated GameSummary s = 1;
+}
+
+message PlayerList {
+  repeated bytes player_id = 1;
+  repeated bytes player_name = 2;
+}
+
+message MoveList {
+  repeated Move ms = 1;
+}
+
+message ListActiveGames {}
+
+message ListFinishedGames {
+  int64 start = 1;
+  int64 end = 2;
+}
+
+message StartGame {
+  repeated bytes white_ids = 1;
+  repeated bytes black_ids = 2;
+  repeated bytes spectators = 3;
+}
+
+message GetSummary {
+}
+
+message GetBoard {
   bytes board_id = 1;
 }
 
-message GetBoardResponse {
-  enum Error {
-    NO_ERROR = 0;
-    NO_BOARD = 1;
+message GetMoveHistory {
+}
+
+message PlayMove {
+  Move move = 1;
+}
+
+message Resign {
+}
+
+message Draw {
+}
+
+message GameSummary {
+  Side cur_move = 1;
+  repeated bytes white = 2;
+  repeated bytes black = 3;
+  repeated bytes spectating = 4;
+  // TODO: various flags, like in check, offer to draw, etc.
+}
+
+message Board {
+  repeated Piece inplay = 1;
+  repeated Piece captured = 2;
+  repeated Move move_list = 3;
+  GameSummary gs = 4;
+}
+
+message MoveResult {
+  bool success = 1;
+  GameSummary result = 2;
+}
+
+message ResignResult {
+  bool success = 1;
+  GameSummary result = 2;
+}
+
+message DrawResult {
+  bool success = 1;
+  GameSummary result = 2;
+}
+
+message Notify {
+  int64 heartbeat = 1;
+  int64 timeout = 2;
+}
+
+message Spectate {}
+message Unspectate {}
+
+message SpectateResult {
+  bool is_spectating = 1;
+}
+
+message UnspectateResult {
+  bool is_spectating = 1;
+}
+
+message MoveNotification {
+  bytes board_id = 1;
+  Move m = 2;
+  GameSummary s = 3;
+}
+
+message ResignNotification {
+  bytes board_id = 1;
+  bytes player_id = 2;
+  bytes player_name = 3;
+  GameSummary s = 4;
+}
+
+message DrawNotification {
+  bytes board_id = 1;
+  bytes player_id = 2;
+  bytes player_name = 3;
+  GameSummary s = 4;
+}
+
+message PlayerNotification {
+  oneof n {
+    MoveNotification mn = 1;
+    ResignNotification rn = 2;
+    DrawNotification dn = 3;
   }
-  Error error = 1;
-  Board board = 2;
-  GameState state = 3;
 }
-
-message GetBoardMetaRequest {
-  // TODO
-}
-
-message GetBoardMetaResponse {
-  // TODO
-}
-
-message OfferDrawRequest {
-  // TODO
-}
-
-message OfferDrawResponse {
-  // TODO
-}
-
-
-message CreateGameRequest {
-  // TODO
-}
-
-message CreateGameResponse {
-  // TODO
-}
-
-
-message WaitForMoveRequest {
-  // TODO
-}
-
-message WaitForMoveResponse {
-  // TODO
-}
-
-
-message GetMovesRequest {
-  // TODO
-}
-
-message GetMovesResponse {
-  // TODO
-}
-
-
-message GetPreviousBoardStatesRequest {
-  // TODO
-}
-
-message GetPreviousBoardStatesResponse {
-  // TODO
-}
-
-
-message GetMovelistRequest {
-  // TODO
-}
-
-message GetMovelistResponse {
-  // TODO
-}
-

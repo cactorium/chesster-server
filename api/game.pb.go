@@ -18,6 +18,67 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type Side int32
+
+const (
+	Side_WHITE Side = 0
+	Side_BLACK Side = 1
+)
+
+var Side_name = map[int32]string{
+	0: "WHITE",
+	1: "BLACK",
+}
+var Side_value = map[string]int32{
+	"WHITE": 0,
+	"BLACK": 1,
+}
+
+func (x Side) String() string {
+	return proto.EnumName(Side_name, int32(x))
+}
+func (Side) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{0}
+}
+
+type Type int32
+
+const (
+	Type_INVALID Type = 0
+	Type_PAWN    Type = 1
+	Type_ROOK    Type = 2
+	Type_KNIGHT  Type = 3
+	Type_BISHOP  Type = 4
+	Type_QUEEN   Type = 5
+	Type_KING    Type = 6
+)
+
+var Type_name = map[int32]string{
+	0: "INVALID",
+	1: "PAWN",
+	2: "ROOK",
+	3: "KNIGHT",
+	4: "BISHOP",
+	5: "QUEEN",
+	6: "KING",
+}
+var Type_value = map[string]int32{
+	"INVALID": 0,
+	"PAWN":    1,
+	"ROOK":    2,
+	"KNIGHT":  3,
+	"BISHOP":  4,
+	"QUEEN":   5,
+	"KING":    6,
+}
+
+func (x Type) String() string {
+	return proto.EnumName(Type_name, int32(x))
+}
+func (Type) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{1}
+}
+
 type Move_Castle int32
 
 const (
@@ -41,360 +102,100 @@ func (x Move_Castle) String() string {
 	return proto.EnumName(Move_Castle_name, int32(x))
 }
 func (Move_Castle) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{4, 0}
+	return fileDescriptor_game_ea86be612a725148, []int{2, 0}
 }
 
-type MoveResponse_Error int32
-
-const (
-	MoveResponse_NO_ERROR     MoveResponse_Error = 0
-	MoveResponse_INVALID_MOVE MoveResponse_Error = 1
-)
-
-var MoveResponse_Error_name = map[int32]string{
-	0: "NO_ERROR",
-	1: "INVALID_MOVE",
-}
-var MoveResponse_Error_value = map[string]int32{
-	"NO_ERROR":     0,
-	"INVALID_MOVE": 1,
-}
-
-func (x MoveResponse_Error) String() string {
-	return proto.EnumName(MoveResponse_Error_name, int32(x))
-}
-func (MoveResponse_Error) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{6, 0}
-}
-
-type GetBoardResponse_Error int32
-
-const (
-	GetBoardResponse_NO_ERROR GetBoardResponse_Error = 0
-	GetBoardResponse_NO_BOARD GetBoardResponse_Error = 1
-)
-
-var GetBoardResponse_Error_name = map[int32]string{
-	0: "NO_ERROR",
-	1: "NO_BOARD",
-}
-var GetBoardResponse_Error_value = map[string]int32{
-	"NO_ERROR": 0,
-	"NO_BOARD": 1,
-}
-
-func (x GetBoardResponse_Error) String() string {
-	return proto.EnumName(GetBoardResponse_Error_name, int32(x))
-}
-func (GetBoardResponse_Error) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{10, 0}
-}
-
-// allow batching requests; basically a single packet can be any combination of
-// these
-type GameRequest struct {
-	ListGamesReq         *ListGamesRequest              `protobuf:"bytes,1,opt,name=list_games_req,json=listGamesReq,proto3" json:"list_games_req,omitempty"`
-	GetBoard             *GetBoardRequest               `protobuf:"bytes,2,opt,name=get_board,json=getBoard,proto3" json:"get_board,omitempty"`
-	GetBoardMeta         *GetBoardMetaRequest           `protobuf:"bytes,8,opt,name=get_board_meta,json=getBoardMeta,proto3" json:"get_board_meta,omitempty"`
-	MakeMove             *MoveRequest                   `protobuf:"bytes,3,opt,name=make_move,json=makeMove,proto3" json:"make_move,omitempty"`
-	Draw                 *OfferDrawRequest              `protobuf:"bytes,7,opt,name=draw,proto3" json:"draw,omitempty"`
-	CreateGame           *CreateGameRequest             `protobuf:"bytes,4,opt,name=create_game,json=createGame,proto3" json:"create_game,omitempty"`
-	WaitMoves            *WaitForMoveRequest            `protobuf:"bytes,5,opt,name=wait_moves,json=waitMoves,proto3" json:"wait_moves,omitempty"`
-	GetMoves             []*GetMovesRequest             `protobuf:"bytes,6,rep,name=get_moves,json=getMoves,proto3" json:"get_moves,omitempty"`
-	GetPrevBoard         *GetPreviousBoardStatesRequest `protobuf:"bytes,9,opt,name=get_prev_board,json=getPrevBoard,proto3" json:"get_prev_board,omitempty"`
-	MoveList             *GetMovelistRequest            `protobuf:"bytes,10,opt,name=move_list,json=moveList,proto3" json:"move_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
-	XXX_unrecognized     []byte                         `json:"-"`
-	XXX_sizecache        int32                          `json:"-"`
-}
-
-func (m *GameRequest) Reset()         { *m = GameRequest{} }
-func (m *GameRequest) String() string { return proto.CompactTextString(m) }
-func (*GameRequest) ProtoMessage()    {}
-func (*GameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{0}
-}
-func (m *GameRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GameRequest.Unmarshal(m, b)
-}
-func (m *GameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GameRequest.Marshal(b, m, deterministic)
-}
-func (dst *GameRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GameRequest.Merge(dst, src)
-}
-func (m *GameRequest) XXX_Size() int {
-	return xxx_messageInfo_GameRequest.Size(m)
-}
-func (m *GameRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GameRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GameRequest proto.InternalMessageInfo
-
-func (m *GameRequest) GetListGamesReq() *ListGamesRequest {
-	if m != nil {
-		return m.ListGamesReq
-	}
-	return nil
-}
-
-func (m *GameRequest) GetGetBoard() *GetBoardRequest {
-	if m != nil {
-		return m.GetBoard
-	}
-	return nil
-}
-
-func (m *GameRequest) GetGetBoardMeta() *GetBoardMetaRequest {
-	if m != nil {
-		return m.GetBoardMeta
-	}
-	return nil
-}
-
-func (m *GameRequest) GetMakeMove() *MoveRequest {
-	if m != nil {
-		return m.MakeMove
-	}
-	return nil
-}
-
-func (m *GameRequest) GetDraw() *OfferDrawRequest {
-	if m != nil {
-		return m.Draw
-	}
-	return nil
-}
-
-func (m *GameRequest) GetCreateGame() *CreateGameRequest {
-	if m != nil {
-		return m.CreateGame
-	}
-	return nil
-}
-
-func (m *GameRequest) GetWaitMoves() *WaitForMoveRequest {
-	if m != nil {
-		return m.WaitMoves
-	}
-	return nil
-}
-
-func (m *GameRequest) GetGetMoves() []*GetMovesRequest {
-	if m != nil {
-		return m.GetMoves
-	}
-	return nil
-}
-
-func (m *GameRequest) GetGetPrevBoard() *GetPreviousBoardStatesRequest {
-	if m != nil {
-		return m.GetPrevBoard
-	}
-	return nil
-}
-
-func (m *GameRequest) GetMoveList() *GetMovelistRequest {
-	if m != nil {
-		return m.MoveList
-	}
-	return nil
-}
-
-type GameResponse struct {
-	ListGames            *ListGamesResponse              `protobuf:"bytes,1,opt,name=list_games,json=listGames,proto3" json:"list_games,omitempty"`
-	GetBoard             *GetBoardResponse               `protobuf:"bytes,2,opt,name=get_board,json=getBoard,proto3" json:"get_board,omitempty"`
-	GetBoardMeta         *GetBoardMetaResponse           `protobuf:"bytes,8,opt,name=get_board_meta,json=getBoardMeta,proto3" json:"get_board_meta,omitempty"`
-	MakeMoveResp         *MoveResponse                   `protobuf:"bytes,3,opt,name=make_move_resp,json=makeMoveResp,proto3" json:"make_move_resp,omitempty"`
-	Draw                 *OfferDrawResponse              `protobuf:"bytes,7,opt,name=draw,proto3" json:"draw,omitempty"`
-	CreateGame           *CreateGameResponse             `protobuf:"bytes,4,opt,name=create_game,json=createGame,proto3" json:"create_game,omitempty"`
-	WaitMoves            *WaitForMoveResponse            `protobuf:"bytes,5,opt,name=wait_moves,json=waitMoves,proto3" json:"wait_moves,omitempty"`
-	GetMoves             []*GetMovesResponse             `protobuf:"bytes,6,rep,name=get_moves,json=getMoves,proto3" json:"get_moves,omitempty"`
-	GetPrevBoard         *GetPreviousBoardStatesResponse `protobuf:"bytes,9,opt,name=get_prev_board,json=getPrevBoard,proto3" json:"get_prev_board,omitempty"`
-	MoveList             *GetMovelistResponse            `protobuf:"bytes,10,opt,name=move_list,json=moveList,proto3" json:"move_list,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
-	XXX_unrecognized     []byte                          `json:"-"`
-	XXX_sizecache        int32                           `json:"-"`
-}
-
-func (m *GameResponse) Reset()         { *m = GameResponse{} }
-func (m *GameResponse) String() string { return proto.CompactTextString(m) }
-func (*GameResponse) ProtoMessage()    {}
-func (*GameResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{1}
-}
-func (m *GameResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GameResponse.Unmarshal(m, b)
-}
-func (m *GameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GameResponse.Marshal(b, m, deterministic)
-}
-func (dst *GameResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GameResponse.Merge(dst, src)
-}
-func (m *GameResponse) XXX_Size() int {
-	return xxx_messageInfo_GameResponse.Size(m)
-}
-func (m *GameResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GameResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GameResponse proto.InternalMessageInfo
-
-func (m *GameResponse) GetListGames() *ListGamesResponse {
-	if m != nil {
-		return m.ListGames
-	}
-	return nil
-}
-
-func (m *GameResponse) GetGetBoard() *GetBoardResponse {
-	if m != nil {
-		return m.GetBoard
-	}
-	return nil
-}
-
-func (m *GameResponse) GetGetBoardMeta() *GetBoardMetaResponse {
-	if m != nil {
-		return m.GetBoardMeta
-	}
-	return nil
-}
-
-func (m *GameResponse) GetMakeMoveResp() *MoveResponse {
-	if m != nil {
-		return m.MakeMoveResp
-	}
-	return nil
-}
-
-func (m *GameResponse) GetDraw() *OfferDrawResponse {
-	if m != nil {
-		return m.Draw
-	}
-	return nil
-}
-
-func (m *GameResponse) GetCreateGame() *CreateGameResponse {
-	if m != nil {
-		return m.CreateGame
-	}
-	return nil
-}
-
-func (m *GameResponse) GetWaitMoves() *WaitForMoveResponse {
-	if m != nil {
-		return m.WaitMoves
-	}
-	return nil
-}
-
-func (m *GameResponse) GetGetMoves() []*GetMovesResponse {
-	if m != nil {
-		return m.GetMoves
-	}
-	return nil
-}
-
-func (m *GameResponse) GetGetPrevBoard() *GetPreviousBoardStatesResponse {
-	if m != nil {
-		return m.GetPrevBoard
-	}
-	return nil
-}
-
-func (m *GameResponse) GetMoveList() *GetMovelistResponse {
-	if m != nil {
-		return m.MoveList
-	}
-	return nil
-}
-
-type ListGamesRequest struct {
-	ListRecent           bool     `protobuf:"varint,1,opt,name=list_recent,json=listRecent,proto3" json:"list_recent,omitempty"`
-	Latest               uint64   `protobuf:"varint,2,opt,name=latest,proto3" json:"latest,omitempty"`
-	Earliest             uint64   `protobuf:"varint,3,opt,name=earliest,proto3" json:"earliest,omitempty"`
+type Position struct {
+	X                    int32    `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y                    int32    `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ListGamesRequest) Reset()         { *m = ListGamesRequest{} }
-func (m *ListGamesRequest) String() string { return proto.CompactTextString(m) }
-func (*ListGamesRequest) ProtoMessage()    {}
-func (*ListGamesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{2}
+func (m *Position) Reset()         { *m = Position{} }
+func (m *Position) String() string { return proto.CompactTextString(m) }
+func (*Position) ProtoMessage()    {}
+func (*Position) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{0}
 }
-func (m *ListGamesRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListGamesRequest.Unmarshal(m, b)
+func (m *Position) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Position.Unmarshal(m, b)
 }
-func (m *ListGamesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListGamesRequest.Marshal(b, m, deterministic)
+func (m *Position) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Position.Marshal(b, m, deterministic)
 }
-func (dst *ListGamesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListGamesRequest.Merge(dst, src)
+func (dst *Position) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Position.Merge(dst, src)
 }
-func (m *ListGamesRequest) XXX_Size() int {
-	return xxx_messageInfo_ListGamesRequest.Size(m)
+func (m *Position) XXX_Size() int {
+	return xxx_messageInfo_Position.Size(m)
 }
-func (m *ListGamesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListGamesRequest.DiscardUnknown(m)
+func (m *Position) XXX_DiscardUnknown() {
+	xxx_messageInfo_Position.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ListGamesRequest proto.InternalMessageInfo
+var xxx_messageInfo_Position proto.InternalMessageInfo
 
-func (m *ListGamesRequest) GetListRecent() bool {
+func (m *Position) GetX() int32 {
 	if m != nil {
-		return m.ListRecent
-	}
-	return false
-}
-
-func (m *ListGamesRequest) GetLatest() uint64 {
-	if m != nil {
-		return m.Latest
+		return m.X
 	}
 	return 0
 }
 
-func (m *ListGamesRequest) GetEarliest() uint64 {
+func (m *Position) GetY() int32 {
 	if m != nil {
-		return m.Earliest
+		return m.Y
 	}
 	return 0
 }
 
-type ListGamesResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+type Piece struct {
+	Type                 Type      `protobuf:"varint,1,opt,name=type,proto3,enum=api.Type" json:"type,omitempty"`
+	Position             *Position `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *ListGamesResponse) Reset()         { *m = ListGamesResponse{} }
-func (m *ListGamesResponse) String() string { return proto.CompactTextString(m) }
-func (*ListGamesResponse) ProtoMessage()    {}
-func (*ListGamesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{3}
+func (m *Piece) Reset()         { *m = Piece{} }
+func (m *Piece) String() string { return proto.CompactTextString(m) }
+func (*Piece) ProtoMessage()    {}
+func (*Piece) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{1}
 }
-func (m *ListGamesResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListGamesResponse.Unmarshal(m, b)
+func (m *Piece) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Piece.Unmarshal(m, b)
 }
-func (m *ListGamesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListGamesResponse.Marshal(b, m, deterministic)
+func (m *Piece) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Piece.Marshal(b, m, deterministic)
 }
-func (dst *ListGamesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListGamesResponse.Merge(dst, src)
+func (dst *Piece) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Piece.Merge(dst, src)
 }
-func (m *ListGamesResponse) XXX_Size() int {
-	return xxx_messageInfo_ListGamesResponse.Size(m)
+func (m *Piece) XXX_Size() int {
+	return xxx_messageInfo_Piece.Size(m)
 }
-func (m *ListGamesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListGamesResponse.DiscardUnknown(m)
+func (m *Piece) XXX_DiscardUnknown() {
+	xxx_messageInfo_Piece.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ListGamesResponse proto.InternalMessageInfo
+var xxx_messageInfo_Piece proto.InternalMessageInfo
+
+func (m *Piece) GetType() Type {
+	if m != nil {
+		return m.Type
+	}
+	return Type_INVALID
+}
+
+func (m *Piece) GetPosition() *Position {
+	if m != nil {
+		return m.Position
+	}
+	return nil
+}
 
 type Move struct {
 	Type                 Type        `protobuf:"varint,1,opt,name=type,proto3,enum=api.Type" json:"type,omitempty"`
@@ -402,6 +203,7 @@ type Move struct {
 	End                  *Position   `protobuf:"bytes,3,opt,name=end,proto3" json:"end,omitempty"`
 	Promotion            bool        `protobuf:"varint,4,opt,name=promotion,proto3" json:"promotion,omitempty"`
 	Castle               Move_Castle `protobuf:"varint,5,opt,name=castle,proto3,enum=api.Move_Castle" json:"castle,omitempty"`
+	PlayerId             []byte      `protobuf:"bytes,6,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -411,7 +213,7 @@ func (m *Move) Reset()         { *m = Move{} }
 func (m *Move) String() string { return proto.CompactTextString(m) }
 func (*Move) ProtoMessage()    {}
 func (*Move) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{4}
+	return fileDescriptor_game_ea86be612a725148, []int{2}
 }
 func (m *Move) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Move.Unmarshal(m, b)
@@ -466,165 +268,2273 @@ func (m *Move) GetCastle() Move_Castle {
 	return Move_NONE
 }
 
-type MoveRequest struct {
-	GameId               []byte   `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
-	Side                 Side     `protobuf:"varint,2,opt,name=side,proto3,enum=api.Side" json:"side,omitempty"`
-	Move                 *Move    `protobuf:"bytes,3,opt,name=move,proto3" json:"move,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+func (m *Move) GetPlayerId() []byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
 }
 
-func (m *MoveRequest) Reset()         { *m = MoveRequest{} }
-func (m *MoveRequest) String() string { return proto.CompactTextString(m) }
-func (*MoveRequest) ProtoMessage()    {}
-func (*MoveRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{5}
-}
-func (m *MoveRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MoveRequest.Unmarshal(m, b)
-}
-func (m *MoveRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MoveRequest.Marshal(b, m, deterministic)
-}
-func (dst *MoveRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MoveRequest.Merge(dst, src)
-}
-func (m *MoveRequest) XXX_Size() int {
-	return xxx_messageInfo_MoveRequest.Size(m)
-}
-func (m *MoveRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_MoveRequest.DiscardUnknown(m)
+// allow batching requests; basically a single packet can be any combination of
+// these
+type GameRequest struct {
+	Ps                   []*PlayerReq `protobuf:"bytes,1,rep,name=ps,proto3" json:"ps,omitempty"`
+	Gs                   []*GameReq   `protobuf:"bytes,2,rep,name=gs,proto3" json:"gs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
-var xxx_messageInfo_MoveRequest proto.InternalMessageInfo
+func (m *GameRequest) Reset()         { *m = GameRequest{} }
+func (m *GameRequest) String() string { return proto.CompactTextString(m) }
+func (*GameRequest) ProtoMessage()    {}
+func (*GameRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{3}
+}
+func (m *GameRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameRequest.Unmarshal(m, b)
+}
+func (m *GameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameRequest.Marshal(b, m, deterministic)
+}
+func (dst *GameRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameRequest.Merge(dst, src)
+}
+func (m *GameRequest) XXX_Size() int {
+	return xxx_messageInfo_GameRequest.Size(m)
+}
+func (m *GameRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameRequest.DiscardUnknown(m)
+}
 
-func (m *MoveRequest) GetGameId() []byte {
+var xxx_messageInfo_GameRequest proto.InternalMessageInfo
+
+func (m *GameRequest) GetPs() []*PlayerReq {
+	if m != nil {
+		return m.Ps
+	}
+	return nil
+}
+
+func (m *GameRequest) GetGs() []*GameReq {
+	if m != nil {
+		return m.Gs
+	}
+	return nil
+}
+
+type GameResponse struct {
+	Ps                   []*PlayerResp `protobuf:"bytes,1,rep,name=ps,proto3" json:"ps,omitempty"`
+	Gs                   []*GameResp   `protobuf:"bytes,2,rep,name=gs,proto3" json:"gs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *GameResponse) Reset()         { *m = GameResponse{} }
+func (m *GameResponse) String() string { return proto.CompactTextString(m) }
+func (*GameResponse) ProtoMessage()    {}
+func (*GameResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{4}
+}
+func (m *GameResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameResponse.Unmarshal(m, b)
+}
+func (m *GameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameResponse.Marshal(b, m, deterministic)
+}
+func (dst *GameResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameResponse.Merge(dst, src)
+}
+func (m *GameResponse) XXX_Size() int {
+	return xxx_messageInfo_GameResponse.Size(m)
+}
+func (m *GameResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameResponse proto.InternalMessageInfo
+
+func (m *GameResponse) GetPs() []*PlayerResp {
+	if m != nil {
+		return m.Ps
+	}
+	return nil
+}
+
+func (m *GameResponse) GetGs() []*GameResp {
+	if m != nil {
+		return m.Gs
+	}
+	return nil
+}
+
+type PlayerReq struct {
+	PlayerId             []byte          `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Actions              []*PlayerAction `protobuf:"bytes,2,rep,name=actions,proto3" json:"actions,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *PlayerReq) Reset()         { *m = PlayerReq{} }
+func (m *PlayerReq) String() string { return proto.CompactTextString(m) }
+func (*PlayerReq) ProtoMessage()    {}
+func (*PlayerReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{5}
+}
+func (m *PlayerReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayerReq.Unmarshal(m, b)
+}
+func (m *PlayerReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayerReq.Marshal(b, m, deterministic)
+}
+func (dst *PlayerReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerReq.Merge(dst, src)
+}
+func (m *PlayerReq) XXX_Size() int {
+	return xxx_messageInfo_PlayerReq.Size(m)
+}
+func (m *PlayerReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerReq proto.InternalMessageInfo
+
+func (m *PlayerReq) GetPlayerId() []byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *PlayerReq) GetActions() []*PlayerAction {
+	if m != nil {
+		return m.Actions
+	}
+	return nil
+}
+
+type PlayerResp struct {
+	PlayerId             []byte          `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Results              []*PlayerResult `protobuf:"bytes,2,rep,name=results,proto3" json:"results,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *PlayerResp) Reset()         { *m = PlayerResp{} }
+func (m *PlayerResp) String() string { return proto.CompactTextString(m) }
+func (*PlayerResp) ProtoMessage()    {}
+func (*PlayerResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{6}
+}
+func (m *PlayerResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayerResp.Unmarshal(m, b)
+}
+func (m *PlayerResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayerResp.Marshal(b, m, deterministic)
+}
+func (dst *PlayerResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerResp.Merge(dst, src)
+}
+func (m *PlayerResp) XXX_Size() int {
+	return xxx_messageInfo_PlayerResp.Size(m)
+}
+func (m *PlayerResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerResp proto.InternalMessageInfo
+
+func (m *PlayerResp) GetPlayerId() []byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *PlayerResp) GetResults() []*PlayerResult {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
+type GameReq struct {
+	GameId               []byte        `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
+	Actions              []*GameAction `protobuf:"bytes,2,rep,name=actions,proto3" json:"actions,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *GameReq) Reset()         { *m = GameReq{} }
+func (m *GameReq) String() string { return proto.CompactTextString(m) }
+func (*GameReq) ProtoMessage()    {}
+func (*GameReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{7}
+}
+func (m *GameReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameReq.Unmarshal(m, b)
+}
+func (m *GameReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameReq.Marshal(b, m, deterministic)
+}
+func (dst *GameReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameReq.Merge(dst, src)
+}
+func (m *GameReq) XXX_Size() int {
+	return xxx_messageInfo_GameReq.Size(m)
+}
+func (m *GameReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameReq proto.InternalMessageInfo
+
+func (m *GameReq) GetGameId() []byte {
 	if m != nil {
 		return m.GameId
 	}
 	return nil
 }
 
-func (m *MoveRequest) GetSide() Side {
+func (m *GameReq) GetActions() []*GameAction {
 	if m != nil {
-		return m.Side
+		return m.Actions
 	}
-	return Side_WHITE
+	return nil
 }
 
-func (m *MoveRequest) GetMove() *Move {
+type GameResp struct {
+	GameId               []byte        `protobuf:"bytes,1,opt,name=game_id,json=gameId,proto3" json:"game_id,omitempty"`
+	Results              []*GameResult `protobuf:"bytes,2,rep,name=results,proto3" json:"results,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
+}
+
+func (m *GameResp) Reset()         { *m = GameResp{} }
+func (m *GameResp) String() string { return proto.CompactTextString(m) }
+func (*GameResp) ProtoMessage()    {}
+func (*GameResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{8}
+}
+func (m *GameResp) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameResp.Unmarshal(m, b)
+}
+func (m *GameResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameResp.Marshal(b, m, deterministic)
+}
+func (dst *GameResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameResp.Merge(dst, src)
+}
+func (m *GameResp) XXX_Size() int {
+	return xxx_messageInfo_GameResp.Size(m)
+}
+func (m *GameResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameResp proto.InternalMessageInfo
+
+func (m *GameResp) GetGameId() []byte {
+	if m != nil {
+		return m.GameId
+	}
+	return nil
+}
+
+func (m *GameResp) GetResults() []*GameResult {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
+type PlayerAction struct {
+	ActionId []byte `protobuf:"bytes,1,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	// Types that are valid to be assigned to Actions:
+	//	*PlayerAction_ListGames
+	//	*PlayerAction_ListHist
+	//	*PlayerAction_StartGame
+	//	*PlayerAction_Notify
+	//	*PlayerAction_Profile
+	//	*PlayerAction_ModifyProfile
+	//	*PlayerAction_ListPlayers
+	Actions              isPlayerAction_Actions `protobuf_oneof:"actions"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *PlayerAction) Reset()         { *m = PlayerAction{} }
+func (m *PlayerAction) String() string { return proto.CompactTextString(m) }
+func (*PlayerAction) ProtoMessage()    {}
+func (*PlayerAction) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{9}
+}
+func (m *PlayerAction) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayerAction.Unmarshal(m, b)
+}
+func (m *PlayerAction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayerAction.Marshal(b, m, deterministic)
+}
+func (dst *PlayerAction) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerAction.Merge(dst, src)
+}
+func (m *PlayerAction) XXX_Size() int {
+	return xxx_messageInfo_PlayerAction.Size(m)
+}
+func (m *PlayerAction) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerAction.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerAction proto.InternalMessageInfo
+
+type isPlayerAction_Actions interface {
+	isPlayerAction_Actions()
+}
+
+type PlayerAction_ListGames struct {
+	ListGames *ListActiveGames `protobuf:"bytes,2,opt,name=list_games,json=listGames,proto3,oneof"`
+}
+type PlayerAction_ListHist struct {
+	ListHist *ListFinishedGames `protobuf:"bytes,3,opt,name=list_hist,json=listHist,proto3,oneof"`
+}
+type PlayerAction_StartGame struct {
+	StartGame *StartGame `protobuf:"bytes,5,opt,name=start_game,json=startGame,proto3,oneof"`
+}
+type PlayerAction_Notify struct {
+	Notify *Notify `protobuf:"bytes,6,opt,name=notify,proto3,oneof"`
+}
+type PlayerAction_Profile struct {
+	Profile *GetProfile `protobuf:"bytes,7,opt,name=profile,proto3,oneof"`
+}
+type PlayerAction_ModifyProfile struct {
+	ModifyProfile *ModifyProfile `protobuf:"bytes,8,opt,name=modify_profile,json=modifyProfile,proto3,oneof"`
+}
+type PlayerAction_ListPlayers struct {
+	ListPlayers *ListPlayers `protobuf:"bytes,9,opt,name=list_players,json=listPlayers,proto3,oneof"`
+}
+
+func (*PlayerAction_ListGames) isPlayerAction_Actions()     {}
+func (*PlayerAction_ListHist) isPlayerAction_Actions()      {}
+func (*PlayerAction_StartGame) isPlayerAction_Actions()     {}
+func (*PlayerAction_Notify) isPlayerAction_Actions()        {}
+func (*PlayerAction_Profile) isPlayerAction_Actions()       {}
+func (*PlayerAction_ModifyProfile) isPlayerAction_Actions() {}
+func (*PlayerAction_ListPlayers) isPlayerAction_Actions()   {}
+
+func (m *PlayerAction) GetActions() isPlayerAction_Actions {
+	if m != nil {
+		return m.Actions
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetActionId() []byte {
+	if m != nil {
+		return m.ActionId
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetListGames() *ListActiveGames {
+	if x, ok := m.GetActions().(*PlayerAction_ListGames); ok {
+		return x.ListGames
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetListHist() *ListFinishedGames {
+	if x, ok := m.GetActions().(*PlayerAction_ListHist); ok {
+		return x.ListHist
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetStartGame() *StartGame {
+	if x, ok := m.GetActions().(*PlayerAction_StartGame); ok {
+		return x.StartGame
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetNotify() *Notify {
+	if x, ok := m.GetActions().(*PlayerAction_Notify); ok {
+		return x.Notify
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetProfile() *GetProfile {
+	if x, ok := m.GetActions().(*PlayerAction_Profile); ok {
+		return x.Profile
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetModifyProfile() *ModifyProfile {
+	if x, ok := m.GetActions().(*PlayerAction_ModifyProfile); ok {
+		return x.ModifyProfile
+	}
+	return nil
+}
+
+func (m *PlayerAction) GetListPlayers() *ListPlayers {
+	if x, ok := m.GetActions().(*PlayerAction_ListPlayers); ok {
+		return x.ListPlayers
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*PlayerAction) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _PlayerAction_OneofMarshaler, _PlayerAction_OneofUnmarshaler, _PlayerAction_OneofSizer, []interface{}{
+		(*PlayerAction_ListGames)(nil),
+		(*PlayerAction_ListHist)(nil),
+		(*PlayerAction_StartGame)(nil),
+		(*PlayerAction_Notify)(nil),
+		(*PlayerAction_Profile)(nil),
+		(*PlayerAction_ModifyProfile)(nil),
+		(*PlayerAction_ListPlayers)(nil),
+	}
+}
+
+func _PlayerAction_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*PlayerAction)
+	// actions
+	switch x := m.Actions.(type) {
+	case *PlayerAction_ListGames:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ListGames); err != nil {
+			return err
+		}
+	case *PlayerAction_ListHist:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ListHist); err != nil {
+			return err
+		}
+	case *PlayerAction_StartGame:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.StartGame); err != nil {
+			return err
+		}
+	case *PlayerAction_Notify:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Notify); err != nil {
+			return err
+		}
+	case *PlayerAction_Profile:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Profile); err != nil {
+			return err
+		}
+	case *PlayerAction_ModifyProfile:
+		b.EncodeVarint(8<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ModifyProfile); err != nil {
+			return err
+		}
+	case *PlayerAction_ListPlayers:
+		b.EncodeVarint(9<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ListPlayers); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("PlayerAction.Actions has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _PlayerAction_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*PlayerAction)
+	switch tag {
+	case 2: // actions.list_games
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListActiveGames)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_ListGames{msg}
+		return true, err
+	case 3: // actions.list_hist
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListFinishedGames)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_ListHist{msg}
+		return true, err
+	case 5: // actions.start_game
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(StartGame)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_StartGame{msg}
+		return true, err
+	case 6: // actions.notify
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Notify)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_Notify{msg}
+		return true, err
+	case 7: // actions.profile
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetProfile)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_Profile{msg}
+		return true, err
+	case 8: // actions.modify_profile
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ModifyProfile)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_ModifyProfile{msg}
+		return true, err
+	case 9: // actions.list_players
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ListPlayers)
+		err := b.DecodeMessage(msg)
+		m.Actions = &PlayerAction_ListPlayers{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _PlayerAction_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*PlayerAction)
+	// actions
+	switch x := m.Actions.(type) {
+	case *PlayerAction_ListGames:
+		s := proto.Size(x.ListGames)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerAction_ListHist:
+		s := proto.Size(x.ListHist)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerAction_StartGame:
+		s := proto.Size(x.StartGame)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerAction_Notify:
+		s := proto.Size(x.Notify)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerAction_Profile:
+		s := proto.Size(x.Profile)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerAction_ModifyProfile:
+		s := proto.Size(x.ModifyProfile)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerAction_ListPlayers:
+		s := proto.Size(x.ListPlayers)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type PlayerResult struct {
+	ActionId []byte `protobuf:"bytes,1,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	// Types that are valid to be assigned to Results:
+	//	*PlayerResult_Games
+	//	*PlayerResult_History
+	//	*PlayerResult_GameId
+	//	*PlayerResult_Notification
+	//	*PlayerResult_Profile
+	//	*PlayerResult_ModifySuccess
+	//	*PlayerResult_ListedPlayerId
+	Results              isPlayerResult_Results `protobuf_oneof:"results"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *PlayerResult) Reset()         { *m = PlayerResult{} }
+func (m *PlayerResult) String() string { return proto.CompactTextString(m) }
+func (*PlayerResult) ProtoMessage()    {}
+func (*PlayerResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{10}
+}
+func (m *PlayerResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayerResult.Unmarshal(m, b)
+}
+func (m *PlayerResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayerResult.Marshal(b, m, deterministic)
+}
+func (dst *PlayerResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerResult.Merge(dst, src)
+}
+func (m *PlayerResult) XXX_Size() int {
+	return xxx_messageInfo_PlayerResult.Size(m)
+}
+func (m *PlayerResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerResult proto.InternalMessageInfo
+
+type isPlayerResult_Results interface {
+	isPlayerResult_Results()
+}
+
+type PlayerResult_Games struct {
+	Games *GameSummaries `protobuf:"bytes,2,opt,name=games,proto3,oneof"`
+}
+type PlayerResult_History struct {
+	History *GameSummaries `protobuf:"bytes,3,opt,name=history,proto3,oneof"`
+}
+type PlayerResult_GameId struct {
+	GameId []byte `protobuf:"bytes,4,opt,name=game_id,json=gameId,proto3,oneof"`
+}
+type PlayerResult_Notification struct {
+	Notification *PlayerNotification `protobuf:"bytes,5,opt,name=notification,proto3,oneof"`
+}
+type PlayerResult_Profile struct {
+	Profile *Profile `protobuf:"bytes,7,opt,name=profile,proto3,oneof"`
+}
+type PlayerResult_ModifySuccess struct {
+	ModifySuccess bool `protobuf:"varint,8,opt,name=modify_success,json=modifySuccess,proto3,oneof"`
+}
+type PlayerResult_ListedPlayerId struct {
+	ListedPlayerId *PlayerList `protobuf:"bytes,6,opt,name=listed_player_id,json=listedPlayerId,proto3,oneof"`
+}
+
+func (*PlayerResult_Games) isPlayerResult_Results()          {}
+func (*PlayerResult_History) isPlayerResult_Results()        {}
+func (*PlayerResult_GameId) isPlayerResult_Results()         {}
+func (*PlayerResult_Notification) isPlayerResult_Results()   {}
+func (*PlayerResult_Profile) isPlayerResult_Results()        {}
+func (*PlayerResult_ModifySuccess) isPlayerResult_Results()  {}
+func (*PlayerResult_ListedPlayerId) isPlayerResult_Results() {}
+
+func (m *PlayerResult) GetResults() isPlayerResult_Results {
+	if m != nil {
+		return m.Results
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetActionId() []byte {
+	if m != nil {
+		return m.ActionId
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetGames() *GameSummaries {
+	if x, ok := m.GetResults().(*PlayerResult_Games); ok {
+		return x.Games
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetHistory() *GameSummaries {
+	if x, ok := m.GetResults().(*PlayerResult_History); ok {
+		return x.History
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetGameId() []byte {
+	if x, ok := m.GetResults().(*PlayerResult_GameId); ok {
+		return x.GameId
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetNotification() *PlayerNotification {
+	if x, ok := m.GetResults().(*PlayerResult_Notification); ok {
+		return x.Notification
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetProfile() *Profile {
+	if x, ok := m.GetResults().(*PlayerResult_Profile); ok {
+		return x.Profile
+	}
+	return nil
+}
+
+func (m *PlayerResult) GetModifySuccess() bool {
+	if x, ok := m.GetResults().(*PlayerResult_ModifySuccess); ok {
+		return x.ModifySuccess
+	}
+	return false
+}
+
+func (m *PlayerResult) GetListedPlayerId() *PlayerList {
+	if x, ok := m.GetResults().(*PlayerResult_ListedPlayerId); ok {
+		return x.ListedPlayerId
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*PlayerResult) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _PlayerResult_OneofMarshaler, _PlayerResult_OneofUnmarshaler, _PlayerResult_OneofSizer, []interface{}{
+		(*PlayerResult_Games)(nil),
+		(*PlayerResult_History)(nil),
+		(*PlayerResult_GameId)(nil),
+		(*PlayerResult_Notification)(nil),
+		(*PlayerResult_Profile)(nil),
+		(*PlayerResult_ModifySuccess)(nil),
+		(*PlayerResult_ListedPlayerId)(nil),
+	}
+}
+
+func _PlayerResult_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*PlayerResult)
+	// results
+	switch x := m.Results.(type) {
+	case *PlayerResult_Games:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Games); err != nil {
+			return err
+		}
+	case *PlayerResult_History:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.History); err != nil {
+			return err
+		}
+	case *PlayerResult_GameId:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		b.EncodeRawBytes(x.GameId)
+	case *PlayerResult_Notification:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Notification); err != nil {
+			return err
+		}
+	case *PlayerResult_Profile:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Profile); err != nil {
+			return err
+		}
+	case *PlayerResult_ModifySuccess:
+		t := uint64(0)
+		if x.ModifySuccess {
+			t = 1
+		}
+		b.EncodeVarint(8<<3 | proto.WireVarint)
+		b.EncodeVarint(t)
+	case *PlayerResult_ListedPlayerId:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ListedPlayerId); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("PlayerResult.Results has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _PlayerResult_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*PlayerResult)
+	switch tag {
+	case 2: // results.games
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GameSummaries)
+		err := b.DecodeMessage(msg)
+		m.Results = &PlayerResult_Games{msg}
+		return true, err
+	case 3: // results.history
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GameSummaries)
+		err := b.DecodeMessage(msg)
+		m.Results = &PlayerResult_History{msg}
+		return true, err
+	case 4: // results.game_id
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		x, err := b.DecodeRawBytes(true)
+		m.Results = &PlayerResult_GameId{x}
+		return true, err
+	case 5: // results.notification
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(PlayerNotification)
+		err := b.DecodeMessage(msg)
+		m.Results = &PlayerResult_Notification{msg}
+		return true, err
+	case 7: // results.profile
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Profile)
+		err := b.DecodeMessage(msg)
+		m.Results = &PlayerResult_Profile{msg}
+		return true, err
+	case 8: // results.modify_success
+		if wire != proto.WireVarint {
+			return true, proto.ErrInternalBadWireType
+		}
+		x, err := b.DecodeVarint()
+		m.Results = &PlayerResult_ModifySuccess{x != 0}
+		return true, err
+	case 6: // results.listed_player_id
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(PlayerList)
+		err := b.DecodeMessage(msg)
+		m.Results = &PlayerResult_ListedPlayerId{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _PlayerResult_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*PlayerResult)
+	// results
+	switch x := m.Results.(type) {
+	case *PlayerResult_Games:
+		s := proto.Size(x.Games)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerResult_History:
+		s := proto.Size(x.History)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerResult_GameId:
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(len(x.GameId)))
+		n += len(x.GameId)
+	case *PlayerResult_Notification:
+		s := proto.Size(x.Notification)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerResult_Profile:
+		s := proto.Size(x.Profile)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerResult_ModifySuccess:
+		n += 1 // tag and wire
+		n += 1
+	case *PlayerResult_ListedPlayerId:
+		s := proto.Size(x.ListedPlayerId)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type GameAction struct {
+	ActionId []byte `protobuf:"bytes,1,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	// Types that are valid to be assigned to Actions:
+	//	*GameAction_GameSummary
+	//	*GameAction_Board
+	//	*GameAction_History
+	//	*GameAction_PlayMove
+	//	*GameAction_Resign
+	//	*GameAction_Draw
+	//	*GameAction_Spectate
+	//	*GameAction_Unspectate
+	Actions              isGameAction_Actions `protobuf_oneof:"actions"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *GameAction) Reset()         { *m = GameAction{} }
+func (m *GameAction) String() string { return proto.CompactTextString(m) }
+func (*GameAction) ProtoMessage()    {}
+func (*GameAction) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{11}
+}
+func (m *GameAction) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameAction.Unmarshal(m, b)
+}
+func (m *GameAction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameAction.Marshal(b, m, deterministic)
+}
+func (dst *GameAction) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameAction.Merge(dst, src)
+}
+func (m *GameAction) XXX_Size() int {
+	return xxx_messageInfo_GameAction.Size(m)
+}
+func (m *GameAction) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameAction.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameAction proto.InternalMessageInfo
+
+type isGameAction_Actions interface {
+	isGameAction_Actions()
+}
+
+type GameAction_GameSummary struct {
+	GameSummary *GetSummary `protobuf:"bytes,2,opt,name=game_summary,json=gameSummary,proto3,oneof"`
+}
+type GameAction_Board struct {
+	Board *GetBoard `protobuf:"bytes,3,opt,name=board,proto3,oneof"`
+}
+type GameAction_History struct {
+	History *GetMoveHistory `protobuf:"bytes,4,opt,name=history,proto3,oneof"`
+}
+type GameAction_PlayMove struct {
+	PlayMove *PlayMove `protobuf:"bytes,5,opt,name=play_move,json=playMove,proto3,oneof"`
+}
+type GameAction_Resign struct {
+	Resign *Resign `protobuf:"bytes,6,opt,name=resign,proto3,oneof"`
+}
+type GameAction_Draw struct {
+	Draw *Draw `protobuf:"bytes,7,opt,name=draw,proto3,oneof"`
+}
+type GameAction_Spectate struct {
+	Spectate *Spectate `protobuf:"bytes,8,opt,name=spectate,proto3,oneof"`
+}
+type GameAction_Unspectate struct {
+	Unspectate *Unspectate `protobuf:"bytes,9,opt,name=unspectate,proto3,oneof"`
+}
+
+func (*GameAction_GameSummary) isGameAction_Actions() {}
+func (*GameAction_Board) isGameAction_Actions()       {}
+func (*GameAction_History) isGameAction_Actions()     {}
+func (*GameAction_PlayMove) isGameAction_Actions()    {}
+func (*GameAction_Resign) isGameAction_Actions()      {}
+func (*GameAction_Draw) isGameAction_Actions()        {}
+func (*GameAction_Spectate) isGameAction_Actions()    {}
+func (*GameAction_Unspectate) isGameAction_Actions()  {}
+
+func (m *GameAction) GetActions() isGameAction_Actions {
+	if m != nil {
+		return m.Actions
+	}
+	return nil
+}
+
+func (m *GameAction) GetActionId() []byte {
+	if m != nil {
+		return m.ActionId
+	}
+	return nil
+}
+
+func (m *GameAction) GetGameSummary() *GetSummary {
+	if x, ok := m.GetActions().(*GameAction_GameSummary); ok {
+		return x.GameSummary
+	}
+	return nil
+}
+
+func (m *GameAction) GetBoard() *GetBoard {
+	if x, ok := m.GetActions().(*GameAction_Board); ok {
+		return x.Board
+	}
+	return nil
+}
+
+func (m *GameAction) GetHistory() *GetMoveHistory {
+	if x, ok := m.GetActions().(*GameAction_History); ok {
+		return x.History
+	}
+	return nil
+}
+
+func (m *GameAction) GetPlayMove() *PlayMove {
+	if x, ok := m.GetActions().(*GameAction_PlayMove); ok {
+		return x.PlayMove
+	}
+	return nil
+}
+
+func (m *GameAction) GetResign() *Resign {
+	if x, ok := m.GetActions().(*GameAction_Resign); ok {
+		return x.Resign
+	}
+	return nil
+}
+
+func (m *GameAction) GetDraw() *Draw {
+	if x, ok := m.GetActions().(*GameAction_Draw); ok {
+		return x.Draw
+	}
+	return nil
+}
+
+func (m *GameAction) GetSpectate() *Spectate {
+	if x, ok := m.GetActions().(*GameAction_Spectate); ok {
+		return x.Spectate
+	}
+	return nil
+}
+
+func (m *GameAction) GetUnspectate() *Unspectate {
+	if x, ok := m.GetActions().(*GameAction_Unspectate); ok {
+		return x.Unspectate
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*GameAction) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _GameAction_OneofMarshaler, _GameAction_OneofUnmarshaler, _GameAction_OneofSizer, []interface{}{
+		(*GameAction_GameSummary)(nil),
+		(*GameAction_Board)(nil),
+		(*GameAction_History)(nil),
+		(*GameAction_PlayMove)(nil),
+		(*GameAction_Resign)(nil),
+		(*GameAction_Draw)(nil),
+		(*GameAction_Spectate)(nil),
+		(*GameAction_Unspectate)(nil),
+	}
+}
+
+func _GameAction_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*GameAction)
+	// actions
+	switch x := m.Actions.(type) {
+	case *GameAction_GameSummary:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GameSummary); err != nil {
+			return err
+		}
+	case *GameAction_Board:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Board); err != nil {
+			return err
+		}
+	case *GameAction_History:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.History); err != nil {
+			return err
+		}
+	case *GameAction_PlayMove:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.PlayMove); err != nil {
+			return err
+		}
+	case *GameAction_Resign:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Resign); err != nil {
+			return err
+		}
+	case *GameAction_Draw:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Draw); err != nil {
+			return err
+		}
+	case *GameAction_Spectate:
+		b.EncodeVarint(8<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Spectate); err != nil {
+			return err
+		}
+	case *GameAction_Unspectate:
+		b.EncodeVarint(9<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Unspectate); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("GameAction.Actions has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _GameAction_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*GameAction)
+	switch tag {
+	case 2: // actions.game_summary
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSummary)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_GameSummary{msg}
+		return true, err
+	case 3: // actions.board
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetBoard)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_Board{msg}
+		return true, err
+	case 4: // actions.history
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetMoveHistory)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_History{msg}
+		return true, err
+	case 5: // actions.play_move
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(PlayMove)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_PlayMove{msg}
+		return true, err
+	case 6: // actions.resign
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Resign)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_Resign{msg}
+		return true, err
+	case 7: // actions.draw
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Draw)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_Draw{msg}
+		return true, err
+	case 8: // actions.spectate
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Spectate)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_Spectate{msg}
+		return true, err
+	case 9: // actions.unspectate
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Unspectate)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameAction_Unspectate{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _GameAction_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*GameAction)
+	// actions
+	switch x := m.Actions.(type) {
+	case *GameAction_GameSummary:
+		s := proto.Size(x.GameSummary)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_Board:
+		s := proto.Size(x.Board)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_History:
+		s := proto.Size(x.History)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_PlayMove:
+		s := proto.Size(x.PlayMove)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_Resign:
+		s := proto.Size(x.Resign)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_Draw:
+		s := proto.Size(x.Draw)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_Spectate:
+		s := proto.Size(x.Spectate)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameAction_Unspectate:
+		s := proto.Size(x.Unspectate)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type GameResult struct {
+	ActionId []byte `protobuf:"bytes,1,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	// Types that are valid to be assigned to Actions:
+	//	*GameResult_Summary
+	//	*GameResult_Board
+	//	*GameResult_Moves
+	//	*GameResult_MoveResult
+	//	*GameResult_ResignResult
+	//	*GameResult_DrawResult
+	//	*GameResult_Spectate
+	//	*GameResult_Unspectate
+	Actions              isGameResult_Actions `protobuf_oneof:"actions"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *GameResult) Reset()         { *m = GameResult{} }
+func (m *GameResult) String() string { return proto.CompactTextString(m) }
+func (*GameResult) ProtoMessage()    {}
+func (*GameResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{12}
+}
+func (m *GameResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameResult.Unmarshal(m, b)
+}
+func (m *GameResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameResult.Marshal(b, m, deterministic)
+}
+func (dst *GameResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameResult.Merge(dst, src)
+}
+func (m *GameResult) XXX_Size() int {
+	return xxx_messageInfo_GameResult.Size(m)
+}
+func (m *GameResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameResult proto.InternalMessageInfo
+
+type isGameResult_Actions interface {
+	isGameResult_Actions()
+}
+
+type GameResult_Summary struct {
+	Summary *GameSummary `protobuf:"bytes,2,opt,name=summary,proto3,oneof"`
+}
+type GameResult_Board struct {
+	Board *Board `protobuf:"bytes,3,opt,name=board,proto3,oneof"`
+}
+type GameResult_Moves struct {
+	Moves *MoveList `protobuf:"bytes,4,opt,name=moves,proto3,oneof"`
+}
+type GameResult_MoveResult struct {
+	MoveResult *MoveResult `protobuf:"bytes,5,opt,name=move_result,json=moveResult,proto3,oneof"`
+}
+type GameResult_ResignResult struct {
+	ResignResult *ResignResult `protobuf:"bytes,6,opt,name=resign_result,json=resignResult,proto3,oneof"`
+}
+type GameResult_DrawResult struct {
+	DrawResult *DrawResult `protobuf:"bytes,7,opt,name=draw_result,json=drawResult,proto3,oneof"`
+}
+type GameResult_Spectate struct {
+	Spectate *SpectateResult `protobuf:"bytes,8,opt,name=spectate,proto3,oneof"`
+}
+type GameResult_Unspectate struct {
+	Unspectate *UnspectateResult `protobuf:"bytes,9,opt,name=unspectate,proto3,oneof"`
+}
+
+func (*GameResult_Summary) isGameResult_Actions()      {}
+func (*GameResult_Board) isGameResult_Actions()        {}
+func (*GameResult_Moves) isGameResult_Actions()        {}
+func (*GameResult_MoveResult) isGameResult_Actions()   {}
+func (*GameResult_ResignResult) isGameResult_Actions() {}
+func (*GameResult_DrawResult) isGameResult_Actions()   {}
+func (*GameResult_Spectate) isGameResult_Actions()     {}
+func (*GameResult_Unspectate) isGameResult_Actions()   {}
+
+func (m *GameResult) GetActions() isGameResult_Actions {
+	if m != nil {
+		return m.Actions
+	}
+	return nil
+}
+
+func (m *GameResult) GetActionId() []byte {
+	if m != nil {
+		return m.ActionId
+	}
+	return nil
+}
+
+func (m *GameResult) GetSummary() *GameSummary {
+	if x, ok := m.GetActions().(*GameResult_Summary); ok {
+		return x.Summary
+	}
+	return nil
+}
+
+func (m *GameResult) GetBoard() *Board {
+	if x, ok := m.GetActions().(*GameResult_Board); ok {
+		return x.Board
+	}
+	return nil
+}
+
+func (m *GameResult) GetMoves() *MoveList {
+	if x, ok := m.GetActions().(*GameResult_Moves); ok {
+		return x.Moves
+	}
+	return nil
+}
+
+func (m *GameResult) GetMoveResult() *MoveResult {
+	if x, ok := m.GetActions().(*GameResult_MoveResult); ok {
+		return x.MoveResult
+	}
+	return nil
+}
+
+func (m *GameResult) GetResignResult() *ResignResult {
+	if x, ok := m.GetActions().(*GameResult_ResignResult); ok {
+		return x.ResignResult
+	}
+	return nil
+}
+
+func (m *GameResult) GetDrawResult() *DrawResult {
+	if x, ok := m.GetActions().(*GameResult_DrawResult); ok {
+		return x.DrawResult
+	}
+	return nil
+}
+
+func (m *GameResult) GetSpectate() *SpectateResult {
+	if x, ok := m.GetActions().(*GameResult_Spectate); ok {
+		return x.Spectate
+	}
+	return nil
+}
+
+func (m *GameResult) GetUnspectate() *UnspectateResult {
+	if x, ok := m.GetActions().(*GameResult_Unspectate); ok {
+		return x.Unspectate
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*GameResult) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _GameResult_OneofMarshaler, _GameResult_OneofUnmarshaler, _GameResult_OneofSizer, []interface{}{
+		(*GameResult_Summary)(nil),
+		(*GameResult_Board)(nil),
+		(*GameResult_Moves)(nil),
+		(*GameResult_MoveResult)(nil),
+		(*GameResult_ResignResult)(nil),
+		(*GameResult_DrawResult)(nil),
+		(*GameResult_Spectate)(nil),
+		(*GameResult_Unspectate)(nil),
+	}
+}
+
+func _GameResult_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*GameResult)
+	// actions
+	switch x := m.Actions.(type) {
+	case *GameResult_Summary:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Summary); err != nil {
+			return err
+		}
+	case *GameResult_Board:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Board); err != nil {
+			return err
+		}
+	case *GameResult_Moves:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Moves); err != nil {
+			return err
+		}
+	case *GameResult_MoveResult:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.MoveResult); err != nil {
+			return err
+		}
+	case *GameResult_ResignResult:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.ResignResult); err != nil {
+			return err
+		}
+	case *GameResult_DrawResult:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.DrawResult); err != nil {
+			return err
+		}
+	case *GameResult_Spectate:
+		b.EncodeVarint(8<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Spectate); err != nil {
+			return err
+		}
+	case *GameResult_Unspectate:
+		b.EncodeVarint(9<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Unspectate); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("GameResult.Actions has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _GameResult_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*GameResult)
+	switch tag {
+	case 2: // actions.summary
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GameSummary)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_Summary{msg}
+		return true, err
+	case 3: // actions.board
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Board)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_Board{msg}
+		return true, err
+	case 4: // actions.moves
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(MoveList)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_Moves{msg}
+		return true, err
+	case 5: // actions.move_result
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(MoveResult)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_MoveResult{msg}
+		return true, err
+	case 6: // actions.resign_result
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ResignResult)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_ResignResult{msg}
+		return true, err
+	case 7: // actions.draw_result
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(DrawResult)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_DrawResult{msg}
+		return true, err
+	case 8: // actions.spectate
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SpectateResult)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_Spectate{msg}
+		return true, err
+	case 9: // actions.unspectate
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(UnspectateResult)
+		err := b.DecodeMessage(msg)
+		m.Actions = &GameResult_Unspectate{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _GameResult_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*GameResult)
+	// actions
+	switch x := m.Actions.(type) {
+	case *GameResult_Summary:
+		s := proto.Size(x.Summary)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_Board:
+		s := proto.Size(x.Board)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_Moves:
+		s := proto.Size(x.Moves)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_MoveResult:
+		s := proto.Size(x.MoveResult)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_ResignResult:
+		s := proto.Size(x.ResignResult)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_DrawResult:
+		s := proto.Size(x.DrawResult)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_Spectate:
+		s := proto.Size(x.Spectate)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *GameResult_Unspectate:
+		s := proto.Size(x.Unspectate)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type GetProfile struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetProfile) Reset()         { *m = GetProfile{} }
+func (m *GetProfile) String() string { return proto.CompactTextString(m) }
+func (*GetProfile) ProtoMessage()    {}
+func (*GetProfile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{13}
+}
+func (m *GetProfile) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetProfile.Unmarshal(m, b)
+}
+func (m *GetProfile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetProfile.Marshal(b, m, deterministic)
+}
+func (dst *GetProfile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetProfile.Merge(dst, src)
+}
+func (m *GetProfile) XXX_Size() int {
+	return xxx_messageInfo_GetProfile.Size(m)
+}
+func (m *GetProfile) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetProfile.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetProfile proto.InternalMessageInfo
+
+type Profile struct {
+	PlayerId             []byte   `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Wins                 uint64   `protobuf:"varint,2,opt,name=wins,proto3" json:"wins,omitempty"`
+	Ties                 uint64   `protobuf:"varint,3,opt,name=ties,proto3" json:"ties,omitempty"`
+	Losses               uint64   `protobuf:"varint,4,opt,name=losses,proto3" json:"losses,omitempty"`
+	CurrentGames         [][]byte `protobuf:"bytes,5,rep,name=current_games,json=currentGames,proto3" json:"current_games,omitempty"`
+	PlayerName           []byte   `protobuf:"bytes,6,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Profile) Reset()         { *m = Profile{} }
+func (m *Profile) String() string { return proto.CompactTextString(m) }
+func (*Profile) ProtoMessage()    {}
+func (*Profile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{14}
+}
+func (m *Profile) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Profile.Unmarshal(m, b)
+}
+func (m *Profile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Profile.Marshal(b, m, deterministic)
+}
+func (dst *Profile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Profile.Merge(dst, src)
+}
+func (m *Profile) XXX_Size() int {
+	return xxx_messageInfo_Profile.Size(m)
+}
+func (m *Profile) XXX_DiscardUnknown() {
+	xxx_messageInfo_Profile.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Profile proto.InternalMessageInfo
+
+func (m *Profile) GetPlayerId() []byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *Profile) GetWins() uint64 {
+	if m != nil {
+		return m.Wins
+	}
+	return 0
+}
+
+func (m *Profile) GetTies() uint64 {
+	if m != nil {
+		return m.Ties
+	}
+	return 0
+}
+
+func (m *Profile) GetLosses() uint64 {
+	if m != nil {
+		return m.Losses
+	}
+	return 0
+}
+
+func (m *Profile) GetCurrentGames() [][]byte {
+	if m != nil {
+		return m.CurrentGames
+	}
+	return nil
+}
+
+func (m *Profile) GetPlayerName() []byte {
+	if m != nil {
+		return m.PlayerName
+	}
+	return nil
+}
+
+type ModifyProfile struct {
+	NewName              []byte   `protobuf:"bytes,1,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ModifyProfile) Reset()         { *m = ModifyProfile{} }
+func (m *ModifyProfile) String() string { return proto.CompactTextString(m) }
+func (*ModifyProfile) ProtoMessage()    {}
+func (*ModifyProfile) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{15}
+}
+func (m *ModifyProfile) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyProfile.Unmarshal(m, b)
+}
+func (m *ModifyProfile) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyProfile.Marshal(b, m, deterministic)
+}
+func (dst *ModifyProfile) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyProfile.Merge(dst, src)
+}
+func (m *ModifyProfile) XXX_Size() int {
+	return xxx_messageInfo_ModifyProfile.Size(m)
+}
+func (m *ModifyProfile) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyProfile.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyProfile proto.InternalMessageInfo
+
+func (m *ModifyProfile) GetNewName() []byte {
+	if m != nil {
+		return m.NewName
+	}
+	return nil
+}
+
+type ListPlayers struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ListPlayers) Reset()         { *m = ListPlayers{} }
+func (m *ListPlayers) String() string { return proto.CompactTextString(m) }
+func (*ListPlayers) ProtoMessage()    {}
+func (*ListPlayers) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{16}
+}
+func (m *ListPlayers) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListPlayers.Unmarshal(m, b)
+}
+func (m *ListPlayers) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListPlayers.Marshal(b, m, deterministic)
+}
+func (dst *ListPlayers) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListPlayers.Merge(dst, src)
+}
+func (m *ListPlayers) XXX_Size() int {
+	return xxx_messageInfo_ListPlayers.Size(m)
+}
+func (m *ListPlayers) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListPlayers.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListPlayers proto.InternalMessageInfo
+
+type GameSummaries struct {
+	S                    []*GameSummary `protobuf:"bytes,1,rep,name=s,proto3" json:"s,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *GameSummaries) Reset()         { *m = GameSummaries{} }
+func (m *GameSummaries) String() string { return proto.CompactTextString(m) }
+func (*GameSummaries) ProtoMessage()    {}
+func (*GameSummaries) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{17}
+}
+func (m *GameSummaries) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameSummaries.Unmarshal(m, b)
+}
+func (m *GameSummaries) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameSummaries.Marshal(b, m, deterministic)
+}
+func (dst *GameSummaries) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameSummaries.Merge(dst, src)
+}
+func (m *GameSummaries) XXX_Size() int {
+	return xxx_messageInfo_GameSummaries.Size(m)
+}
+func (m *GameSummaries) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameSummaries.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameSummaries proto.InternalMessageInfo
+
+func (m *GameSummaries) GetS() []*GameSummary {
+	if m != nil {
+		return m.S
+	}
+	return nil
+}
+
+type PlayerList struct {
+	PlayerId             [][]byte `protobuf:"bytes,1,rep,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	PlayerName           [][]byte `protobuf:"bytes,2,rep,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PlayerList) Reset()         { *m = PlayerList{} }
+func (m *PlayerList) String() string { return proto.CompactTextString(m) }
+func (*PlayerList) ProtoMessage()    {}
+func (*PlayerList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{18}
+}
+func (m *PlayerList) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayerList.Unmarshal(m, b)
+}
+func (m *PlayerList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayerList.Marshal(b, m, deterministic)
+}
+func (dst *PlayerList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerList.Merge(dst, src)
+}
+func (m *PlayerList) XXX_Size() int {
+	return xxx_messageInfo_PlayerList.Size(m)
+}
+func (m *PlayerList) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayerList proto.InternalMessageInfo
+
+func (m *PlayerList) GetPlayerId() [][]byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *PlayerList) GetPlayerName() [][]byte {
+	if m != nil {
+		return m.PlayerName
+	}
+	return nil
+}
+
+type MoveList struct {
+	Ms                   []*Move  `protobuf:"bytes,1,rep,name=ms,proto3" json:"ms,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *MoveList) Reset()         { *m = MoveList{} }
+func (m *MoveList) String() string { return proto.CompactTextString(m) }
+func (*MoveList) ProtoMessage()    {}
+func (*MoveList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{19}
+}
+func (m *MoveList) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MoveList.Unmarshal(m, b)
+}
+func (m *MoveList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MoveList.Marshal(b, m, deterministic)
+}
+func (dst *MoveList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MoveList.Merge(dst, src)
+}
+func (m *MoveList) XXX_Size() int {
+	return xxx_messageInfo_MoveList.Size(m)
+}
+func (m *MoveList) XXX_DiscardUnknown() {
+	xxx_messageInfo_MoveList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MoveList proto.InternalMessageInfo
+
+func (m *MoveList) GetMs() []*Move {
+	if m != nil {
+		return m.Ms
+	}
+	return nil
+}
+
+type ListActiveGames struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ListActiveGames) Reset()         { *m = ListActiveGames{} }
+func (m *ListActiveGames) String() string { return proto.CompactTextString(m) }
+func (*ListActiveGames) ProtoMessage()    {}
+func (*ListActiveGames) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{20}
+}
+func (m *ListActiveGames) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListActiveGames.Unmarshal(m, b)
+}
+func (m *ListActiveGames) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListActiveGames.Marshal(b, m, deterministic)
+}
+func (dst *ListActiveGames) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListActiveGames.Merge(dst, src)
+}
+func (m *ListActiveGames) XXX_Size() int {
+	return xxx_messageInfo_ListActiveGames.Size(m)
+}
+func (m *ListActiveGames) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListActiveGames.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListActiveGames proto.InternalMessageInfo
+
+type ListFinishedGames struct {
+	Start                int64    `protobuf:"varint,1,opt,name=start,proto3" json:"start,omitempty"`
+	End                  int64    `protobuf:"varint,2,opt,name=end,proto3" json:"end,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ListFinishedGames) Reset()         { *m = ListFinishedGames{} }
+func (m *ListFinishedGames) String() string { return proto.CompactTextString(m) }
+func (*ListFinishedGames) ProtoMessage()    {}
+func (*ListFinishedGames) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{21}
+}
+func (m *ListFinishedGames) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListFinishedGames.Unmarshal(m, b)
+}
+func (m *ListFinishedGames) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListFinishedGames.Marshal(b, m, deterministic)
+}
+func (dst *ListFinishedGames) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListFinishedGames.Merge(dst, src)
+}
+func (m *ListFinishedGames) XXX_Size() int {
+	return xxx_messageInfo_ListFinishedGames.Size(m)
+}
+func (m *ListFinishedGames) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListFinishedGames.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListFinishedGames proto.InternalMessageInfo
+
+func (m *ListFinishedGames) GetStart() int64 {
+	if m != nil {
+		return m.Start
+	}
+	return 0
+}
+
+func (m *ListFinishedGames) GetEnd() int64 {
+	if m != nil {
+		return m.End
+	}
+	return 0
+}
+
+type StartGame struct {
+	WhiteIds             [][]byte `protobuf:"bytes,1,rep,name=white_ids,json=whiteIds,proto3" json:"white_ids,omitempty"`
+	BlackIds             [][]byte `protobuf:"bytes,2,rep,name=black_ids,json=blackIds,proto3" json:"black_ids,omitempty"`
+	Spectators           [][]byte `protobuf:"bytes,3,rep,name=spectators,proto3" json:"spectators,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *StartGame) Reset()         { *m = StartGame{} }
+func (m *StartGame) String() string { return proto.CompactTextString(m) }
+func (*StartGame) ProtoMessage()    {}
+func (*StartGame) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{22}
+}
+func (m *StartGame) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StartGame.Unmarshal(m, b)
+}
+func (m *StartGame) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StartGame.Marshal(b, m, deterministic)
+}
+func (dst *StartGame) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartGame.Merge(dst, src)
+}
+func (m *StartGame) XXX_Size() int {
+	return xxx_messageInfo_StartGame.Size(m)
+}
+func (m *StartGame) XXX_DiscardUnknown() {
+	xxx_messageInfo_StartGame.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StartGame proto.InternalMessageInfo
+
+func (m *StartGame) GetWhiteIds() [][]byte {
+	if m != nil {
+		return m.WhiteIds
+	}
+	return nil
+}
+
+func (m *StartGame) GetBlackIds() [][]byte {
+	if m != nil {
+		return m.BlackIds
+	}
+	return nil
+}
+
+func (m *StartGame) GetSpectators() [][]byte {
+	if m != nil {
+		return m.Spectators
+	}
+	return nil
+}
+
+type GetSummary struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSummary) Reset()         { *m = GetSummary{} }
+func (m *GetSummary) String() string { return proto.CompactTextString(m) }
+func (*GetSummary) ProtoMessage()    {}
+func (*GetSummary) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{23}
+}
+func (m *GetSummary) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSummary.Unmarshal(m, b)
+}
+func (m *GetSummary) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSummary.Marshal(b, m, deterministic)
+}
+func (dst *GetSummary) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSummary.Merge(dst, src)
+}
+func (m *GetSummary) XXX_Size() int {
+	return xxx_messageInfo_GetSummary.Size(m)
+}
+func (m *GetSummary) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSummary.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSummary proto.InternalMessageInfo
+
+type GetBoard struct {
+	BoardId              []byte   `protobuf:"bytes,1,opt,name=board_id,json=boardId,proto3" json:"board_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetBoard) Reset()         { *m = GetBoard{} }
+func (m *GetBoard) String() string { return proto.CompactTextString(m) }
+func (*GetBoard) ProtoMessage()    {}
+func (*GetBoard) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{24}
+}
+func (m *GetBoard) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetBoard.Unmarshal(m, b)
+}
+func (m *GetBoard) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetBoard.Marshal(b, m, deterministic)
+}
+func (dst *GetBoard) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetBoard.Merge(dst, src)
+}
+func (m *GetBoard) XXX_Size() int {
+	return xxx_messageInfo_GetBoard.Size(m)
+}
+func (m *GetBoard) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetBoard.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetBoard proto.InternalMessageInfo
+
+func (m *GetBoard) GetBoardId() []byte {
+	if m != nil {
+		return m.BoardId
+	}
+	return nil
+}
+
+type GetMoveHistory struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetMoveHistory) Reset()         { *m = GetMoveHistory{} }
+func (m *GetMoveHistory) String() string { return proto.CompactTextString(m) }
+func (*GetMoveHistory) ProtoMessage()    {}
+func (*GetMoveHistory) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{25}
+}
+func (m *GetMoveHistory) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetMoveHistory.Unmarshal(m, b)
+}
+func (m *GetMoveHistory) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetMoveHistory.Marshal(b, m, deterministic)
+}
+func (dst *GetMoveHistory) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetMoveHistory.Merge(dst, src)
+}
+func (m *GetMoveHistory) XXX_Size() int {
+	return xxx_messageInfo_GetMoveHistory.Size(m)
+}
+func (m *GetMoveHistory) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetMoveHistory.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetMoveHistory proto.InternalMessageInfo
+
+type PlayMove struct {
+	Move                 *Move    `protobuf:"bytes,1,opt,name=move,proto3" json:"move,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PlayMove) Reset()         { *m = PlayMove{} }
+func (m *PlayMove) String() string { return proto.CompactTextString(m) }
+func (*PlayMove) ProtoMessage()    {}
+func (*PlayMove) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{26}
+}
+func (m *PlayMove) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayMove.Unmarshal(m, b)
+}
+func (m *PlayMove) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayMove.Marshal(b, m, deterministic)
+}
+func (dst *PlayMove) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayMove.Merge(dst, src)
+}
+func (m *PlayMove) XXX_Size() int {
+	return xxx_messageInfo_PlayMove.Size(m)
+}
+func (m *PlayMove) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayMove.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PlayMove proto.InternalMessageInfo
+
+func (m *PlayMove) GetMove() *Move {
 	if m != nil {
 		return m.Move
 	}
 	return nil
 }
 
-type MoveResponse struct {
-	Committed            bool               `protobuf:"varint,1,opt,name=committed,proto3" json:"committed,omitempty"`
-	Error                MoveResponse_Error `protobuf:"varint,2,opt,name=error,proto3,enum=api.MoveResponse_Error" json:"error,omitempty"`
-	IsCheckmate          bool               `protobuf:"varint,3,opt,name=is_checkmate,json=isCheckmate,proto3" json:"is_checkmate,omitempty"`
-	IsStalemate          bool               `protobuf:"varint,4,opt,name=is_stalemate,json=isStalemate,proto3" json:"is_stalemate,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
-	XXX_unrecognized     []byte             `json:"-"`
-	XXX_sizecache        int32              `json:"-"`
-}
-
-func (m *MoveResponse) Reset()         { *m = MoveResponse{} }
-func (m *MoveResponse) String() string { return proto.CompactTextString(m) }
-func (*MoveResponse) ProtoMessage()    {}
-func (*MoveResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{6}
-}
-func (m *MoveResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MoveResponse.Unmarshal(m, b)
-}
-func (m *MoveResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MoveResponse.Marshal(b, m, deterministic)
-}
-func (dst *MoveResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MoveResponse.Merge(dst, src)
-}
-func (m *MoveResponse) XXX_Size() int {
-	return xxx_messageInfo_MoveResponse.Size(m)
-}
-func (m *MoveResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MoveResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MoveResponse proto.InternalMessageInfo
-
-func (m *MoveResponse) GetCommitted() bool {
-	if m != nil {
-		return m.Committed
-	}
-	return false
-}
-
-func (m *MoveResponse) GetError() MoveResponse_Error {
-	if m != nil {
-		return m.Error
-	}
-	return MoveResponse_NO_ERROR
-}
-
-func (m *MoveResponse) GetIsCheckmate() bool {
-	if m != nil {
-		return m.IsCheckmate
-	}
-	return false
-}
-
-func (m *MoveResponse) GetIsStalemate() bool {
-	if m != nil {
-		return m.IsStalemate
-	}
-	return false
-}
-
-type GameState struct {
+type Resign struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GameState) Reset()         { *m = GameState{} }
-func (m *GameState) String() string { return proto.CompactTextString(m) }
-func (*GameState) ProtoMessage()    {}
-func (*GameState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{7}
+func (m *Resign) Reset()         { *m = Resign{} }
+func (m *Resign) String() string { return proto.CompactTextString(m) }
+func (*Resign) ProtoMessage()    {}
+func (*Resign) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{27}
 }
-func (m *GameState) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GameState.Unmarshal(m, b)
+func (m *Resign) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Resign.Unmarshal(m, b)
 }
-func (m *GameState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GameState.Marshal(b, m, deterministic)
+func (m *Resign) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Resign.Marshal(b, m, deterministic)
 }
-func (dst *GameState) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GameState.Merge(dst, src)
+func (dst *Resign) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Resign.Merge(dst, src)
 }
-func (m *GameState) XXX_Size() int {
-	return xxx_messageInfo_GameState.Size(m)
+func (m *Resign) XXX_Size() int {
+	return xxx_messageInfo_Resign.Size(m)
 }
-func (m *GameState) XXX_DiscardUnknown() {
-	xxx_messageInfo_GameState.DiscardUnknown(m)
+func (m *Resign) XXX_DiscardUnknown() {
+	xxx_messageInfo_Resign.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GameState proto.InternalMessageInfo
+var xxx_messageInfo_Resign proto.InternalMessageInfo
+
+type Draw struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Draw) Reset()         { *m = Draw{} }
+func (m *Draw) String() string { return proto.CompactTextString(m) }
+func (*Draw) ProtoMessage()    {}
+func (*Draw) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{28}
+}
+func (m *Draw) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Draw.Unmarshal(m, b)
+}
+func (m *Draw) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Draw.Marshal(b, m, deterministic)
+}
+func (dst *Draw) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Draw.Merge(dst, src)
+}
+func (m *Draw) XXX_Size() int {
+	return xxx_messageInfo_Draw.Size(m)
+}
+func (m *Draw) XXX_DiscardUnknown() {
+	xxx_messageInfo_Draw.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Draw proto.InternalMessageInfo
+
+type GameSummary struct {
+	CurMove              Side     `protobuf:"varint,1,opt,name=cur_move,json=curMove,proto3,enum=api.Side" json:"cur_move,omitempty"`
+	White                [][]byte `protobuf:"bytes,2,rep,name=white,proto3" json:"white,omitempty"`
+	Black                [][]byte `protobuf:"bytes,3,rep,name=black,proto3" json:"black,omitempty"`
+	Spectating           [][]byte `protobuf:"bytes,4,rep,name=spectating,proto3" json:"spectating,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GameSummary) Reset()         { *m = GameSummary{} }
+func (m *GameSummary) String() string { return proto.CompactTextString(m) }
+func (*GameSummary) ProtoMessage()    {}
+func (*GameSummary) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{29}
+}
+func (m *GameSummary) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GameSummary.Unmarshal(m, b)
+}
+func (m *GameSummary) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GameSummary.Marshal(b, m, deterministic)
+}
+func (dst *GameSummary) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GameSummary.Merge(dst, src)
+}
+func (m *GameSummary) XXX_Size() int {
+	return xxx_messageInfo_GameSummary.Size(m)
+}
+func (m *GameSummary) XXX_DiscardUnknown() {
+	xxx_messageInfo_GameSummary.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GameSummary proto.InternalMessageInfo
+
+func (m *GameSummary) GetCurMove() Side {
+	if m != nil {
+		return m.CurMove
+	}
+	return Side_WHITE
+}
+
+func (m *GameSummary) GetWhite() [][]byte {
+	if m != nil {
+		return m.White
+	}
+	return nil
+}
+
+func (m *GameSummary) GetBlack() [][]byte {
+	if m != nil {
+		return m.Black
+	}
+	return nil
+}
+
+func (m *GameSummary) GetSpectating() [][]byte {
+	if m != nil {
+		return m.Spectating
+	}
+	return nil
+}
 
 type Board struct {
-	Pieces               []*Piece `protobuf:"bytes,1,rep,name=pieces,proto3" json:"pieces,omitempty"`
-	Captured             []*Piece `protobuf:"bytes,2,rep,name=captured,proto3" json:"captured,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Inplay               []*Piece     `protobuf:"bytes,1,rep,name=inplay,proto3" json:"inplay,omitempty"`
+	Captured             []*Piece     `protobuf:"bytes,2,rep,name=captured,proto3" json:"captured,omitempty"`
+	MoveList             []*Move      `protobuf:"bytes,3,rep,name=move_list,json=moveList,proto3" json:"move_list,omitempty"`
+	Gs                   *GameSummary `protobuf:"bytes,4,opt,name=gs,proto3" json:"gs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
 func (m *Board) Reset()         { *m = Board{} }
 func (m *Board) String() string { return proto.CompactTextString(m) }
 func (*Board) ProtoMessage()    {}
 func (*Board) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{8}
+	return fileDescriptor_game_ea86be612a725148, []int{30}
 }
 func (m *Board) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Board.Unmarshal(m, b)
@@ -644,9 +2554,9 @@ func (m *Board) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Board proto.InternalMessageInfo
 
-func (m *Board) GetPieces() []*Piece {
+func (m *Board) GetInplay() []*Piece {
 	if m != nil {
-		return m.Pieces
+		return m.Inplay
 	}
 	return nil
 }
@@ -658,614 +2568,852 @@ func (m *Board) GetCaptured() []*Piece {
 	return nil
 }
 
-type GetBoardRequest struct {
-	BoardId              []byte   `protobuf:"bytes,1,opt,name=board_id,json=boardId,proto3" json:"board_id,omitempty"`
+func (m *Board) GetMoveList() []*Move {
+	if m != nil {
+		return m.MoveList
+	}
+	return nil
+}
+
+func (m *Board) GetGs() *GameSummary {
+	if m != nil {
+		return m.Gs
+	}
+	return nil
+}
+
+type MoveResult struct {
+	Success              bool         `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Result               *GameSummary `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *MoveResult) Reset()         { *m = MoveResult{} }
+func (m *MoveResult) String() string { return proto.CompactTextString(m) }
+func (*MoveResult) ProtoMessage()    {}
+func (*MoveResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{31}
+}
+func (m *MoveResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MoveResult.Unmarshal(m, b)
+}
+func (m *MoveResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MoveResult.Marshal(b, m, deterministic)
+}
+func (dst *MoveResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MoveResult.Merge(dst, src)
+}
+func (m *MoveResult) XXX_Size() int {
+	return xxx_messageInfo_MoveResult.Size(m)
+}
+func (m *MoveResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_MoveResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MoveResult proto.InternalMessageInfo
+
+func (m *MoveResult) GetSuccess() bool {
+	if m != nil {
+		return m.Success
+	}
+	return false
+}
+
+func (m *MoveResult) GetResult() *GameSummary {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+type ResignResult struct {
+	Success              bool         `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Result               *GameSummary `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *ResignResult) Reset()         { *m = ResignResult{} }
+func (m *ResignResult) String() string { return proto.CompactTextString(m) }
+func (*ResignResult) ProtoMessage()    {}
+func (*ResignResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{32}
+}
+func (m *ResignResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResignResult.Unmarshal(m, b)
+}
+func (m *ResignResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResignResult.Marshal(b, m, deterministic)
+}
+func (dst *ResignResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResignResult.Merge(dst, src)
+}
+func (m *ResignResult) XXX_Size() int {
+	return xxx_messageInfo_ResignResult.Size(m)
+}
+func (m *ResignResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResignResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResignResult proto.InternalMessageInfo
+
+func (m *ResignResult) GetSuccess() bool {
+	if m != nil {
+		return m.Success
+	}
+	return false
+}
+
+func (m *ResignResult) GetResult() *GameSummary {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+type DrawResult struct {
+	Success              bool         `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Result               *GameSummary `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *DrawResult) Reset()         { *m = DrawResult{} }
+func (m *DrawResult) String() string { return proto.CompactTextString(m) }
+func (*DrawResult) ProtoMessage()    {}
+func (*DrawResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{33}
+}
+func (m *DrawResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DrawResult.Unmarshal(m, b)
+}
+func (m *DrawResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DrawResult.Marshal(b, m, deterministic)
+}
+func (dst *DrawResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DrawResult.Merge(dst, src)
+}
+func (m *DrawResult) XXX_Size() int {
+	return xxx_messageInfo_DrawResult.Size(m)
+}
+func (m *DrawResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_DrawResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DrawResult proto.InternalMessageInfo
+
+func (m *DrawResult) GetSuccess() bool {
+	if m != nil {
+		return m.Success
+	}
+	return false
+}
+
+func (m *DrawResult) GetResult() *GameSummary {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+type Notify struct {
+	Heartbeat            int64    `protobuf:"varint,1,opt,name=heartbeat,proto3" json:"heartbeat,omitempty"`
+	Timeout              int64    `protobuf:"varint,2,opt,name=timeout,proto3" json:"timeout,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetBoardRequest) Reset()         { *m = GetBoardRequest{} }
-func (m *GetBoardRequest) String() string { return proto.CompactTextString(m) }
-func (*GetBoardRequest) ProtoMessage()    {}
-func (*GetBoardRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{9}
+func (m *Notify) Reset()         { *m = Notify{} }
+func (m *Notify) String() string { return proto.CompactTextString(m) }
+func (*Notify) ProtoMessage()    {}
+func (*Notify) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{34}
 }
-func (m *GetBoardRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetBoardRequest.Unmarshal(m, b)
+func (m *Notify) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Notify.Unmarshal(m, b)
 }
-func (m *GetBoardRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetBoardRequest.Marshal(b, m, deterministic)
+func (m *Notify) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Notify.Marshal(b, m, deterministic)
 }
-func (dst *GetBoardRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetBoardRequest.Merge(dst, src)
+func (dst *Notify) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Notify.Merge(dst, src)
 }
-func (m *GetBoardRequest) XXX_Size() int {
-	return xxx_messageInfo_GetBoardRequest.Size(m)
+func (m *Notify) XXX_Size() int {
+	return xxx_messageInfo_Notify.Size(m)
 }
-func (m *GetBoardRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetBoardRequest.DiscardUnknown(m)
+func (m *Notify) XXX_DiscardUnknown() {
+	xxx_messageInfo_Notify.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetBoardRequest proto.InternalMessageInfo
+var xxx_messageInfo_Notify proto.InternalMessageInfo
 
-func (m *GetBoardRequest) GetBoardId() []byte {
+func (m *Notify) GetHeartbeat() int64 {
+	if m != nil {
+		return m.Heartbeat
+	}
+	return 0
+}
+
+func (m *Notify) GetTimeout() int64 {
+	if m != nil {
+		return m.Timeout
+	}
+	return 0
+}
+
+type Spectate struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Spectate) Reset()         { *m = Spectate{} }
+func (m *Spectate) String() string { return proto.CompactTextString(m) }
+func (*Spectate) ProtoMessage()    {}
+func (*Spectate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{35}
+}
+func (m *Spectate) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Spectate.Unmarshal(m, b)
+}
+func (m *Spectate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Spectate.Marshal(b, m, deterministic)
+}
+func (dst *Spectate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Spectate.Merge(dst, src)
+}
+func (m *Spectate) XXX_Size() int {
+	return xxx_messageInfo_Spectate.Size(m)
+}
+func (m *Spectate) XXX_DiscardUnknown() {
+	xxx_messageInfo_Spectate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Spectate proto.InternalMessageInfo
+
+type Unspectate struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Unspectate) Reset()         { *m = Unspectate{} }
+func (m *Unspectate) String() string { return proto.CompactTextString(m) }
+func (*Unspectate) ProtoMessage()    {}
+func (*Unspectate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{36}
+}
+func (m *Unspectate) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Unspectate.Unmarshal(m, b)
+}
+func (m *Unspectate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Unspectate.Marshal(b, m, deterministic)
+}
+func (dst *Unspectate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Unspectate.Merge(dst, src)
+}
+func (m *Unspectate) XXX_Size() int {
+	return xxx_messageInfo_Unspectate.Size(m)
+}
+func (m *Unspectate) XXX_DiscardUnknown() {
+	xxx_messageInfo_Unspectate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Unspectate proto.InternalMessageInfo
+
+type SpectateResult struct {
+	IsSpectating         bool     `protobuf:"varint,1,opt,name=is_spectating,json=isSpectating,proto3" json:"is_spectating,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SpectateResult) Reset()         { *m = SpectateResult{} }
+func (m *SpectateResult) String() string { return proto.CompactTextString(m) }
+func (*SpectateResult) ProtoMessage()    {}
+func (*SpectateResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{37}
+}
+func (m *SpectateResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SpectateResult.Unmarshal(m, b)
+}
+func (m *SpectateResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SpectateResult.Marshal(b, m, deterministic)
+}
+func (dst *SpectateResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SpectateResult.Merge(dst, src)
+}
+func (m *SpectateResult) XXX_Size() int {
+	return xxx_messageInfo_SpectateResult.Size(m)
+}
+func (m *SpectateResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_SpectateResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SpectateResult proto.InternalMessageInfo
+
+func (m *SpectateResult) GetIsSpectating() bool {
+	if m != nil {
+		return m.IsSpectating
+	}
+	return false
+}
+
+type UnspectateResult struct {
+	IsSpectating         bool     `protobuf:"varint,1,opt,name=is_spectating,json=isSpectating,proto3" json:"is_spectating,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UnspectateResult) Reset()         { *m = UnspectateResult{} }
+func (m *UnspectateResult) String() string { return proto.CompactTextString(m) }
+func (*UnspectateResult) ProtoMessage()    {}
+func (*UnspectateResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{38}
+}
+func (m *UnspectateResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnspectateResult.Unmarshal(m, b)
+}
+func (m *UnspectateResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnspectateResult.Marshal(b, m, deterministic)
+}
+func (dst *UnspectateResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnspectateResult.Merge(dst, src)
+}
+func (m *UnspectateResult) XXX_Size() int {
+	return xxx_messageInfo_UnspectateResult.Size(m)
+}
+func (m *UnspectateResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnspectateResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnspectateResult proto.InternalMessageInfo
+
+func (m *UnspectateResult) GetIsSpectating() bool {
+	if m != nil {
+		return m.IsSpectating
+	}
+	return false
+}
+
+type MoveNotification struct {
+	BoardId              []byte       `protobuf:"bytes,1,opt,name=board_id,json=boardId,proto3" json:"board_id,omitempty"`
+	M                    *Move        `protobuf:"bytes,2,opt,name=m,proto3" json:"m,omitempty"`
+	S                    *GameSummary `protobuf:"bytes,3,opt,name=s,proto3" json:"s,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *MoveNotification) Reset()         { *m = MoveNotification{} }
+func (m *MoveNotification) String() string { return proto.CompactTextString(m) }
+func (*MoveNotification) ProtoMessage()    {}
+func (*MoveNotification) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{39}
+}
+func (m *MoveNotification) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MoveNotification.Unmarshal(m, b)
+}
+func (m *MoveNotification) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MoveNotification.Marshal(b, m, deterministic)
+}
+func (dst *MoveNotification) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MoveNotification.Merge(dst, src)
+}
+func (m *MoveNotification) XXX_Size() int {
+	return xxx_messageInfo_MoveNotification.Size(m)
+}
+func (m *MoveNotification) XXX_DiscardUnknown() {
+	xxx_messageInfo_MoveNotification.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MoveNotification proto.InternalMessageInfo
+
+func (m *MoveNotification) GetBoardId() []byte {
 	if m != nil {
 		return m.BoardId
 	}
 	return nil
 }
 
-type GetBoardResponse struct {
-	Error                GetBoardResponse_Error `protobuf:"varint,1,opt,name=error,proto3,enum=api.GetBoardResponse_Error" json:"error,omitempty"`
-	Board                *Board                 `protobuf:"bytes,2,opt,name=board,proto3" json:"board,omitempty"`
-	State                *GameState             `protobuf:"bytes,3,opt,name=state,proto3" json:"state,omitempty"`
+func (m *MoveNotification) GetM() *Move {
+	if m != nil {
+		return m.M
+	}
+	return nil
+}
+
+func (m *MoveNotification) GetS() *GameSummary {
+	if m != nil {
+		return m.S
+	}
+	return nil
+}
+
+type ResignNotification struct {
+	BoardId              []byte       `protobuf:"bytes,1,opt,name=board_id,json=boardId,proto3" json:"board_id,omitempty"`
+	PlayerId             []byte       `protobuf:"bytes,2,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	PlayerName           []byte       `protobuf:"bytes,3,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	S                    *GameSummary `protobuf:"bytes,4,opt,name=s,proto3" json:"s,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *ResignNotification) Reset()         { *m = ResignNotification{} }
+func (m *ResignNotification) String() string { return proto.CompactTextString(m) }
+func (*ResignNotification) ProtoMessage()    {}
+func (*ResignNotification) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{40}
+}
+func (m *ResignNotification) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResignNotification.Unmarshal(m, b)
+}
+func (m *ResignNotification) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResignNotification.Marshal(b, m, deterministic)
+}
+func (dst *ResignNotification) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResignNotification.Merge(dst, src)
+}
+func (m *ResignNotification) XXX_Size() int {
+	return xxx_messageInfo_ResignNotification.Size(m)
+}
+func (m *ResignNotification) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResignNotification.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResignNotification proto.InternalMessageInfo
+
+func (m *ResignNotification) GetBoardId() []byte {
+	if m != nil {
+		return m.BoardId
+	}
+	return nil
+}
+
+func (m *ResignNotification) GetPlayerId() []byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *ResignNotification) GetPlayerName() []byte {
+	if m != nil {
+		return m.PlayerName
+	}
+	return nil
+}
+
+func (m *ResignNotification) GetS() *GameSummary {
+	if m != nil {
+		return m.S
+	}
+	return nil
+}
+
+type DrawNotification struct {
+	BoardId              []byte       `protobuf:"bytes,1,opt,name=board_id,json=boardId,proto3" json:"board_id,omitempty"`
+	PlayerId             []byte       `protobuf:"bytes,2,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	PlayerName           []byte       `protobuf:"bytes,3,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	S                    *GameSummary `protobuf:"bytes,4,opt,name=s,proto3" json:"s,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *DrawNotification) Reset()         { *m = DrawNotification{} }
+func (m *DrawNotification) String() string { return proto.CompactTextString(m) }
+func (*DrawNotification) ProtoMessage()    {}
+func (*DrawNotification) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{41}
+}
+func (m *DrawNotification) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DrawNotification.Unmarshal(m, b)
+}
+func (m *DrawNotification) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DrawNotification.Marshal(b, m, deterministic)
+}
+func (dst *DrawNotification) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DrawNotification.Merge(dst, src)
+}
+func (m *DrawNotification) XXX_Size() int {
+	return xxx_messageInfo_DrawNotification.Size(m)
+}
+func (m *DrawNotification) XXX_DiscardUnknown() {
+	xxx_messageInfo_DrawNotification.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DrawNotification proto.InternalMessageInfo
+
+func (m *DrawNotification) GetBoardId() []byte {
+	if m != nil {
+		return m.BoardId
+	}
+	return nil
+}
+
+func (m *DrawNotification) GetPlayerId() []byte {
+	if m != nil {
+		return m.PlayerId
+	}
+	return nil
+}
+
+func (m *DrawNotification) GetPlayerName() []byte {
+	if m != nil {
+		return m.PlayerName
+	}
+	return nil
+}
+
+func (m *DrawNotification) GetS() *GameSummary {
+	if m != nil {
+		return m.S
+	}
+	return nil
+}
+
+type PlayerNotification struct {
+	// Types that are valid to be assigned to N:
+	//	*PlayerNotification_Mn
+	//	*PlayerNotification_Rn
+	//	*PlayerNotification_Dn
+	N                    isPlayerNotification_N `protobuf_oneof:"n"`
 	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
 	XXX_unrecognized     []byte                 `json:"-"`
 	XXX_sizecache        int32                  `json:"-"`
 }
 
-func (m *GetBoardResponse) Reset()         { *m = GetBoardResponse{} }
-func (m *GetBoardResponse) String() string { return proto.CompactTextString(m) }
-func (*GetBoardResponse) ProtoMessage()    {}
-func (*GetBoardResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{10}
+func (m *PlayerNotification) Reset()         { *m = PlayerNotification{} }
+func (m *PlayerNotification) String() string { return proto.CompactTextString(m) }
+func (*PlayerNotification) ProtoMessage()    {}
+func (*PlayerNotification) Descriptor() ([]byte, []int) {
+	return fileDescriptor_game_ea86be612a725148, []int{42}
 }
-func (m *GetBoardResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetBoardResponse.Unmarshal(m, b)
+func (m *PlayerNotification) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PlayerNotification.Unmarshal(m, b)
 }
-func (m *GetBoardResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetBoardResponse.Marshal(b, m, deterministic)
+func (m *PlayerNotification) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PlayerNotification.Marshal(b, m, deterministic)
 }
-func (dst *GetBoardResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetBoardResponse.Merge(dst, src)
+func (dst *PlayerNotification) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PlayerNotification.Merge(dst, src)
 }
-func (m *GetBoardResponse) XXX_Size() int {
-	return xxx_messageInfo_GetBoardResponse.Size(m)
+func (m *PlayerNotification) XXX_Size() int {
+	return xxx_messageInfo_PlayerNotification.Size(m)
 }
-func (m *GetBoardResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetBoardResponse.DiscardUnknown(m)
+func (m *PlayerNotification) XXX_DiscardUnknown() {
+	xxx_messageInfo_PlayerNotification.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetBoardResponse proto.InternalMessageInfo
+var xxx_messageInfo_PlayerNotification proto.InternalMessageInfo
 
-func (m *GetBoardResponse) GetError() GetBoardResponse_Error {
+type isPlayerNotification_N interface {
+	isPlayerNotification_N()
+}
+
+type PlayerNotification_Mn struct {
+	Mn *MoveNotification `protobuf:"bytes,1,opt,name=mn,proto3,oneof"`
+}
+type PlayerNotification_Rn struct {
+	Rn *ResignNotification `protobuf:"bytes,2,opt,name=rn,proto3,oneof"`
+}
+type PlayerNotification_Dn struct {
+	Dn *DrawNotification `protobuf:"bytes,3,opt,name=dn,proto3,oneof"`
+}
+
+func (*PlayerNotification_Mn) isPlayerNotification_N() {}
+func (*PlayerNotification_Rn) isPlayerNotification_N() {}
+func (*PlayerNotification_Dn) isPlayerNotification_N() {}
+
+func (m *PlayerNotification) GetN() isPlayerNotification_N {
 	if m != nil {
-		return m.Error
-	}
-	return GetBoardResponse_NO_ERROR
-}
-
-func (m *GetBoardResponse) GetBoard() *Board {
-	if m != nil {
-		return m.Board
+		return m.N
 	}
 	return nil
 }
 
-func (m *GetBoardResponse) GetState() *GameState {
-	if m != nil {
-		return m.State
+func (m *PlayerNotification) GetMn() *MoveNotification {
+	if x, ok := m.GetN().(*PlayerNotification_Mn); ok {
+		return x.Mn
 	}
 	return nil
 }
 
-type GetBoardMetaRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+func (m *PlayerNotification) GetRn() *ResignNotification {
+	if x, ok := m.GetN().(*PlayerNotification_Rn); ok {
+		return x.Rn
+	}
+	return nil
 }
 
-func (m *GetBoardMetaRequest) Reset()         { *m = GetBoardMetaRequest{} }
-func (m *GetBoardMetaRequest) String() string { return proto.CompactTextString(m) }
-func (*GetBoardMetaRequest) ProtoMessage()    {}
-func (*GetBoardMetaRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{11}
-}
-func (m *GetBoardMetaRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetBoardMetaRequest.Unmarshal(m, b)
-}
-func (m *GetBoardMetaRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetBoardMetaRequest.Marshal(b, m, deterministic)
-}
-func (dst *GetBoardMetaRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetBoardMetaRequest.Merge(dst, src)
-}
-func (m *GetBoardMetaRequest) XXX_Size() int {
-	return xxx_messageInfo_GetBoardMetaRequest.Size(m)
-}
-func (m *GetBoardMetaRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetBoardMetaRequest.DiscardUnknown(m)
+func (m *PlayerNotification) GetDn() *DrawNotification {
+	if x, ok := m.GetN().(*PlayerNotification_Dn); ok {
+		return x.Dn
+	}
+	return nil
 }
 
-var xxx_messageInfo_GetBoardMetaRequest proto.InternalMessageInfo
-
-type GetBoardMetaResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*PlayerNotification) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _PlayerNotification_OneofMarshaler, _PlayerNotification_OneofUnmarshaler, _PlayerNotification_OneofSizer, []interface{}{
+		(*PlayerNotification_Mn)(nil),
+		(*PlayerNotification_Rn)(nil),
+		(*PlayerNotification_Dn)(nil),
+	}
 }
 
-func (m *GetBoardMetaResponse) Reset()         { *m = GetBoardMetaResponse{} }
-func (m *GetBoardMetaResponse) String() string { return proto.CompactTextString(m) }
-func (*GetBoardMetaResponse) ProtoMessage()    {}
-func (*GetBoardMetaResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{12}
-}
-func (m *GetBoardMetaResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetBoardMetaResponse.Unmarshal(m, b)
-}
-func (m *GetBoardMetaResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetBoardMetaResponse.Marshal(b, m, deterministic)
-}
-func (dst *GetBoardMetaResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetBoardMetaResponse.Merge(dst, src)
-}
-func (m *GetBoardMetaResponse) XXX_Size() int {
-	return xxx_messageInfo_GetBoardMetaResponse.Size(m)
-}
-func (m *GetBoardMetaResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetBoardMetaResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetBoardMetaResponse proto.InternalMessageInfo
-
-type OfferDrawRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+func _PlayerNotification_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*PlayerNotification)
+	// n
+	switch x := m.N.(type) {
+	case *PlayerNotification_Mn:
+		b.EncodeVarint(1<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Mn); err != nil {
+			return err
+		}
+	case *PlayerNotification_Rn:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Rn); err != nil {
+			return err
+		}
+	case *PlayerNotification_Dn:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Dn); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("PlayerNotification.N has unexpected type %T", x)
+	}
+	return nil
 }
 
-func (m *OfferDrawRequest) Reset()         { *m = OfferDrawRequest{} }
-func (m *OfferDrawRequest) String() string { return proto.CompactTextString(m) }
-func (*OfferDrawRequest) ProtoMessage()    {}
-func (*OfferDrawRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{13}
-}
-func (m *OfferDrawRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OfferDrawRequest.Unmarshal(m, b)
-}
-func (m *OfferDrawRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OfferDrawRequest.Marshal(b, m, deterministic)
-}
-func (dst *OfferDrawRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OfferDrawRequest.Merge(dst, src)
-}
-func (m *OfferDrawRequest) XXX_Size() int {
-	return xxx_messageInfo_OfferDrawRequest.Size(m)
-}
-func (m *OfferDrawRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_OfferDrawRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OfferDrawRequest proto.InternalMessageInfo
-
-type OfferDrawResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *OfferDrawResponse) Reset()         { *m = OfferDrawResponse{} }
-func (m *OfferDrawResponse) String() string { return proto.CompactTextString(m) }
-func (*OfferDrawResponse) ProtoMessage()    {}
-func (*OfferDrawResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{14}
-}
-func (m *OfferDrawResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OfferDrawResponse.Unmarshal(m, b)
-}
-func (m *OfferDrawResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OfferDrawResponse.Marshal(b, m, deterministic)
-}
-func (dst *OfferDrawResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OfferDrawResponse.Merge(dst, src)
-}
-func (m *OfferDrawResponse) XXX_Size() int {
-	return xxx_messageInfo_OfferDrawResponse.Size(m)
-}
-func (m *OfferDrawResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_OfferDrawResponse.DiscardUnknown(m)
+func _PlayerNotification_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*PlayerNotification)
+	switch tag {
+	case 1: // n.mn
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(MoveNotification)
+		err := b.DecodeMessage(msg)
+		m.N = &PlayerNotification_Mn{msg}
+		return true, err
+	case 2: // n.rn
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(ResignNotification)
+		err := b.DecodeMessage(msg)
+		m.N = &PlayerNotification_Rn{msg}
+		return true, err
+	case 3: // n.dn
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(DrawNotification)
+		err := b.DecodeMessage(msg)
+		m.N = &PlayerNotification_Dn{msg}
+		return true, err
+	default:
+		return false, nil
+	}
 }
 
-var xxx_messageInfo_OfferDrawResponse proto.InternalMessageInfo
-
-type CreateGameRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+func _PlayerNotification_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*PlayerNotification)
+	// n
+	switch x := m.N.(type) {
+	case *PlayerNotification_Mn:
+		s := proto.Size(x.Mn)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerNotification_Rn:
+		s := proto.Size(x.Rn)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PlayerNotification_Dn:
+		s := proto.Size(x.Dn)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
 }
-
-func (m *CreateGameRequest) Reset()         { *m = CreateGameRequest{} }
-func (m *CreateGameRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateGameRequest) ProtoMessage()    {}
-func (*CreateGameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{15}
-}
-func (m *CreateGameRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateGameRequest.Unmarshal(m, b)
-}
-func (m *CreateGameRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateGameRequest.Marshal(b, m, deterministic)
-}
-func (dst *CreateGameRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateGameRequest.Merge(dst, src)
-}
-func (m *CreateGameRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateGameRequest.Size(m)
-}
-func (m *CreateGameRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateGameRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateGameRequest proto.InternalMessageInfo
-
-type CreateGameResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateGameResponse) Reset()         { *m = CreateGameResponse{} }
-func (m *CreateGameResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateGameResponse) ProtoMessage()    {}
-func (*CreateGameResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{16}
-}
-func (m *CreateGameResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateGameResponse.Unmarshal(m, b)
-}
-func (m *CreateGameResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateGameResponse.Marshal(b, m, deterministic)
-}
-func (dst *CreateGameResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateGameResponse.Merge(dst, src)
-}
-func (m *CreateGameResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateGameResponse.Size(m)
-}
-func (m *CreateGameResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateGameResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateGameResponse proto.InternalMessageInfo
-
-type WaitForMoveRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *WaitForMoveRequest) Reset()         { *m = WaitForMoveRequest{} }
-func (m *WaitForMoveRequest) String() string { return proto.CompactTextString(m) }
-func (*WaitForMoveRequest) ProtoMessage()    {}
-func (*WaitForMoveRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{17}
-}
-func (m *WaitForMoveRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_WaitForMoveRequest.Unmarshal(m, b)
-}
-func (m *WaitForMoveRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_WaitForMoveRequest.Marshal(b, m, deterministic)
-}
-func (dst *WaitForMoveRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WaitForMoveRequest.Merge(dst, src)
-}
-func (m *WaitForMoveRequest) XXX_Size() int {
-	return xxx_messageInfo_WaitForMoveRequest.Size(m)
-}
-func (m *WaitForMoveRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_WaitForMoveRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_WaitForMoveRequest proto.InternalMessageInfo
-
-type WaitForMoveResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *WaitForMoveResponse) Reset()         { *m = WaitForMoveResponse{} }
-func (m *WaitForMoveResponse) String() string { return proto.CompactTextString(m) }
-func (*WaitForMoveResponse) ProtoMessage()    {}
-func (*WaitForMoveResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{18}
-}
-func (m *WaitForMoveResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_WaitForMoveResponse.Unmarshal(m, b)
-}
-func (m *WaitForMoveResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_WaitForMoveResponse.Marshal(b, m, deterministic)
-}
-func (dst *WaitForMoveResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WaitForMoveResponse.Merge(dst, src)
-}
-func (m *WaitForMoveResponse) XXX_Size() int {
-	return xxx_messageInfo_WaitForMoveResponse.Size(m)
-}
-func (m *WaitForMoveResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_WaitForMoveResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_WaitForMoveResponse proto.InternalMessageInfo
-
-type GetMovesRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetMovesRequest) Reset()         { *m = GetMovesRequest{} }
-func (m *GetMovesRequest) String() string { return proto.CompactTextString(m) }
-func (*GetMovesRequest) ProtoMessage()    {}
-func (*GetMovesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{19}
-}
-func (m *GetMovesRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetMovesRequest.Unmarshal(m, b)
-}
-func (m *GetMovesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetMovesRequest.Marshal(b, m, deterministic)
-}
-func (dst *GetMovesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetMovesRequest.Merge(dst, src)
-}
-func (m *GetMovesRequest) XXX_Size() int {
-	return xxx_messageInfo_GetMovesRequest.Size(m)
-}
-func (m *GetMovesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetMovesRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetMovesRequest proto.InternalMessageInfo
-
-type GetMovesResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetMovesResponse) Reset()         { *m = GetMovesResponse{} }
-func (m *GetMovesResponse) String() string { return proto.CompactTextString(m) }
-func (*GetMovesResponse) ProtoMessage()    {}
-func (*GetMovesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{20}
-}
-func (m *GetMovesResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetMovesResponse.Unmarshal(m, b)
-}
-func (m *GetMovesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetMovesResponse.Marshal(b, m, deterministic)
-}
-func (dst *GetMovesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetMovesResponse.Merge(dst, src)
-}
-func (m *GetMovesResponse) XXX_Size() int {
-	return xxx_messageInfo_GetMovesResponse.Size(m)
-}
-func (m *GetMovesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetMovesResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetMovesResponse proto.InternalMessageInfo
-
-type GetPreviousBoardStatesRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetPreviousBoardStatesRequest) Reset()         { *m = GetPreviousBoardStatesRequest{} }
-func (m *GetPreviousBoardStatesRequest) String() string { return proto.CompactTextString(m) }
-func (*GetPreviousBoardStatesRequest) ProtoMessage()    {}
-func (*GetPreviousBoardStatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{21}
-}
-func (m *GetPreviousBoardStatesRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetPreviousBoardStatesRequest.Unmarshal(m, b)
-}
-func (m *GetPreviousBoardStatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetPreviousBoardStatesRequest.Marshal(b, m, deterministic)
-}
-func (dst *GetPreviousBoardStatesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPreviousBoardStatesRequest.Merge(dst, src)
-}
-func (m *GetPreviousBoardStatesRequest) XXX_Size() int {
-	return xxx_messageInfo_GetPreviousBoardStatesRequest.Size(m)
-}
-func (m *GetPreviousBoardStatesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetPreviousBoardStatesRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetPreviousBoardStatesRequest proto.InternalMessageInfo
-
-type GetPreviousBoardStatesResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetPreviousBoardStatesResponse) Reset()         { *m = GetPreviousBoardStatesResponse{} }
-func (m *GetPreviousBoardStatesResponse) String() string { return proto.CompactTextString(m) }
-func (*GetPreviousBoardStatesResponse) ProtoMessage()    {}
-func (*GetPreviousBoardStatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{22}
-}
-func (m *GetPreviousBoardStatesResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetPreviousBoardStatesResponse.Unmarshal(m, b)
-}
-func (m *GetPreviousBoardStatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetPreviousBoardStatesResponse.Marshal(b, m, deterministic)
-}
-func (dst *GetPreviousBoardStatesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetPreviousBoardStatesResponse.Merge(dst, src)
-}
-func (m *GetPreviousBoardStatesResponse) XXX_Size() int {
-	return xxx_messageInfo_GetPreviousBoardStatesResponse.Size(m)
-}
-func (m *GetPreviousBoardStatesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetPreviousBoardStatesResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetPreviousBoardStatesResponse proto.InternalMessageInfo
-
-type GetMovelistRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetMovelistRequest) Reset()         { *m = GetMovelistRequest{} }
-func (m *GetMovelistRequest) String() string { return proto.CompactTextString(m) }
-func (*GetMovelistRequest) ProtoMessage()    {}
-func (*GetMovelistRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{23}
-}
-func (m *GetMovelistRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetMovelistRequest.Unmarshal(m, b)
-}
-func (m *GetMovelistRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetMovelistRequest.Marshal(b, m, deterministic)
-}
-func (dst *GetMovelistRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetMovelistRequest.Merge(dst, src)
-}
-func (m *GetMovelistRequest) XXX_Size() int {
-	return xxx_messageInfo_GetMovelistRequest.Size(m)
-}
-func (m *GetMovelistRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetMovelistRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetMovelistRequest proto.InternalMessageInfo
-
-type GetMovelistResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetMovelistResponse) Reset()         { *m = GetMovelistResponse{} }
-func (m *GetMovelistResponse) String() string { return proto.CompactTextString(m) }
-func (*GetMovelistResponse) ProtoMessage()    {}
-func (*GetMovelistResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_game_3de815aee2ea9b68, []int{24}
-}
-func (m *GetMovelistResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetMovelistResponse.Unmarshal(m, b)
-}
-func (m *GetMovelistResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetMovelistResponse.Marshal(b, m, deterministic)
-}
-func (dst *GetMovelistResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetMovelistResponse.Merge(dst, src)
-}
-func (m *GetMovelistResponse) XXX_Size() int {
-	return xxx_messageInfo_GetMovelistResponse.Size(m)
-}
-func (m *GetMovelistResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetMovelistResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetMovelistResponse proto.InternalMessageInfo
 
 func init() {
+	proto.RegisterType((*Position)(nil), "api.Position")
+	proto.RegisterType((*Piece)(nil), "api.Piece")
+	proto.RegisterType((*Move)(nil), "api.Move")
 	proto.RegisterType((*GameRequest)(nil), "api.GameRequest")
 	proto.RegisterType((*GameResponse)(nil), "api.GameResponse")
-	proto.RegisterType((*ListGamesRequest)(nil), "api.ListGamesRequest")
-	proto.RegisterType((*ListGamesResponse)(nil), "api.ListGamesResponse")
-	proto.RegisterType((*Move)(nil), "api.Move")
-	proto.RegisterType((*MoveRequest)(nil), "api.MoveRequest")
-	proto.RegisterType((*MoveResponse)(nil), "api.MoveResponse")
-	proto.RegisterType((*GameState)(nil), "api.GameState")
+	proto.RegisterType((*PlayerReq)(nil), "api.PlayerReq")
+	proto.RegisterType((*PlayerResp)(nil), "api.PlayerResp")
+	proto.RegisterType((*GameReq)(nil), "api.GameReq")
+	proto.RegisterType((*GameResp)(nil), "api.GameResp")
+	proto.RegisterType((*PlayerAction)(nil), "api.PlayerAction")
+	proto.RegisterType((*PlayerResult)(nil), "api.PlayerResult")
+	proto.RegisterType((*GameAction)(nil), "api.GameAction")
+	proto.RegisterType((*GameResult)(nil), "api.GameResult")
+	proto.RegisterType((*GetProfile)(nil), "api.GetProfile")
+	proto.RegisterType((*Profile)(nil), "api.Profile")
+	proto.RegisterType((*ModifyProfile)(nil), "api.ModifyProfile")
+	proto.RegisterType((*ListPlayers)(nil), "api.ListPlayers")
+	proto.RegisterType((*GameSummaries)(nil), "api.GameSummaries")
+	proto.RegisterType((*PlayerList)(nil), "api.PlayerList")
+	proto.RegisterType((*MoveList)(nil), "api.MoveList")
+	proto.RegisterType((*ListActiveGames)(nil), "api.ListActiveGames")
+	proto.RegisterType((*ListFinishedGames)(nil), "api.ListFinishedGames")
+	proto.RegisterType((*StartGame)(nil), "api.StartGame")
+	proto.RegisterType((*GetSummary)(nil), "api.GetSummary")
+	proto.RegisterType((*GetBoard)(nil), "api.GetBoard")
+	proto.RegisterType((*GetMoveHistory)(nil), "api.GetMoveHistory")
+	proto.RegisterType((*PlayMove)(nil), "api.PlayMove")
+	proto.RegisterType((*Resign)(nil), "api.Resign")
+	proto.RegisterType((*Draw)(nil), "api.Draw")
+	proto.RegisterType((*GameSummary)(nil), "api.GameSummary")
 	proto.RegisterType((*Board)(nil), "api.Board")
-	proto.RegisterType((*GetBoardRequest)(nil), "api.GetBoardRequest")
-	proto.RegisterType((*GetBoardResponse)(nil), "api.GetBoardResponse")
-	proto.RegisterType((*GetBoardMetaRequest)(nil), "api.GetBoardMetaRequest")
-	proto.RegisterType((*GetBoardMetaResponse)(nil), "api.GetBoardMetaResponse")
-	proto.RegisterType((*OfferDrawRequest)(nil), "api.OfferDrawRequest")
-	proto.RegisterType((*OfferDrawResponse)(nil), "api.OfferDrawResponse")
-	proto.RegisterType((*CreateGameRequest)(nil), "api.CreateGameRequest")
-	proto.RegisterType((*CreateGameResponse)(nil), "api.CreateGameResponse")
-	proto.RegisterType((*WaitForMoveRequest)(nil), "api.WaitForMoveRequest")
-	proto.RegisterType((*WaitForMoveResponse)(nil), "api.WaitForMoveResponse")
-	proto.RegisterType((*GetMovesRequest)(nil), "api.GetMovesRequest")
-	proto.RegisterType((*GetMovesResponse)(nil), "api.GetMovesResponse")
-	proto.RegisterType((*GetPreviousBoardStatesRequest)(nil), "api.GetPreviousBoardStatesRequest")
-	proto.RegisterType((*GetPreviousBoardStatesResponse)(nil), "api.GetPreviousBoardStatesResponse")
-	proto.RegisterType((*GetMovelistRequest)(nil), "api.GetMovelistRequest")
-	proto.RegisterType((*GetMovelistResponse)(nil), "api.GetMovelistResponse")
+	proto.RegisterType((*MoveResult)(nil), "api.MoveResult")
+	proto.RegisterType((*ResignResult)(nil), "api.ResignResult")
+	proto.RegisterType((*DrawResult)(nil), "api.DrawResult")
+	proto.RegisterType((*Notify)(nil), "api.Notify")
+	proto.RegisterType((*Spectate)(nil), "api.Spectate")
+	proto.RegisterType((*Unspectate)(nil), "api.Unspectate")
+	proto.RegisterType((*SpectateResult)(nil), "api.SpectateResult")
+	proto.RegisterType((*UnspectateResult)(nil), "api.UnspectateResult")
+	proto.RegisterType((*MoveNotification)(nil), "api.MoveNotification")
+	proto.RegisterType((*ResignNotification)(nil), "api.ResignNotification")
+	proto.RegisterType((*DrawNotification)(nil), "api.DrawNotification")
+	proto.RegisterType((*PlayerNotification)(nil), "api.PlayerNotification")
+	proto.RegisterEnum("api.Side", Side_name, Side_value)
+	proto.RegisterEnum("api.Type", Type_name, Type_value)
 	proto.RegisterEnum("api.Move_Castle", Move_Castle_name, Move_Castle_value)
-	proto.RegisterEnum("api.MoveResponse_Error", MoveResponse_Error_name, MoveResponse_Error_value)
-	proto.RegisterEnum("api.GetBoardResponse_Error", GetBoardResponse_Error_name, GetBoardResponse_Error_value)
 }
 
-func init() { proto.RegisterFile("game.proto", fileDescriptor_game_3de815aee2ea9b68) }
+func init() { proto.RegisterFile("game.proto", fileDescriptor_game_ea86be612a725148) }
 
-var fileDescriptor_game_3de815aee2ea9b68 = []byte{
-	// 1001 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x96, 0xdf, 0x72, 0xdb, 0x44,
-	0x14, 0xc6, 0xeb, 0xfa, 0x4f, 0xa4, 0x63, 0xd7, 0x28, 0xdb, 0xc4, 0x51, 0x0b, 0x25, 0x61, 0xc3,
-	0x40, 0x61, 0xa8, 0x99, 0x06, 0x4a, 0x98, 0x61, 0x06, 0xa6, 0x4d, 0x4c, 0xf0, 0xd0, 0xd8, 0x65,
-	0x0d, 0xe5, 0x52, 0xb3, 0xb5, 0xb6, 0x46, 0x53, 0xdb, 0x52, 0xa5, 0x8d, 0x33, 0x7d, 0x2d, 0x6e,
-	0x79, 0x01, 0x86, 0xe7, 0xe0, 0x41, 0x3a, 0x7b, 0x76, 0x25, 0x6f, 0x24, 0x27, 0x97, 0xfa, 0xce,
-	0xf9, 0xbc, 0xab, 0x6f, 0x7f, 0x3a, 0x6b, 0x80, 0x19, 0x5f, 0x88, 0x7e, 0x92, 0xc6, 0x32, 0x26,
-	0x75, 0x9e, 0x44, 0xf7, 0x3b, 0xd3, 0x78, 0xb1, 0x88, 0x97, 0x5a, 0xa2, 0xff, 0x34, 0xa0, 0x7d,
-	0xc6, 0x17, 0x82, 0x89, 0xb7, 0x17, 0x22, 0x93, 0xe4, 0x07, 0xe8, 0xce, 0xa3, 0x4c, 0x06, 0xca,
-	0x95, 0x05, 0xa9, 0x78, 0xeb, 0xd7, 0x0e, 0x6a, 0x0f, 0xdb, 0x47, 0xbb, 0x7d, 0x9e, 0x44, 0xfd,
-	0xe7, 0x51, 0x26, 0x55, 0x77, 0x66, 0xda, 0x59, 0x67, 0x6e, 0x29, 0xe4, 0x31, 0xb8, 0x33, 0x21,
-	0x83, 0x57, 0x31, 0x4f, 0x43, 0xff, 0x36, 0xfa, 0x76, 0xd0, 0x77, 0x26, 0xe4, 0x33, 0x25, 0xe6,
-	0x36, 0x67, 0x66, 0x04, 0xf2, 0x23, 0x74, 0x0b, 0x4b, 0xb0, 0x10, 0x92, 0xfb, 0x0e, 0xfa, 0xfc,
-	0x2b, 0xbe, 0x73, 0x21, 0x79, 0xb1, 0xe4, 0xcc, 0x12, 0xc9, 0x23, 0x70, 0x17, 0xfc, 0x8d, 0x08,
-	0x16, 0xf1, 0x4a, 0xf8, 0x75, 0xb4, 0x7a, 0x68, 0x3d, 0x8f, 0x57, 0xa2, 0x58, 0x4e, 0xb5, 0x28,
-	0x81, 0x7c, 0x01, 0x8d, 0x30, 0xe5, 0x97, 0xfe, 0x96, 0xf5, 0x52, 0xe3, 0xd7, 0xaf, 0x45, 0x7a,
-	0x9a, 0xf2, 0xcb, 0xbc, 0x1d, 0x5b, 0xc8, 0x31, 0xb4, 0xa7, 0xa9, 0xe0, 0x52, 0x60, 0x16, 0x7e,
-	0x03, 0x1d, 0x3d, 0x74, 0x9c, 0xa0, 0x6e, 0xc5, 0xc6, 0x60, 0x5a, 0x48, 0xe4, 0x3b, 0x80, 0x4b,
-	0x1e, 0x49, 0xdc, 0x52, 0xe6, 0x37, 0xd1, 0xb7, 0x87, 0xbe, 0x3f, 0x79, 0x24, 0x7f, 0x8e, 0x53,
-	0x7b, 0x6b, 0xae, 0x6a, 0x55, 0x42, 0x96, 0xa7, 0xa7, 0x6d, 0xad, 0x83, 0xba, 0x9d, 0x1e, 0x76,
-	0xd8, 0xe9, 0x69, 0xcb, 0x2f, 0x3a, 0xbd, 0x24, 0x15, 0x2b, 0x93, 0xba, 0x8b, 0xcb, 0xd1, 0xdc,
-	0xf7, 0x22, 0x15, 0xab, 0x28, 0xbe, 0xc8, 0x30, 0xb0, 0x89, 0xe4, 0xd2, 0x3a, 0xba, 0x99, 0x2e,
-	0xeb, 0x73, 0xf8, 0x16, 0x5c, 0xb5, 0x70, 0xa0, 0xce, 0xd3, 0x07, 0x6b, 0xcf, 0x66, 0x71, 0xa5,
-	0xaf, 0xe3, 0x8c, 0x57, 0x42, 0xa1, 0x40, 0xff, 0x6d, 0x40, 0x47, 0xc7, 0x90, 0x25, 0xf1, 0x32,
-	0x13, 0xe4, 0x09, 0xc0, 0x1a, 0x1f, 0x83, 0x4e, 0xaf, 0x8c, 0x8e, 0xee, 0x65, 0x6e, 0xc1, 0x0e,
-	0x39, 0xaa, 0x82, 0xb3, 0x5b, 0x02, 0xc7, 0x98, 0xd6, 0xe4, 0xfc, 0x74, 0x0d, 0x39, 0xf7, 0x36,
-	0x90, 0x63, 0xcc, 0x57, 0xd1, 0x39, 0x86, 0x6e, 0x81, 0x4e, 0x90, 0x8a, 0x2c, 0x31, 0xfc, 0x6c,
-	0x5b, 0xfc, 0xe4, 0xc6, 0x1c, 0x20, 0xa5, 0x90, 0x2f, 0xaf, 0x40, 0xd4, 0x2b, 0x43, 0x64, 0x3c,
-	0x9a, 0xa2, 0xef, 0x37, 0x51, 0xb4, 0x57, 0xa1, 0xc8, 0x78, 0x6c, 0x8c, 0x8e, 0x37, 0x60, 0xe4,
-	0x57, 0x31, 0xca, 0xc3, 0x5c, 0x73, 0x74, 0x54, 0xe5, 0x68, 0xb7, 0xc4, 0x91, 0x15, 0xa6, 0xf6,
-	0x0c, 0xaf, 0x01, 0xe9, 0xf0, 0x46, 0x90, 0xac, 0x58, 0xd7, 0x24, 0x3d, 0xa9, 0x92, 0xe4, 0x57,
-	0x49, 0xca, 0x77, 0x50, 0xa0, 0x34, 0x03, 0xaf, 0x3c, 0x5d, 0xc8, 0x3e, 0xb4, 0x91, 0xa6, 0x54,
-	0x4c, 0xc5, 0x52, 0x22, 0x4e, 0x0e, 0x03, 0xfd, 0x03, 0x4a, 0x21, 0x3d, 0x68, 0xcd, 0xd5, 0x56,
-	0x24, 0x42, 0xd3, 0x60, 0xe6, 0x89, 0xdc, 0x07, 0x47, 0xf0, 0x74, 0x1e, 0xa9, 0x4a, 0x1d, 0x2b,
-	0xc5, 0x33, 0xbd, 0x0b, 0xdb, 0x15, 0x16, 0xe9, 0xff, 0x35, 0x68, 0xe0, 0x80, 0x78, 0x00, 0x0d,
-	0xf9, 0x2e, 0x11, 0xb8, 0x56, 0xf7, 0xc8, 0xc5, 0x8d, 0xff, 0xfe, 0x2e, 0x11, 0x0c, 0x65, 0x72,
-	0x08, 0xcd, 0x4c, 0xf2, 0x54, 0x1a, 0x48, 0xef, 0x60, 0xfd, 0x45, 0x9c, 0x45, 0x32, 0x8a, 0x97,
-	0x4c, 0xd7, 0xc8, 0x3e, 0xd4, 0xc5, 0x32, 0x34, 0x34, 0x95, 0x5a, 0x54, 0x85, 0x7c, 0x04, 0x6e,
-	0x92, 0xc6, 0x8b, 0x58, 0x29, 0x88, 0x84, 0xc3, 0xd6, 0x02, 0x79, 0x08, 0xad, 0x29, 0xcf, 0xe4,
-	0x5c, 0xe0, 0xa1, 0x77, 0xad, 0x79, 0xd6, 0x3f, 0x41, 0x9d, 0x99, 0x3a, 0xfd, 0x1a, 0x5a, 0x5a,
-	0x21, 0x0e, 0x34, 0x46, 0xe3, 0xd1, 0xc0, 0xbb, 0x45, 0x3a, 0xe0, 0xfc, 0x3a, 0x1c, 0x9d, 0x4d,
-	0x86, 0xa7, 0x03, 0xaf, 0x46, 0xee, 0x80, 0xfb, 0xdb, 0x1f, 0x83, 0xc1, 0x08, 0x1f, 0x6f, 0xd3,
-	0x10, 0xda, 0xd6, 0xf0, 0x21, 0x7b, 0xb0, 0xa5, 0xa8, 0x0c, 0xa2, 0x10, 0xdf, 0xb7, 0xc3, 0x5a,
-	0xea, 0x71, 0x18, 0xaa, 0x14, 0xb2, 0x28, 0x14, 0xf8, 0x96, 0x79, 0x0a, 0x93, 0x28, 0x14, 0x0c,
-	0x65, 0x55, 0xb6, 0xe6, 0xad, 0xbb, 0xfe, 0x5e, 0x50, 0xa6, 0xff, 0xd5, 0xa0, 0x63, 0xc3, 0xa9,
-	0xde, 0x57, 0x5d, 0x3a, 0x91, 0x94, 0x22, 0x34, 0xa7, 0xb8, 0x16, 0xc8, 0x23, 0x68, 0x8a, 0x34,
-	0x8d, 0x53, 0xb3, 0xda, 0x5e, 0xe5, 0xf3, 0xeb, 0x0f, 0x54, 0x99, 0xe9, 0x2e, 0xf2, 0x09, 0x74,
-	0xa2, 0x2c, 0x98, 0xfe, 0x25, 0xa6, 0x6f, 0x16, 0x5c, 0xea, 0x4d, 0x38, 0xac, 0x1d, 0x65, 0x27,
-	0xb9, 0x64, 0x5a, 0x32, 0xc9, 0xe7, 0x02, 0x5b, 0x1a, 0x79, 0xcb, 0x24, 0x97, 0xe8, 0xe7, 0xd0,
-	0xc4, 0x5f, 0x55, 0x79, 0x8d, 0xc6, 0xc1, 0x80, 0xb1, 0x31, 0xf3, 0x6e, 0x11, 0x0f, 0x3a, 0xc3,
-	0xd1, 0xcb, 0xa7, 0xcf, 0x87, 0xa7, 0xc1, 0xf9, 0xf8, 0xe5, 0xc0, 0xab, 0xd1, 0x36, 0xb8, 0x0a,
-	0x15, 0x44, 0x9e, 0x4e, 0xa0, 0xa9, 0x21, 0xa7, 0xd0, 0x4a, 0x22, 0x31, 0xc5, 0x19, 0xa7, 0x3e,
-	0x30, 0xd0, 0xa7, 0xac, 0x24, 0x66, 0x2a, 0xe4, 0x33, 0x70, 0xa6, 0x3c, 0x91, 0x17, 0xa9, 0x50,
-	0x33, 0xad, 0xdc, 0x55, 0xd4, 0xe8, 0x57, 0xf0, 0x41, 0xe9, 0x7e, 0x24, 0xf7, 0xc0, 0xd1, 0x73,
-	0xad, 0x38, 0x99, 0x2d, 0x7c, 0x1e, 0x86, 0xf4, 0xef, 0x1a, 0x78, 0xe5, 0xa9, 0x48, 0x1e, 0xe7,
-	0x11, 0x6a, 0x6c, 0x3f, 0xdc, 0x38, 0x3b, 0xaf, 0xc6, 0x78, 0x00, 0x4d, 0x7b, 0xdc, 0xea, 0xad,
-	0xe9, 0x7e, 0x5d, 0x20, 0x9f, 0x22, 0xeb, 0x32, 0x3f, 0xe6, 0xae, 0xfe, 0xd1, 0x3c, 0x0b, 0xa6,
-	0x8b, 0xf4, 0x70, 0x73, 0x90, 0xfa, 0xe9, 0xd9, 0xf8, 0x29, 0x3b, 0xf5, 0x6a, 0x74, 0x17, 0xee,
-	0x6e, 0xb8, 0xca, 0x69, 0x0f, 0x76, 0x36, 0xcd, 0x69, 0x4a, 0xc0, 0x2b, 0x5f, 0xca, 0xea, 0xb3,
-	0xad, 0xcc, 0x58, 0x25, 0x56, 0xee, 0x62, 0xba, 0x03, 0xa4, 0x3a, 0x5a, 0x95, 0x5a, 0xbd, 0x7e,
-	0xd5, 0xc6, 0x36, 0x4c, 0x53, 0xba, 0x8d, 0x47, 0x62, 0x5f, 0xba, 0x6a, 0x4f, 0xe5, 0xf9, 0x49,
-	0xf7, 0xe1, 0xc1, 0x8d, 0x77, 0x2c, 0x3d, 0x80, 0x8f, 0x6f, 0x9e, 0x9d, 0x6a, 0x5b, 0xd5, 0x1b,
-	0xd6, 0xe4, 0x55, 0x9e, 0x96, 0xaf, 0x5a, 0xf8, 0x9f, 0xed, 0x9b, 0xf7, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0x9b, 0x1a, 0x58, 0xe5, 0xd4, 0x09, 0x00, 0x00,
+var fileDescriptor_game_ea86be612a725148 = []byte{
+	// 1731 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x58, 0x5f, 0x6f, 0x1b, 0xc7,
+	0x11, 0xe7, 0x1d, 0x8f, 0xe4, 0x71, 0x48, 0x4a, 0xe7, 0x8d, 0x1d, 0xd3, 0xa8, 0x63, 0x0b, 0x97,
+	0xca, 0x91, 0x9d, 0x40, 0x46, 0xd4, 0x1a, 0x29, 0x60, 0x14, 0xa8, 0x15, 0xab, 0x22, 0x2b, 0x87,
+	0x56, 0x4e, 0x72, 0xf2, 0x48, 0x9c, 0x79, 0x6b, 0xf9, 0x50, 0xde, 0x9f, 0xdc, 0x1e, 0xad, 0xf0,
+	0xa9, 0xe8, 0x73, 0xd1, 0xd7, 0xa2, 0x2f, 0xf9, 0x06, 0xfd, 0x06, 0xfd, 0x6a, 0x7d, 0x28, 0x66,
+	0x76, 0xf7, 0xfe, 0x89, 0x56, 0xfc, 0x90, 0x87, 0xbc, 0xdd, 0xce, 0xcc, 0xce, 0xce, 0xcc, 0x6f,
+	0xe6, 0xb7, 0x4b, 0x02, 0x5c, 0xf8, 0x11, 0xdf, 0x4f, 0xb3, 0x24, 0x4f, 0x58, 0xdb, 0x4f, 0x43,
+	0xf7, 0x01, 0xd8, 0xa7, 0x89, 0x08, 0xf3, 0x30, 0x89, 0xd9, 0x10, 0x8c, 0x1f, 0xc7, 0xc6, 0x8e,
+	0xb1, 0xd7, 0xf1, 0x8c, 0x1f, 0x71, 0xb5, 0x1e, 0x9b, 0x72, 0xb5, 0x76, 0xbf, 0x85, 0xce, 0x69,
+	0xc8, 0x17, 0x9c, 0x7d, 0x02, 0x56, 0xbe, 0x4e, 0x39, 0xd9, 0x6d, 0x1d, 0xf4, 0xf7, 0xfd, 0x34,
+	0xdc, 0x3f, 0x5f, 0xa7, 0xdc, 0x23, 0x31, 0x7b, 0x08, 0x76, 0xaa, 0xfc, 0xd1, 0xe6, 0xc1, 0xc1,
+	0x88, 0x4c, 0xf4, 0x21, 0x5e, 0xa1, 0x76, 0xff, 0x6e, 0x82, 0xf5, 0x4d, 0xf2, 0xee, 0x67, 0x5d,
+	0x7e, 0x0a, 0x1d, 0x91, 0xfb, 0x59, 0xbe, 0xd9, 0x9f, 0xd4, 0xb1, 0xfb, 0xd0, 0xe6, 0x71, 0x30,
+	0x6e, 0x6f, 0x32, 0x41, 0x0d, 0xbb, 0x0b, 0xfd, 0x34, 0x4b, 0xa2, 0x84, 0x22, 0xb3, 0x76, 0x8c,
+	0x3d, 0xdb, 0x2b, 0x05, 0x6c, 0x0f, 0xba, 0x0b, 0x5f, 0xe4, 0x4b, 0x3e, 0xee, 0x50, 0x10, 0x0e,
+	0x79, 0xc0, 0xe8, 0xf6, 0xbf, 0x26, 0xb9, 0xa7, 0xf4, 0xec, 0x37, 0xd0, 0x4f, 0x97, 0xfe, 0x9a,
+	0x67, 0xf3, 0x30, 0x18, 0x77, 0x77, 0x8c, 0xbd, 0xa1, 0x67, 0x4b, 0xc1, 0x34, 0x70, 0x1f, 0x43,
+	0x57, 0x9a, 0x33, 0x1b, 0xac, 0xd9, 0xcb, 0xd9, 0x91, 0xd3, 0x62, 0x43, 0xb0, 0x4f, 0xa6, 0xb3,
+	0xe3, 0xb3, 0xe9, 0xf3, 0x23, 0xc7, 0x60, 0x23, 0xe8, 0x7f, 0xfb, 0xea, 0xe8, 0x68, 0x46, 0x4b,
+	0xd3, 0x3d, 0x81, 0xc1, 0xb1, 0x1f, 0x71, 0x8f, 0xff, 0xb0, 0xe2, 0x22, 0x67, 0xf7, 0xc0, 0x4c,
+	0xc5, 0xd8, 0xd8, 0x69, 0xef, 0x0d, 0x0e, 0xb6, 0x64, 0x12, 0xe4, 0xda, 0xe3, 0x3f, 0x78, 0x66,
+	0x2a, 0xd8, 0x5d, 0x30, 0x2f, 0xc4, 0xd8, 0x24, 0xfd, 0x90, 0xf4, 0x6a, 0xb7, 0x67, 0x5e, 0x08,
+	0x77, 0x06, 0x43, 0xb9, 0x14, 0x69, 0x12, 0x0b, 0xce, 0xee, 0x57, 0xbc, 0x6d, 0xd7, 0xbc, 0x89,
+	0x94, 0xdc, 0x7d, 0x52, 0x71, 0x37, 0xaa, 0xb8, 0x43, 0xf5, 0x85, 0x70, 0x5f, 0x41, 0xbf, 0x38,
+	0xbe, 0x9e, 0xb7, 0x51, 0xcf, 0x9b, 0x7d, 0x0e, 0x3d, 0x7f, 0x81, 0x85, 0xd4, 0xde, 0x6e, 0x54,
+	0x8e, 0x7b, 0x46, 0x1a, 0x4f, 0x5b, 0xb8, 0xdf, 0x01, 0x94, 0x71, 0xfc, 0xac, 0xdf, 0x8c, 0x8b,
+	0xd5, 0x32, 0xdf, 0xe4, 0xd7, 0x23, 0x8d, 0xa7, 0x2d, 0xdc, 0x6f, 0xa0, 0xa7, 0xaa, 0xc1, 0x6e,
+	0x43, 0x0f, 0x1b, 0xbd, 0x74, 0xd9, 0xc5, 0xe5, 0x34, 0x60, 0x0f, 0x9b, 0x81, 0x6e, 0x17, 0x69,
+	0x37, 0xc3, 0x9c, 0x81, 0xad, 0xab, 0x71, 0xad, 0xbf, 0x7a, 0x80, 0xdb, 0xd5, 0x32, 0xd6, 0xc2,
+	0xfb, 0xa9, 0x0d, 0xc3, 0x6a, 0x41, 0x30, 0x73, 0x79, 0x56, 0x25, 0x73, 0x29, 0x98, 0x06, 0xec,
+	0x09, 0xc0, 0x32, 0x14, 0xf9, 0x1c, 0xcf, 0x11, 0xaa, 0xf3, 0x6f, 0x92, 0xef, 0x17, 0xa1, 0xc8,
+	0xd1, 0xc3, 0x3b, 0x8e, 0xa7, 0x88, 0x49, 0xcb, 0xeb, 0xa3, 0x25, 0x2d, 0xd8, 0x13, 0xa0, 0xc5,
+	0xfc, 0x6d, 0x28, 0x72, 0x35, 0x0c, 0x1f, 0x17, 0xbb, 0xfe, 0x1c, 0xc6, 0xa1, 0x78, 0xcb, 0x03,
+	0xbd, 0xcf, 0x46, 0xd3, 0x49, 0x28, 0x72, 0xf6, 0x18, 0x80, 0xc6, 0x88, 0x8e, 0xa3, 0x11, 0xd0,
+	0xfd, 0x77, 0x86, 0x62, 0xdc, 0x80, 0xe7, 0x08, 0xbd, 0x60, 0xbb, 0xd0, 0x8d, 0x93, 0x3c, 0x7c,
+	0xb3, 0xa6, 0x11, 0x18, 0x1c, 0x0c, 0xc8, 0x78, 0x46, 0xa2, 0x49, 0xcb, 0x53, 0x4a, 0xc4, 0x2f,
+	0xcd, 0x92, 0x37, 0xe1, 0x92, 0x8f, 0x7b, 0x64, 0xa7, 0xca, 0xc3, 0xf3, 0x53, 0x29, 0x9e, 0xb4,
+	0x3c, 0x6d, 0xc1, 0x9e, 0xc2, 0x56, 0x94, 0x04, 0xe1, 0x9b, 0xf5, 0x5c, 0xef, 0xb1, 0x69, 0x0f,
+	0x53, 0xb3, 0x88, 0xaa, 0x72, 0xdb, 0x28, 0xaa, 0x0a, 0xd8, 0x13, 0x18, 0x52, 0xe2, 0xb2, 0x75,
+	0xc4, 0xb8, 0x4f, 0x5b, 0x9d, 0x22, 0x77, 0x59, 0x79, 0xcc, 0x7a, 0xb0, 0x2c, 0x97, 0x87, 0xfd,
+	0xa2, 0x1f, 0xdc, 0xff, 0x99, 0x1a, 0x1f, 0x89, 0xdc, 0xf5, 0xf8, 0x3c, 0x82, 0x4e, 0x15, 0x1a,
+	0x56, 0xc0, 0x7e, 0xb6, 0x8a, 0x22, 0x3f, 0x0b, 0xa9, 0xc0, 0xd2, 0x84, 0xed, 0x43, 0x0f, 0xf1,
+	0x48, 0xb2, 0xb5, 0x82, 0x64, 0xb3, 0xb5, 0x36, 0x62, 0x77, 0xca, 0x6e, 0x43, 0xa2, 0x1a, 0x62,
+	0x41, 0x55, 0xbf, 0xfd, 0x11, 0x86, 0x54, 0xda, 0x70, 0xe1, 0x13, 0x91, 0x49, 0xa8, 0x6e, 0x57,
+	0xa6, 0x62, 0x56, 0x51, 0x4f, 0x5a, 0x5e, 0xcd, 0x9c, 0xed, 0x35, 0xf1, 0x90, 0x24, 0xb2, 0x01,
+	0x8c, 0xcf, 0x0a, 0x30, 0xc4, 0x6a, 0xb1, 0xe0, 0x42, 0x10, 0x18, 0x76, 0x59, 0xf8, 0x33, 0x29,
+	0x66, 0x4f, 0xc1, 0xc1, 0x82, 0xf2, 0x60, 0x5e, 0xa7, 0xc5, 0x3a, 0xe5, 0x20, 0x04, 0x93, 0x96,
+	0xb7, 0x25, 0x4d, 0x4f, 0xd5, 0x7c, 0x63, 0xf9, 0xf5, 0x78, 0xfc, 0xbb, 0x0d, 0x50, 0x8e, 0xe1,
+	0xf5, 0xc5, 0xff, 0x3d, 0x0c, 0xa9, 0x40, 0x82, 0xaa, 0xb7, 0x56, 0x18, 0x14, 0xbd, 0x25, 0x8b,
+	0x8a, 0x7d, 0x38, 0xb8, 0x28, 0x6a, 0xbc, 0x66, 0xbb, 0xd0, 0x79, 0x9d, 0xf8, 0x59, 0xfd, 0x92,
+	0x38, 0xe6, 0xf9, 0x21, 0x0a, 0x11, 0x2d, 0xd2, 0xb2, 0xc7, 0x25, 0x5a, 0x16, 0x19, 0x7e, 0xa4,
+	0x0d, 0xf1, 0x3a, 0x98, 0x48, 0x55, 0x15, 0xae, 0x2f, 0x24, 0x83, 0xcd, 0xa3, 0xe4, 0x9d, 0x9e,
+	0x9d, 0x51, 0x91, 0x3a, 0xed, 0x69, 0x49, 0x4a, 0xa3, 0xcb, 0x6e, 0x17, 0xba, 0x19, 0x17, 0xe1,
+	0x45, 0x5c, 0x9b, 0x1c, 0x8f, 0x44, 0x08, 0xb4, 0x54, 0xb2, 0xfb, 0x60, 0x05, 0x99, 0x7f, 0xa9,
+	0x60, 0x92, 0x77, 0xe2, 0xf3, 0xcc, 0xbf, 0x9c, 0xb4, 0x3c, 0x52, 0xb0, 0xcf, 0xc1, 0x16, 0x29,
+	0x5f, 0xe4, 0x7e, 0xae, 0xe7, 0x44, 0x1e, 0x7a, 0xa6, 0x84, 0x78, 0xa8, 0x36, 0x60, 0x5f, 0x02,
+	0xac, 0xe2, 0xc2, 0xbc, 0x5f, 0x29, 0xd7, 0xab, 0x42, 0x3c, 0x69, 0x79, 0x15, 0xa3, 0xea, 0x64,
+	0xfc, 0x57, 0x41, 0xf3, 0x21, 0x73, 0xf1, 0x05, 0xf4, 0xea, 0xa8, 0x38, 0x8d, 0x5e, 0xa7, 0xd2,
+	0x29, 0x13, 0xe6, 0xd6, 0x21, 0x01, 0xb2, 0x6d, 0xe0, 0xb1, 0x0b, 0x1d, 0xac, 0xac, 0x50, 0x68,
+	0x8c, 0x8a, 0x9b, 0x59, 0xf5, 0x94, 0xd4, 0xb2, 0x03, 0x18, 0xe0, 0xc7, 0x5c, 0xf6, 0x93, 0xc2,
+	0x61, 0xbb, 0x30, 0x96, 0xb1, 0x63, 0x8e, 0x51, 0xb1, 0x62, 0x7f, 0x80, 0x91, 0x2c, 0xb7, 0xde,
+	0x25, 0x21, 0xb9, 0x51, 0x81, 0xa4, 0xd8, 0x37, 0xcc, 0x2a, 0x6b, 0x3c, 0x0d, 0x51, 0xd0, 0xfb,
+	0xaa, 0xe4, 0x86, 0x28, 0x95, 0xa7, 0x05, 0xc5, 0x8a, 0x7d, 0x79, 0x05, 0xb1, 0x8f, 0x6a, 0x88,
+	0x15, 0x9b, 0x4a, 0xdc, 0xbe, 0xda, 0x80, 0xdb, 0xad, 0x06, 0x6e, 0xe5, 0x59, 0x9b, 0xd1, 0x1b,
+	0x02, 0x94, 0x7c, 0xeb, 0xfe, 0xc7, 0x80, 0x9e, 0xe6, 0xcc, 0x6b, 0xaf, 0x5e, 0x06, 0xd6, 0x65,
+	0x18, 0x4b, 0x7e, 0xb3, 0x3c, 0xfa, 0x46, 0x59, 0x1e, 0x72, 0x41, 0x68, 0x59, 0x1e, 0x7d, 0xb3,
+	0x8f, 0xa1, 0xbb, 0x4c, 0x84, 0x50, 0xf8, 0x58, 0x9e, 0x5a, 0xb1, 0x4f, 0x61, 0xb4, 0x58, 0x65,
+	0x19, 0x8f, 0xf5, 0x1d, 0xd6, 0xd9, 0x69, 0xef, 0x0d, 0xbd, 0xa1, 0x12, 0xca, 0xeb, 0xea, 0x3e,
+	0x0c, 0x54, 0x04, 0x31, 0x5e, 0x3c, 0xf2, 0x39, 0x05, 0x52, 0x34, 0xf3, 0x23, 0xee, 0x3e, 0x82,
+	0x51, 0x8d, 0xf8, 0xd9, 0x1d, 0xb0, 0x63, 0x7e, 0x29, 0xcd, 0x65, 0xc8, 0xbd, 0x98, 0x5f, 0x92,
+	0xed, 0x08, 0x06, 0x15, 0xa6, 0x77, 0x1f, 0xc3, 0xa8, 0xc6, 0xb0, 0xec, 0x1e, 0x18, 0xfa, 0x35,
+	0x74, 0xa5, 0x29, 0x3d, 0x43, 0xb8, 0x7f, 0xd1, 0xef, 0x12, 0xf4, 0xd2, 0x2c, 0x4e, 0xbb, 0x56,
+	0x9c, 0x46, 0xdc, 0x26, 0xa9, 0xab, 0x71, 0xef, 0x82, 0xad, 0x5b, 0x94, 0xdd, 0x01, 0x33, 0xd2,
+	0x07, 0xf7, 0xcb, 0x86, 0x34, 0x23, 0xe1, 0xde, 0x80, 0xed, 0xc6, 0x75, 0xee, 0x3e, 0x85, 0x1b,
+	0x57, 0xee, 0x6a, 0x76, 0x53, 0x3f, 0x81, 0x31, 0xe5, 0xb6, 0x7e, 0xf3, 0x3a, 0xf2, 0xcd, 0x6b,
+	0x92, 0x0c, 0x3f, 0x5d, 0x0e, 0xfd, 0xe2, 0xc2, 0xc6, 0x0c, 0x2e, 0xdf, 0x86, 0x39, 0xde, 0x23,
+	0x42, 0x67, 0x40, 0x82, 0x69, 0x20, 0x50, 0xf9, 0x7a, 0xe9, 0x2f, 0xfe, 0x4a, 0x4a, 0x19, 0xbf,
+	0x4d, 0x02, 0x54, 0xde, 0x03, 0x50, 0x9d, 0x94, 0x64, 0x88, 0x36, 0x65, 0x57, 0x4a, 0x54, 0x4b,
+	0xa9, 0xd2, 0x61, 0xae, 0x9a, 0x45, 0x11, 0x1e, 0x9a, 0xda, 0xb2, 0xa3, 0x7a, 0xb4, 0x9e, 0x06,
+	0xae, 0x03, 0x5b, 0x75, 0x0e, 0x75, 0x1f, 0x82, 0xad, 0x29, 0x12, 0x7f, 0x03, 0x10, 0x7f, 0x1a,
+	0x15, 0xbe, 0xa3, 0x32, 0x91, 0xd8, 0xb5, 0xa1, 0x2b, 0xe7, 0xd1, 0xed, 0x82, 0x85, 0x13, 0xe6,
+	0xfe, 0x4d, 0xbe, 0x9c, 0x35, 0xb9, 0xff, 0x16, 0xec, 0xc5, 0x2a, 0x9b, 0x17, 0x3e, 0xf4, 0xef,
+	0x88, 0xb3, 0x30, 0xe0, 0x5e, 0x6f, 0xb1, 0xca, 0xe8, 0x94, 0x9b, 0xd0, 0xa1, 0x0a, 0xa8, 0x8c,
+	0xe5, 0x02, 0xa5, 0x94, 0xba, 0xca, 0x54, 0x2e, 0x2a, 0x45, 0x08, 0xe3, 0x8b, 0xb1, 0x55, 0x2b,
+	0x42, 0x18, 0x5f, 0xb8, 0x3f, 0x19, 0xd0, 0x91, 0x49, 0xbb, 0xd0, 0x0d, 0x63, 0x04, 0x5f, 0x81,
+	0x2c, 0x69, 0x8c, 0x7e, 0x2e, 0x79, 0x4a, 0xc3, 0x1e, 0x80, 0xbd, 0xf0, 0xd3, 0x7c, 0x95, 0xf1,
+	0x40, 0xbd, 0x14, 0xab, 0x56, 0x85, 0x8e, 0x3d, 0x80, 0x3e, 0xd1, 0xd8, 0x52, 0x3e, 0xe0, 0x1a,
+	0x3d, 0x63, 0x47, 0xba, 0xa9, 0x76, 0xe8, 0xe9, 0x6e, 0x6d, 0xa6, 0x58, 0x7a, 0xbd, 0x9f, 0x02,
+	0x94, 0xc4, 0xc7, 0xc6, 0xc8, 0xcb, 0xf2, 0x22, 0x37, 0xe8, 0xc7, 0x8f, 0x5e, 0xe2, 0x4f, 0x1f,
+	0xc5, 0x62, 0xef, 0x21, 0x6c, 0x4f, 0xe9, 0x5d, 0x0f, 0x86, 0x55, 0x52, 0xfc, 0x45, 0x7c, 0x9e,
+	0x02, 0x94, 0x84, 0xf9, 0x8b, 0x78, 0xfc, 0x13, 0x74, 0xe5, 0x3b, 0x14, 0x7f, 0xf2, 0xbd, 0xe5,
+	0x7e, 0x96, 0xbf, 0xe6, 0xbe, 0x9e, 0x9c, 0x52, 0x80, 0x67, 0xe5, 0x61, 0xc4, 0x93, 0x55, 0xae,
+	0x26, 0x48, 0x2f, 0x5d, 0x00, 0x5b, 0x73, 0x32, 0xb6, 0x7a, 0x49, 0xb5, 0xee, 0x13, 0xd8, 0xaa,
+	0xb3, 0x35, 0xd2, 0x5c, 0x28, 0xe6, 0x95, 0x46, 0x91, 0x71, 0x0f, 0x43, 0x71, 0x56, 0xb6, 0xca,
+	0x57, 0xe0, 0x34, 0xf9, 0xfa, 0xc3, 0x36, 0xbe, 0x01, 0x07, 0x31, 0xac, 0xbe, 0xe9, 0xae, 0x19,
+	0x31, 0x76, 0x1b, 0x8c, 0x48, 0xd5, 0xa7, 0xd2, 0x34, 0x46, 0x24, 0xa9, 0xaf, 0xfd, 0x9e, 0xc2,
+	0x19, 0xc2, 0xfd, 0xa7, 0x01, 0x4c, 0x42, 0xfb, 0xa1, 0x47, 0xd5, 0xe8, 0xd1, 0x6c, 0xdc, 0x1d,
+	0x0d, 0x7a, 0x6c, 0x37, 0x69, 0x5d, 0xc6, 0x63, 0xbd, 0x3f, 0x9e, 0x7f, 0x18, 0xe0, 0x60, 0x5b,
+	0xfc, 0x3a, 0xa2, 0xf9, 0x97, 0x01, 0xec, 0xea, 0xe3, 0x9a, 0x7d, 0x06, 0x66, 0x14, 0x2b, 0xc2,
+	0xba, 0x55, 0x94, 0xbb, 0xf1, 0xfe, 0x36, 0xa3, 0x98, 0x3d, 0x04, 0x33, 0xd3, 0xff, 0x86, 0xdc,
+	0xae, 0xbc, 0x2d, 0x9a, 0xa6, 0x19, 0xf9, 0x0c, 0x62, 0x85, 0xd4, 0xad, 0xe2, 0x39, 0xd1, 0x34,
+	0x0c, 0xe2, 0xc3, 0x36, 0x18, 0xf1, 0xa3, 0xbb, 0x60, 0x21, 0xbf, 0xb1, 0x3e, 0x74, 0xbe, 0x9f,
+	0x4c, 0xcf, 0x8f, 0x9c, 0x16, 0x7e, 0x1e, 0xbe, 0x78, 0xf6, 0xf5, 0x89, 0x63, 0x3c, 0x3a, 0x07,
+	0xeb, 0x7c, 0x9d, 0x72, 0x36, 0x80, 0xde, 0x74, 0xf6, 0xdd, 0xb3, 0x17, 0xd3, 0xe7, 0x4e, 0x8b,
+	0xd9, 0x60, 0x9d, 0x3e, 0xfb, 0x7e, 0xe6, 0x18, 0xf8, 0xe5, 0xbd, 0x7c, 0x79, 0xe2, 0x98, 0x0c,
+	0xa0, 0x7b, 0x32, 0x9b, 0x1e, 0x4f, 0xce, 0x9d, 0x36, 0x7e, 0x1f, 0x4e, 0xcf, 0x26, 0x2f, 0x4f,
+	0x1d, 0x0b, 0x7d, 0xd1, 0x7f, 0x15, 0x4e, 0x07, 0x8d, 0x4f, 0xa6, 0xb3, 0x63, 0xa7, 0xfb, 0xba,
+	0x4b, 0x7f, 0x1e, 0xfd, 0xee, 0xff, 0x01, 0x00, 0x00, 0xff, 0xff, 0x85, 0x99, 0xd7, 0xb7, 0x4a,
+	0x12, 0x00, 0x00,
 }
