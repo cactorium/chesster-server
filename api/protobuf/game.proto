@@ -25,6 +25,8 @@ enum Type {
 message Piece {
   Type type = 1;
   Position position = 2;
+  Side side = 3;
+  bool has_moved = 4;
 }
 
 message Move {
@@ -145,7 +147,9 @@ message ModifyProfile {
 }
 
 message ListPlayers {
-  // TODO: filters for player name or whatever
+  bytes name_fragment = 1;
+  // each page is 100 players by default
+  uint64 page_num = 2;
 }
 
 
@@ -189,18 +193,34 @@ message PlayMove {
   Move move = 1;
 }
 
-message Resign {
-}
+message Resign {}
 
-message Draw {
+message Draw {}
+
+enum GameState {
+  WhiteMove = 0;
+  BlackMove = 1;
+	WhiteCheckmate = 2;
+	BlackCheckmate = 3;
+	WhiteStalemate = 4;
+	BlackStalemate = 5;
+	WhiteResigned = 6;
+	BlackResigned = 7;
+	DrawAgreed = 8;
+	Draw50Moves = 9;
+	Draw3Fold = 10;
 }
 
 message GameSummary {
-  Side cur_move = 1;
+  GameState state = 1;
   repeated bytes white = 2;
   repeated bytes black = 3;
   repeated bytes spectating = 4;
-  // TODO: various flags, like in check, offer to draw, etc.
+  bool white_check = 5;
+  bool black_check = 6;
+  bool white_draw = 7;
+  bool black_draw = 8;
+  int64 moves_since_capture = 9;
 }
 
 message Board {

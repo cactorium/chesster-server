@@ -11,6 +11,8 @@ message AuthRequest {
     RevokeSessionsRequest revoke_sessions = 5;
     RevokeKeysRequest revoke_keys = 6;
     CreateAccountRequest create_account = 7;
+    ListKeys list_keys = 8;
+    ListSessions list_sessions = 9;
   }
 }
 
@@ -23,6 +25,8 @@ message AuthResponse {
     RevokeSessionsResponse revoke_sessions = 5;
     RevokeKeysResponse revoke_keys = 6;
     CreateAccountResponse create_account = 7;
+    KeyList list_keys = 8;
+    SessionList list_sessions = 9;
   }
 }
 
@@ -53,6 +57,7 @@ message Auth1Request {
     Password password = 2;
     PubKey pub_key = 3;
   }
+  bytes device_type = 4;
 }
 
 message Auth1Response {
@@ -73,11 +78,14 @@ message Auth1Response {
 }
 
 message Auth1GuestRequest {
-  // TODO
+  bytes guest_pub = 1;
+  bytes guest_nonce = 2;
 }
 
 message Auth1GuestResponse {
-  // TODO
+  bytes server_pub = 1;
+  bytes server_nonce = 2;
+  bytes session_token = 3;
 }
 
 // second set of messages to ensure credentials are good
@@ -102,18 +110,34 @@ message RefreshTokenResponse {
 }
 
 message RevokeSessionsRequest {
-  // TODO
+  repeated bytes sessions = 1;
 }
 
 message RevokeSessionsResponse {
-  // TODO
+  repeated bytes sessions = 1;
+  repeated bool success = 2;
 }
 
 message RevokeKeysRequest {
-  // TODO
+  repeated bytes keys = 1;
 }
 
 message RevokeKeysResponse {
-  // TODO
+  repeated bytes keys = 1;
+  repeated bool success = 2;
 }
 
+message ListKeys {}
+
+message KeyList {
+  repeated bytes keys = 1;
+  repeated bytes device_type = 2;
+}
+
+message ListSessions {}
+
+message SessionList {
+  repeated bytes sessions = 1;
+  repeated bytes device_type = 2;
+  repeated uint64 expiration = 3;
+}

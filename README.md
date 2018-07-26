@@ -79,6 +79,8 @@ The session token is valid for two hours, and at any point the client can send a
 The old token will be revoked after the new session token has been successfully used.
 There will be a packet type to allow logging out and elimination of the session information.
 
+A guest session uses a Diffie-Hellman key exchange since there's a lack of a shared secret between the server and the user.
+
 TODO: flesh out with hash function and encryption choices
 
 ### Packet types
